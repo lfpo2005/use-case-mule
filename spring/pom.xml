@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>dev.luisoliveira</groupId>
-    <artifactId>mule-banco</artifactId>
+    <artifactId>spring</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>mule-banco</name>
     <description>mule-banco</description>

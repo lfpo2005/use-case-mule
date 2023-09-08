@@ -20,3 +20,7 @@ spring:
   output:
     ansi:
       enabled: Always
+  logging:
+    level:
+      org.hibernate.SQL: DEBUG
+      org.hibernate.type: TRACE

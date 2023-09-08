@@ -1,182 +1,240 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd 
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd 
 http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
-    <http:listener-config name="use-case-mule-httpListenerConfig">
-        <http:listener-connection host="0.0.0.0" port="8081" />
-    </http:listener-config>
-    <apikit:config name="use-case-mule-config" api="resource::e8af90f8-c409-49df-a9f9-428fe20ea1e2:use-case-mule:1.0.3:raml:zip:use-case-mule.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
-    <flow name="use-case-mule-main">
-        <http:listener config-ref="use-case-mule-httpListenerConfig" path="/mule/*">
-            <http:response statusCode="#[vars.httpStatus default 200]">
-                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
-            </http:response>
-            <http:error-response statusCode="#[vars.httpStatus default 500]">
-                <http:body><![CDATA[#[payload]]]></http:body>
-                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
-            </http:error-response>
-        </http:listener>
-        <apikit:router config-ref="use-case-mule-config" />
-        <error-handler>
-            <on-error-propagate type="APIKIT:BAD_REQUEST">
-                <ee:transform doc:name="Transform Message">
-                    <ee:message>
-                        <ee:set-payload><![CDATA[%dw 2.0
+	<http:listener-config
+		name="use-case-mule-httpListenerConfig">
+		<http:listener-connection host="0.0.0.0"
+			port="8081" />
+	</http:listener-config>
+	<apikit:config name="use-case-mule-config"
+		api="resource::e8af90f8-c409-49df-a9f9-428fe20ea1e2:use-case-mule:1.0.3:raml:zip:use-case-mule.raml"
+		outboundHeadersMapName="outboundHeaders"
+		httpStatusVarName="httpStatus" />
+	<flow name="use-case-mule-main">
+		<http:listener
+			config-ref="use-case-mule-httpListenerConfig" path="/mule/*">
+			<http:response
+				statusCode="#[vars.httpStatus default 200]">
+				<http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+			</http:response>
+			<http:error-response
+				statusCode="#[vars.httpStatus default 500]">
+				<http:body><![CDATA[#[payload]]]></http:body>
+				<http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+			</http:error-response>
+		</http:listener>
+		<apikit:router config-ref="use-case-mule-config" />
+		<error-handler>
+			<on-error-propagate type="APIKIT:BAD_REQUEST">
+				<ee:transform doc:name="Transform Message">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {message: "Bad request"}]]></ee:set-payload>
-                    </ee:message>
-                    <ee:variables>
-                        <ee:set-variable variableName="httpStatus">400</ee:set-variable>
-                    </ee:variables>
-                </ee:transform>
-            </on-error-propagate>
-            <on-error-propagate type="APIKIT:NOT_FOUND">
-                <ee:transform doc:name="Transform Message">
-                    <ee:message>
-                        <ee:set-payload><![CDATA[%dw 2.0
+					</ee:message>
+					<ee:variables>
+						<ee:set-variable variableName="httpStatus">400
+						</ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+			</on-error-propagate>
+			<on-error-propagate type="APIKIT:NOT_FOUND">
+				<ee:transform doc:name="Transform Message">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {message: "Resource not found"}]]></ee:set-payload>
-                    </ee:message>
-                    <ee:variables>
-                        <ee:set-variable variableName="httpStatus">404</ee:set-variable>
-                    </ee:variables>
-                </ee:transform>
-            </on-error-propagate>
-            <on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED">
-                <ee:transform doc:name="Transform Message">
-                    <ee:message>
-                        <ee:set-payload><![CDATA[%dw 2.0
+					</ee:message>
+					<ee:variables>
+						<ee:set-variable variableName="httpStatus">404
+						</ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+			</on-error-propagate>
+			<on-error-propagate
+				type="APIKIT:METHOD_NOT_ALLOWED">
+				<ee:transform doc:name="Transform Message">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {message: "Method not allowed"}]]></ee:set-payload>
-                    </ee:message>
-                    <ee:variables>
-                        <ee:set-variable variableName="httpStatus">405</ee:set-variable>
-                    </ee:variables>
-                </ee:transform>
-            </on-error-propagate>
-            <on-error-propagate type="APIKIT:NOT_ACCEPTABLE">
-                <ee:transform doc:name="Transform Message">
-                    <ee:message>
-                        <ee:set-payload><![CDATA[%dw 2.0
+					</ee:message>
+					<ee:variables>
+						<ee:set-variable variableName="httpStatus">405
+						</ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+			</on-error-propagate>
+			<on-error-propagate type="APIKIT:NOT_ACCEPTABLE">
+				<ee:transform doc:name="Transform Message">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {message: "Not acceptable"}]]></ee:set-payload>
-                    </ee:message>
-                    <ee:variables>
-                        <ee:set-variable variableName="httpStatus">406</ee:set-variable>
-                    </ee:variables>
-                </ee:transform>
-            </on-error-propagate>
-            <on-error-propagate type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
-                <ee:transform doc:name="Transform Message">
-                    <ee:message>
-                        <ee:set-payload><![CDATA[%dw 2.0
+					</ee:message>
+					<ee:variables>
+						<ee:set-variable variableName="httpStatus">406
+						</ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+			</on-error-propagate>
+			<on-error-propagate
+				type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
+				<ee:transform doc:name="Transform Message">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {message: "Unsupported media type"}]]></ee:set-payload>
-                    </ee:message>
-                    <ee:variables>
-                        <ee:set-variable variableName="httpStatus">415</ee:set-variable>
-                    </ee:variables>
-                </ee:transform>
-            </on-error-propagate>
-            <on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
-                <ee:transform doc:name="Transform Message">
-                    <ee:message>
-                        <ee:set-payload><![CDATA[%dw 2.0
+					</ee:message>
+					<ee:variables>
+						<ee:set-variable variableName="httpStatus">415
+						</ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+			</on-error-propagate>
+			<on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
+				<ee:transform doc:name="Transform Message">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {message: "Not Implemented"}]]></ee:set-payload>
-                    </ee:message>
-                    <ee:variables>
-                        <ee:set-variable variableName="httpStatus">501</ee:set-variable>
-                    </ee:variables>
-                </ee:transform>
-            </on-error-propagate>
-        </error-handler>
-    </flow>
-    <flow name="use-case-mule-console">
-        <http:listener config-ref="use-case-mule-httpListenerConfig" path="/console/*">
-            <http:response statusCode="#[vars.httpStatus default 200]">
-                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
-            </http:response>
-            <http:error-response statusCode="#[vars.httpStatus default 500]">
-                <http:body>#[payload]</http:body>
-                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
-            </http:error-response>
-        </http:listener>
-        <apikit:console config-ref="use-case-mule-config" />
-        <error-handler>
-            <on-error-propagate type="APIKIT:NOT_FOUND">
-                <ee:transform doc:name="Transform Message">
-                    <ee:message>
-                        <ee:set-payload><![CDATA[%dw 2.0
+					</ee:message>
+					<ee:variables>
+						<ee:set-variable variableName="httpStatus">501
+						</ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+			</on-error-propagate>
+		</error-handler>
+	</flow>
+	<flow name="use-case-mule-console">
+		<http:listener
+			config-ref="use-case-mule-httpListenerConfig" path="/console/*">
+			<http:response
+				statusCode="#[vars.httpStatus default 200]">
+				<http:headers>#[vars.outboundHeaders default {}]</http:headers>
+			</http:response>
+			<http:error-response
+				statusCode="#[vars.httpStatus default 500]">
+				<http:body>#[payload]</http:body>
+				<http:headers>#[vars.outboundHeaders default {}]</http:headers>
+			</http:error-response>
+		</http:listener>
+		<apikit:console config-ref="use-case-mule-config" />
+		<error-handler>
+			<on-error-propagate type="APIKIT:NOT_FOUND">
+				<ee:transform doc:name="Transform Message">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {message: "Resource not found"}]]></ee:set-payload>
-                    </ee:message>
-                    <ee:variables>
-                        <ee:set-variable variableName="httpStatus">404</ee:set-variable>
-                    </ee:variables>
-                </ee:transform>
-            </on-error-propagate>
-        </error-handler>
-    </flow>
-    <flow name="get:\contas">
-		<flow-ref doc:name="Get Account" doc:id="8944455d-fd9e-43d4-8bdc-f925a43b9ba1" name="implementation-get-account-main"/>
-    </flow>
-    <flow name="post:\contas">
-		<flow-ref doc:name="Create Account" doc:id="5b6838ce-6b3a-4620-9572-5ecad4f9198e" name="implementation-post-create-account-main"/>
-    </flow>
-	<flow name="get:\contas\(contaId)\historico:use-case-mule-config">
-        <ee:transform doc:name="Transform Message">
-            <ee:variables>
-                <ee:set-variable variableName="contaId">attributes.uriParams.'contaId'</ee:set-variable>
-            </ee:variables>
-        </ee:transform>
-        <logger level="INFO" message="get:\contas\(contaId)\historico:use-case-mule-config" />
-    </flow>
+					</ee:message>
+					<ee:variables>
+						<ee:set-variable variableName="httpStatus">404
+						</ee:set-variable>
+					</ee:variables>
+				</ee:transform>
+			</on-error-propagate>
+		</error-handler>
+	</flow>
+	<flow name="get:\contas">
+		<flow-ref doc:name="Get Account"
+			doc:id="8944455d-fd9e-43d4-8bdc-f925a43b9ba1"
+			name="implementation-get-account-main" />
+	</flow>
+	<flow name="post:\contas">
+		<flow-ref doc:name="Create Account"
+			doc:id="5b6838ce-6b3a-4620-9572-5ecad4f9198e"
+			name="implementation-post-create-account-main" />
+	</flow>
+	<flow name="get:\contas\(contaId)\historico">
+		<ee:transform doc:name="Transform Message">
+			<ee:variables>
+				<ee:set-variable variableName="contaId"><![CDATA[output application/java
+---
+attributes.uriParams.'contaId'
+				]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<logger level="DEBUG" doc:name="Logger"
+			message="#[vars.contaId]" />
+		<http:request method="GET" doc:name="Request"
+			doc:id="54d48987-32f7-4803-b9c5-4126dc7715b8"
+			config-ref="HTTP_Request_config" path="/contas/{contaId}/historico">
+			<http:uri-params><![CDATA[#[{
+	contaId : vars.contaId
+}]]]></http:uri-params>
+		</http:request>
+		<logger level="INFO" doc:name="Logger HTTP"
+			message="#[payload]" />
+	</flow>
 	<flow name="get:\contas\(contaId)\saldo:use-case-mule-config">
-        <ee:transform doc:name="Transform Message">
-            <ee:variables>
-                <ee:set-variable variableName="contaId">attributes.uriParams.'contaId'</ee:set-variable>
-            </ee:variables>
-        </ee:transform>
-        <logger level="INFO" message="get:\contas\(contaId)\saldo:use-case-mule-config" />
-    </flow>
+		<ee:transform doc:name="Transform Message">
+			<ee:variables>
+				<ee:set-variable variableName="contaId">attributes.uriParams.'contaId'
+				</ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<logger level="INFO"
+			message="get:\contas\(contaId)\saldo:use-case-mule-config" />
+	</flow>
 	<flow name="get:\contas\(contaId):use-case-mule-config">
-        <ee:transform doc:name="Transform Message">
-            <ee:variables>
-                <ee:set-variable variableName="contaId">attributes.uriParams.'contaId'</ee:set-variable>
-            </ee:variables>
-        </ee:transform>
-        <logger level="INFO" message="get:\contas\(contaId):use-case-mule-config" />
-    </flow>
-    <flow name="post:\contas\(contaId)\depositar:application\json:use-case-mule-config">
-        <ee:transform doc:name="Transform Message">
-            <ee:variables>
-                <ee:set-variable variableName="contaId">attributes.uriParams.'contaId'</ee:set-variable>
-            </ee:variables>
-        </ee:transform>
-        <logger level="INFO" message="post:\contas\(contaId)\depositar:application\json:use-case-mule-config" />
-    </flow>
-    <flow name="post:\contas\(contaId)\sacar:application\json:use-case-mule-config">
-        <ee:transform doc:name="Transform Message">
-            <ee:variables>
-                <ee:set-variable variableName="contaId">attributes.uriParams.'contaId'</ee:set-variable>
-            </ee:variables>
-        </ee:transform>
-        <logger level="INFO" message="post:\contas\(contaId)\sacar:application\json:use-case-mule-config" />
-    </flow>
-    <flow name="post:\contas\transferir\de\(deId)\para\(paraId):application\json:use-case-mule-config">
-        <ee:transform doc:name="Transform Message">
-            <ee:variables>
-                <ee:set-variable variableName="deId">attributes.uriParams.'deId'</ee:set-variable>
-                <ee:set-variable variableName="paraId">attributes.uriParams.'paraId'</ee:set-variable>
-            </ee:variables>
-        </ee:transform>
-        <logger level="INFO" message="post:\contas\transferir\de\(deId)\para\(paraId):application\json:use-case-mule-config" />
-    </flow>
+		<ee:transform doc:name="Transform Message">
+			<ee:variables>
+				<ee:set-variable variableName="contaId">attributes.uriParams.'contaId'
+				</ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<logger level="INFO"
+			message="get:\contas\(contaId):use-case-mule-config" />
+	</flow>
+	<flow
+		name="post:\contas\(contaId)\depositar:application\json:use-case-mule-config">
+		<ee:transform doc:name="Transform Message">
+			<ee:variables>
+				<ee:set-variable variableName="contaId">attributes.uriParams.'contaId'
+				</ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<logger level="INFO"
+			message="post:\contas\(contaId)\depositar:application\json:use-case-mule-config" />
+	</flow>
+	<flow
+		name="post:\contas\(contaId)\sacar:application\json:use-case-mule-config">
+		<ee:transform doc:name="Transform Message">
+			<ee:variables>
+				<ee:set-variable variableName="contaId">attributes.uriParams.'contaId'
+				</ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<logger level="INFO"
+			message="post:\contas\(contaId)\sacar:application\json:use-case-mule-config" />
+	</flow>
+	<flow
+		name="post:\contas\transferir\de\(deId)\para\(paraId):application\json:use-case-mule-config">
+		<ee:transform doc:name="Transform Message">
+			<ee:variables>
+				<ee:set-variable variableName="deId">attributes.uriParams.'deId'
+				</ee:set-variable>
+				<ee:set-variable variableName="paraId">attributes.uriParams.'paraId'
+				</ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<logger level="INFO"
+			message="post:\contas\transferir\de\(deId)\para\(paraId):application\json:use-case-mule-config" />
+	</flow>
 </mule>

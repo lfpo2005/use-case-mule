@@ -26,8 +26,7 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 		<db:select doc:name="Select"
 			doc:id="ef3a7a70-e2a3-46d1-b003-f5a2580a2f61"
 			config-ref="Database_Config">
-			<db:sql><![CDATA[SELECT conta_id FROM mule_conta WHERE conta_id = :conta_id]]></db:sql>
-			<db:input-parameters ><![CDATA[#[{'conta_id': vars.currentItem.contaId}]]]></db:input-parameters>
+			<db:sql><![CDATA[SELECT * FROM mule_conta;]]></db:sql>
 		</db:select>
 		<ee:transform doc:name="Transform Message"
 			doc:id="f2f7fe96-7f74-41c2-8965-299cb4a63c5f">
@@ -36,12 +35,9 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 output application/json
 ---
 payload map (item) -> {
-    "Numero da conta": if (item.numero_conta != null) 
-                        (item.numero_conta as String)[0 to -2] ++ "-" ++ (item.numero_conta as String)[-1] 
-                       else "Indisponível",
+    "Numero da conta": (item.numero_conta as String)[0 to -2] ++ "-" ++ (item.numero_conta as String)[-1],
     "Nome": item.nome
-}
-]]></ee:set-payload>
+}]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
 	</sub-flow>
