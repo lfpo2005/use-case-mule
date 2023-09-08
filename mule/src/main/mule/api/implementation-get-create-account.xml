@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule
+	xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<flow name="implementation-get-account-main"
+		doc:id="b00818d8-0a63-4805-a56f-a588167ca6ba">
+		<flow-ref doc:name="Update Data"
+			doc:id="6d7fcc83-5258-4314-ba09-1b82b470d148"
+			name="implementation-get-save-account" />
+		<flow-ref doc:name="Get Account"
+			doc:id="c70da563-6897-492a-8119-58f60d384079"
+			name="implementation-get-account-db" />
+	</flow>
+	<sub-flow name="implementation-get-account-db"
+		doc:id="0f5b0845-5873-4c46-94d7-6bd12e982bb9">
+		<db:select doc:name="Select"
+			doc:id="ef3a7a70-e2a3-46d1-b003-f5a2580a2f61"
+			config-ref="Database_Config">
+			<db:sql><![CDATA[SELECT conta_id FROM mule_conta WHERE conta_id = :conta_id]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{'conta_id': vars.currentItem.contaId}]]]></db:input-parameters>
+		</db:select>
+		<ee:transform doc:name="Transform Message"
+			doc:id="f2f7fe96-7f74-41c2-8965-299cb4a63c5f">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload map (item) -> {
+    "Numero da conta": if (item.numero_conta != null) 
+                        (item.numero_conta as String)[0 to -2] ++ "-" ++ (item.numero_conta as String)[-1] 
+                       else "Indisponível",
+    "Nome": item.nome
+}
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</sub-flow>
+	<sub-flow name="implementation-get-save-account"
+		doc:id="e98f0c0f-cf04-4fcd-a289-2ed660a2b605">
+		<http:request method="GET"
+			config-ref="HTTP_Request_config" path="/contas"
+			doc:name="Get Account" />
+		<foreach doc:name="For Each">
+			<set-variable variableName="currentItem"
+				value="#[payload]" doc:name="Store current item" />
+			<db:select config-ref="Database_Config"
+				doc:name="Check if conta_id exists">
+				<db:sql><![CDATA[SELECT EXISTS (SELECT 1 FROM mule_conta WHERE conta_id = :conta_id)]]></db:sql>
+				<db:input-parameters><![CDATA[#[{'conta_id': vars.currentItem.contaId}]]]></db:input-parameters> 
+			</db:select>
+			<logger level="INFO" doc:name="Logger"
+				message="#[payload[0]['EXISTS']]" />
+			<choice doc:name="Choice">
+				<when expression="payload[0]['EXISTS'] == false">
+					<db:insert config-ref="Database_Config"
+						doc:name="Insert into DB">
+						<db:sql><![CDATA[INSERT INTO mule_conta (conta_id, nome, saldo)
+                        VALUES (:conta_id, :nome, :saldo);]]></db:sql>
+					<db:input-parameters><![CDATA[
+					    #[{
+					        'conta_id': vars.currentItem.contaId,
+					        'nome': vars.currentItem.nome,
+					         'saldo': vars.currentItem.saldo
+					    }]
+					]]></db:input-parameters>
+					</db:insert>
+				</when>
+				<otherwise>
+					<logger level="INFO"
+						message="Número de conta já existe, gerando um novo número..." />
+				</otherwise>
+			</choice>
+		</foreach>
+	</sub-flow>
+</mule>
