@@ -1,0 +1,26 @@
+%dw 2.0
+
+type auto_b56fb690_0f14_49b3_a024_7f326a5940c7_Input_Attributes = {|
+  clientCertificate?: {|
+    publicKey?: {|  |}, 
+    "type"?: String, 
+    encoded?: Binary
+  |}, 
+  headers: {|  |}, 
+  listenerPath: String, 
+  method: String, 
+  queryParams: {|
+    startDate?: String, 
+    endDate?: String
+  |}, 
+  queryString: String, 
+  relativePath: String, 
+  remoteAddress: String, 
+  requestPath: String, 
+  requestUri: String, 
+  scheme: String, 
+  uriParams: {| account_number: String |}, 
+  version: String, 
+  localAddress: String
+|}
+

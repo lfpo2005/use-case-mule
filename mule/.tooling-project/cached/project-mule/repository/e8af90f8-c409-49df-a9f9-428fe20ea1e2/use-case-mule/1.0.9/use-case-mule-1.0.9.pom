@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>e8af90f8-c409-49df-a9f9-428fe20ea1e2</groupId>
+  <artifactId>use-case-mule</artifactId>
+  <version>1.0.9</version>
+  <name>use-case-mule</name>
+  <properties>
+    <classifier>raml</classifier>
+    <main>use-case-mule.raml</main>
+    <status>published</status>
+    <originalFormatVersion>1.0</originalFormatVersion>
+    <apiVersion>v1</apiVersion>
+    <projectId>701ec91b-6eb3-4364-a901-db8425e3de5a</projectId>
+    <branchId>master</branchId>
+    <commitId>fac374fc264efd9f2ba9836113daacc004f92965</commitId>
+    <keywords/>
+    <type>rest-api</type>
+    <mainFile>use-case-mule.raml</mainFile>
+  </properties>
+  <repositories>
+    <repository>
+      <id>anypoint-exchange</id>
+      <url>https://maven.anypoint.mulesoft.com/api/v3/maven</url>
+    </repository>
+  </repositories>
+</project>

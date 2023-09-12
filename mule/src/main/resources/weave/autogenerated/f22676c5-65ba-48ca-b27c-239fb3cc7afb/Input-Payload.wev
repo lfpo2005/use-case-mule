@@ -1,0 +1,7 @@
+%dw 2.0
+
+type auto_f22676c5_65ba_48ca_b27c_239fb3cc7afb_Input_Payload = {
+  name: String, 
+  _?: Any
+}
+
