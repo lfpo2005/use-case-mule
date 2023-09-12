@@ -59,7 +59,7 @@ output application/json
 	    "Tipo de transação": item.types,
 	    "Valor": item.amount,
 	    "De": item.from_account_name
-	}
+	}filterObject (value, key) -> value != null
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
