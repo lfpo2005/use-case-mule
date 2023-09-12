@@ -9,7 +9,7 @@ import java.util.UUID;
 
 @Repository
 public interface TransacaoRepository extends JpaRepository<TransacaoModel, UUID> {
-    List<TransacaoModel> findByContaIdOrderByTimestampDesc(UUID contaId);
+    List<TransacaoModel> findByContaIdOrderByDataTransacaoDesc(UUID contaId);
 
 }
 

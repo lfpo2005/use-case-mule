@@ -18,4 +18,5 @@ public class ContaModel implements Serializable {
     private UUID contaId;
     @Column(nullable = false, unique = true)
     private String nome;
-    private BigDecimal saldo;}
+    private BigDecimal saldo;
+}

@@ -57,12 +57,12 @@ public class ContaService {
         transacao.setContaId(contaId);
         transacao.setTipo(tipo);
         transacao.setValor(valor);
-        transacao.setTimestamp(LocalDateTime.now());
+        transacao.setDataTransacao(LocalDateTime.now());
         return transacaoRepository.save(transacao);
     }
 
     public List<TransacaoModel> buscarHistorico(UUID contaId) {
-        return transacaoRepository.findByContaIdOrderByTimestampDesc(contaId);
+        return transacaoRepository.findByContaIdOrderByDataTransacaoDesc(contaId);
     }
 
     public ContaModel consultarSaldo(UUID contaId) {

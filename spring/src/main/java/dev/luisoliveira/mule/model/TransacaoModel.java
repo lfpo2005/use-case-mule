@@ -22,7 +22,7 @@ public class TransacaoModel implements Serializable {
     private String tipo;
     private BigDecimal valor;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'")
-    private LocalDateTime timestamp;
+    private LocalDateTime dataTransacao;
 
 }
 
