@@ -1,0 +1,23 @@
+%dw 2.0
+
+type auto_b06c0ec9_41df_4c13_a5b9_c8dfaddc137d_Input_Attributes = {|
+  clientCertificate?: {|
+    publicKey?: {|  |}, 
+    "type"?: String, 
+    encoded?: Binary
+  |}, 
+  headers: {|  |}, 
+  listenerPath: String, 
+  method: String, 
+  queryParams: {|  |}, 
+  queryString: String, 
+  relativePath: String, 
+  remoteAddress: String, 
+  requestPath: String, 
+  requestUri: String, 
+  scheme: String, 
+  uriParams: {| account_number: String |}, 
+  version: String, 
+  localAddress: String
+|}
+

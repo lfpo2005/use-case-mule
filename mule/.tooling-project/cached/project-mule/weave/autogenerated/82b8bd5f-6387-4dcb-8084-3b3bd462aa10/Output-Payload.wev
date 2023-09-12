@@ -1,0 +1,11 @@
+%dw 2.0
+
+type auto_82b8bd5f_6387_4dcb_8084_3b3bd462aa10_Output_Payload = {
+  accountId: String, 
+  amount: Number, 
+  "type": String, 
+  transactionId: String, 
+  dateTransaction: String, 
+  _?: Any
+}
+
