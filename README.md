@@ -78,4 +78,4 @@ Faça a importação da collection do postaman, que esta na raiz do github, e te
 ### Extrato
 - Por período (limite de 1 mês)
 - Por mês (limite de 1 mês por consulta)
-- Esta api deve ser paginada trazendo apenas 10 registros por página
+
