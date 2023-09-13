@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd 
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+	<sub-flow name="implementation-get-history-main"
+		doc:id="b56fb690-0f14-49b3-a024-7f326a5940c7">
+		<flow-ref doc:name="Flow Reference"
+			doc:id="be8db970-43b0-49cb-8dab-a5786cfc7cc5"
+			name="implementation-get-history-select" />
+	</sub-flow>
+	<flow name="implementation-get-history-select"
+		doc:id="efc5abf1-9e17-406b-818b-da3034d1c60e">
+		<logger level="INFO" message="#[payload]" />
+		<db:select doc:name="Check if extract already generated"
+			config-ref="Database_Config">
+			<db:sql><![CDATA[SELECT last_query_date 
+FROM queries_extracts 
+WHERE account_number = :account_number 
+AND EXTRACT(MONTH FROM last_query_date) = EXTRACT(MONTH FROM CURRENT_DATE)
+AND EXTRACT(YEAR FROM last_query_date) = EXTRACT(YEAR FROM CURRENT_DATE);
+]]></db:sql>
+			<db:input-parameters><![CDATA[#[{
+    account_number: vars.account_number,
+    currentMonth: vars.currentMonth,
+    currentYear: vars.currentYear  
+}]]]></db:input-parameters>
+		</db:select>
+		<logger level="INFO" doc:name="Logger"
+			message="#[payload.getClass().getName()]" />
+		<ee:transform doc:name="Set Condition Variable">
+			<ee:variables>
+				<ee:set-variable variableName="isPayloadNotEmpty"><![CDATA[ payload != null and sizeOf(payload) > 0
+        ]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+
+		<choice doc:name="Choice"
+			doc:id="9594f77f-86ff-488d-9a58-594fed7cc37c">
+			<when
+				expression="#[vars.isPayloadNotEmpty]">
+				<ee:transform doc:name="Transform Message"
+					doc:id="f3f0e82c-7a42-48db-985a-d34022846f8e">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"status": "erro",
+	"mensagem": "Não é permitido fazer mais de um extrato por mes"
+}
+
+]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</when>
+			<otherwise>
+				<db:insert doc:name="Insert or Update Last Query Date"
+					config-ref="Database_Config">
+					<db:sql><![CDATA[INSERT INTO queries_extracts (account_number, last_query_date)
+VALUES (:account_number, CURRENT_DATE)
+ON CONFLICT (account_number) DO UPDATE SET last_query_date = CURRENT_DATE;
+]]>
+            </db:sql>
+					<db:input-parameters><![CDATA[#[{
+   account_number: vars.account_number,
+}]]]>
+            </db:input-parameters>
+				</db:insert>
+				<db:select doc:name="Get Accont-Id"
+					doc:id="2cd89b64-4c24-4e3c-9f53-c2f18dec28b7"
+					config-ref="Database_Config">
+					<db:sql><![CDATA[select account_id from mule_account where account_number = :account_number]]></db:sql>
+					<db:input-parameters><![CDATA[#[{
+	account_number: vars.account_number
+}]]]></db:input-parameters>
+				</db:select>
+				<logger level="INFO" doc:name="Logger"
+					doc:id="f68ef773-4f61-447d-bef8-3950891cd567"
+					message="#[payload.account_id]" />
+				<db:select doc:name="Get History"
+					doc:id="7d81c48f-4849-4a62-9d48-9951d8168439"
+					config-ref="Database_Config">
+					<db:sql><![CDATA[SELECT
+    t.*,
+    a.name as to_account_name,
+    a.balance,
+    a.account_number,
+    CASE 
+        WHEN t.types = 'DEPOSIT' THEN a.name
+        WHEN t.types = 'WITHDRAWAL' THEN a.name
+        ELSE f.name
+    END as from_account_name
+FROM mule_transaction t
+    JOIN mule_account a ON t.account_id = a.account_id
+    LEFT JOIN mule_account f ON t.from_account_id = f.account_id
+WHERE t.account_id = :account_id
+    AND DATE(t.date_transaction) BETWEEN :startDate AND :endDate
+ORDER BY t.date_transaction DESC;
+]]></db:sql>
+					<db:input-parameters><![CDATA[#[{
+    account_id: payload[0].account_id,
+    startDate: vars.startDate,
+    endDate: vars.endDate
+}]]]></db:input-parameters>
+				</db:select>
+				<logger level="INFO" doc:name="Logger"
+					doc:id="6ec8874b-ac08-4223-9eae-9b29c6990189" message="#[payload]" />
+				<ee:transform doc:name="Transform Message"
+					doc:id="b983c757-5b48-421c-aecb-5dd5fe3929c4">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"Numero da conta": payload[0].account_number,
+	"Nome": payload[0].to_account_name,
+	"Saldo": payload[0].balance,
+	"Transações": payload map (item) -> {
+		"Data": item.date_transaction as String {format: "dd-MM-yyyy"},
+		"Horas": item.date_transaction as String {format: "HH:mm:ss"},    
+	    "Tipo de transação": item.types,
+	    "Valor": item.amount,
+	    "De": item.from_account_name
+	}filterObject (value, key) -> value != null
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</otherwise>
+		</choice>
+	</flow>
+</mule>
