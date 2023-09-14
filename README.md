@@ -62,7 +62,11 @@ Este projeto é uma API desenvolvida com MuleSoft para gerenciamento de contas e
 
 ## Testando a API
 
-Faça a importação da collection do postaman, que esta na raiz do github, e teste a api.
+Faça a importação da collection do postman, que esta na raiz do do projeto, ou utilise o o API console link a baixo e teste a api.
+
+```
+http://localhost:8081/console/
+```
 
 ## Regras de Operação
 

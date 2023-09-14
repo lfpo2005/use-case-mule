@@ -17,7 +17,7 @@ http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/cu
 			port="8081" />
 	</http:listener-config>
 	<apikit:config name="use-case-mule-config"
-		api="resource::e8af90f8-c409-49df-a9f9-428fe20ea1e2:use-case-mule:1.0.9:raml:zip:use-case-mule.raml"
+		api="resource::e8af90f8-c409-49df-a9f9-428fe20ea1e2:use-case-mule:1.0.11:raml:zip:use-case-mule.raml"
 		outboundHeadersMapName="outboundHeaders"
 		httpStatusVarName="httpStatus" />
 	<flow name="use-case-mule-main">
@@ -155,6 +155,8 @@ output application/json
 		</error-handler>
 	</flow>
 	<flow name="get:\accounts">
+		<set-variable value="#[attributes.queryParams.page default 1]" doc:name="Set Variable" doc:id="ad42ff6e-e925-4f2c-a756-7adbfeff7b68" variableName="page"/>
+		<set-variable value="#[attributes.queryParams.size default 10]" doc:name="Set Variable" doc:id="b9f27208-06fe-4c08-9424-23f2b15b7317" variableName="size"/>
 		<flow-ref doc:name="Flow Reference"
 			doc:id="32077b63-cc96-4e53-9004-fe3d3a292963"
 			name="implementation-get-accounts-main" />
@@ -258,91 +260,9 @@ output application/json
 				</ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<logger level="INFO"
-			message="Transfer from account: #[vars.from_account_number] to account: #[vars.to_account_number] with amount: #[vars.amount]" />
-
-		<db:select config-ref="Database_Config">
-			<db:sql><![CDATA[SELECT * FROM mule_account WHERE account_number = :from_account_number]]></db:sql>
-			<db:input-parameters><![CDATA[#[{
-	'from_account_number': vars.from_account_number
-}]]]></db:input-parameters>
-		</db:select>
-		<set-variable value="#[payload[0]]"
-			variableName="fromAccountInfo" />
-		<db:select config-ref="Database_Config">
-			<db:sql><![CDATA[SELECT * FROM mule_account WHERE account_number = :to_account_number]]></db:sql>
-			<db:input-parameters><![CDATA[#[{
-	'to_account_number': vars.to_account_number
-}]]]></db:input-parameters>
-		</db:select>
-		<set-variable value="#[payload[0]]"
-			variableName="toAccountInfo" />
-		<choice>
-			<when
-				expression="#[vars.amount &gt; 0 and vars.amount &lt;= vars.fromAccountInfo.balance]">
-				<!-- Update From Account Balance -->
-				<db:update config-ref="Database_Config"
-					doc:name="Update-get-amount">
-					<db:sql><![CDATA[UPDATE mule_account SET balance = balance - :amount WHERE account_id = :account_id]]></db:sql>
-					<db:input-parameters><![CDATA[#[{
-	'amount': vars.amount,
-	'account_id': vars.fromAccountInfo.account_id
-}]]]></db:input-parameters>
-				</db:update>
-				<db:update config-ref="Database_Config"
-					doc:name="Update-post-amount">
-					<db:sql><![CDATA[UPDATE mule_account SET balance = balance + :amount WHERE account_id = :account_id]]></db:sql>
-					<db:input-parameters><![CDATA[#[{
-	'amount': vars.amount,
-	'account_id': vars.toAccountInfo.account_id
-}]]]></db:input-parameters>
-				</db:update>
-				<db:insert config-ref="Database_Config"
-					doc:name="Insert-from">
-					<db:sql><![CDATA[INSERT INTO mule_transaction(account_id, from_account_id, types, amount, date_transaction) VALUES (:account_id, :from_account_id, :types, :amount, now())]]></db:sql>
-					<db:input-parameters><![CDATA[#[{
-	'account_id': vars.fromAccountInfo.account_id,
-	'from_account_id': vars.toAccountInfo.account_id,
-	'types': 'TRANSFER_OUT',
-	'amount': vars.amount
-}]]]></db:input-parameters>
-				</db:insert>
-				<db:insert config-ref="Database_Config"
-					doc:name="Insert-to">
-					<db:sql><![CDATA[INSERT INTO mule_transaction(account_id, from_account_id, types, amount, date_transaction) VALUES (:account_id, :from_account_id, :types, :amount, now())]]></db:sql>
-					<db:input-parameters><![CDATA[#[{
-	'account_id': vars.toAccountInfo.account_id,
-	'from_account_id': vars.fromAccountInfo.account_id,
-	'types': 'TRANSFER_IN',
-	'amount': vars.amount
-}]]]></db:input-parameters>
-				</db:insert>
-				<ee:transform doc:name="Transform Message"
-					doc:id="49b2bea1-8c87-483b-bd61-21e559fb26c5">
-					<ee:message>
-						<ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{
-	'Mensagem': "Transferência feita com sucesso"
-}]]></ee:set-payload>
-					</ee:message>
-				</ee:transform>
-			</when>
-			<otherwise>
-				<ee:transform doc:name="Transform Message"
-					doc:id="ae72a1e7-a25e-4039-b8d6-1356241b0aab">
-					<ee:message>
-						<ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{
-	'Mensagem': 'Falha na transferência: saldo insuficiente ou valor inválido'
-}]]></ee:set-payload>
-					</ee:message>
-				</ee:transform>
-			</otherwise>
-		</choice>
+		<flow-ref doc:name="Flow Reference" doc:id="7ac3ec36-0cc9-4ca6-b274-78fb8e33b603" name="implementation-post-transfer-main"/>
 	</flow>
-
+	 <flow name="get:\health-check">
+		<flow-ref doc:name="Get Health Check" doc:id="8e4d2d80-754f-4d8d-bf36-6eb04174518c" name="implementation-health-check-main"/>
+    </flow>
 </mule>
