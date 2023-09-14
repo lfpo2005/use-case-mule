@@ -35,6 +35,18 @@
 							<groupId>org.postgresql</groupId>
 							<artifactId>postgresql</artifactId>
 						</sharedLibrary>
+						<sharedLibrary>
+							<groupId>org.apache.activemq</groupId>
+							<artifactId>activemq-broker</artifactId>
+						</sharedLibrary>
+						<sharedLibrary>
+							<groupId>org.apache.activemq</groupId>
+							<artifactId>activemq-kahadb-store</artifactId>
+						</sharedLibrary>
+						<sharedLibrary>
+							<groupId>org.apache.activemq</groupId>
+							<artifactId>activemq-client</artifactId>
+						</sharedLibrary>
 					</sharedLibraries>
 				</configuration>
 			</plugin>
@@ -72,11 +84,38 @@
 			<version>42.2.19</version>
 		</dependency>
 		<dependency>
+			<groupId>org.mule.connectors</groupId>
+			<artifactId>mule-file-connector</artifactId>
+			<version>1.5.1</version>
+			<classifier>mule-plugin</classifier>
+		</dependency>
+		<dependency>
 			<groupId>e8af90f8-c409-49df-a9f9-428fe20ea1e2</groupId>
 			<artifactId>use-case-mule</artifactId>
-			<version>1.0.9</version>
+			<version>1.0.11</version>
 			<classifier>raml</classifier>
 			<type>zip</type>
+		</dependency>
+		<dependency>
+			<groupId>org.mule.connectors</groupId>
+			<artifactId>mule-jms-connector</artifactId>
+			<version>1.9.0</version>
+			<classifier>mule-plugin</classifier>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.activemq</groupId>
+			<artifactId>activemq-broker</artifactId>
+			<version>5.15.4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.activemq</groupId>
+			<artifactId>activemq-kahadb-store</artifactId>
+			<version>5.15.4</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.activemq</groupId>
+			<artifactId>activemq-client</artifactId>
+			<version>5.15.4</version>
 		</dependency>
 	</dependencies>
 
