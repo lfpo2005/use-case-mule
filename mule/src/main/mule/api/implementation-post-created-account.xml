@@ -1,36 +1,137 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+<mule xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db"
 	xmlns="http://www.mulesoft.org/schema/mule/core"
-	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
-http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-	<sub-flow name="implementation-post-created-account-main" doc:id="f22676c5-65ba-48ca-b27c-239fb3cc7afb" >
-		<flow-ref doc:name="Flow Reference" doc:id="0a9756e7-70c9-426d-b473-d35c302ee33d" name="implementation-post-created-account-insert"/>
-	</sub-flow>
-	<sub-flow name="implementation-post-created-account-insert" doc:id="c98e7584-6896-44fe-ba46-2ed7565fdc9c" >
-		<logger level="INFO" doc:name="Logger" doc:id="aee7667f-385b-419b-ab28-3917d8a48479" message="payload" />
-		<set-variable value="#[payload]" doc:name="Set Variable" doc:id="d2f6c2e5-70aa-444a-93c5-f7baa3f80252" variableName="newName" />
-		<logger level="INFO" doc:name="Logger" doc:id="dc72f501-0ade-4847-8e3f-7ad8d1a88c79" message="#['newName value: ' ++ vars.newName.name]" />
-		<db:select doc:name="Select" doc:id="5bb7704c-79a2-4100-b6b9-0e86b9cfe613" config-ref="Database_Config" >
-			<db:sql ><![CDATA[SELECT EXISTS (SELECT 1 FROM mule_account WHERE name = :name)]]></db:sql>
-			<db:input-parameters ><![CDATA[#[{name: vars.newName.name}]]]></db:input-parameters>
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd">
+	<flow name="implementation-post-created-account-main"
+		doc:id="f22676c5-65ba-48ca-b27c-239fb3cc7afb">
+		<flow-ref doc:name="Flow Reference"
+			doc:id="0a9756e7-70c9-426d-b473-d35c302ee33d"
+			name="implementation-post-created-account-publish" />
+		<flow-ref doc:name="Flow Reference"
+			doc:id="4a053ae2-4401-4b53-b6f7-023a259346ee"
+			name="implementation-post-created-account-consumer" />
+		<error-handler>
+			<on-error-propagate type="ANY">
+				<set-variable variableName="customErrorMessage"
+					value="#[error.description]" />
+				<logger level="ERROR"
+					message="#['Erro encontrado: ' ++ vars.customErrorMessage]" />
+				<ee:transform>
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+    'Mensagem': vars.customErrorMessage default 'Erro desconhecido'
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</on-error-propagate>
+		</error-handler>
+	</flow>
+	<flow name="implementation-post-created-account-publish"
+		doc:id="c98e7584-6896-44fe-ba46-2ed7565fdc9c">
+		<logger level="INFO" doc:name="Logger"
+			doc:id="aee7667f-385b-419b-ab28-3917d8a48479" message="payload" />
+		<set-variable value="#[payload.name]" doc:name="New Name"
+			doc:id="64d6e040-0fd7-4ea6-b1fe-c14f0ac4f4a9" variableName="newName" />
+		<db:select doc:name="Select"
+			doc:id="5bb7704c-79a2-4100-b6b9-0e86b9cfe613"
+			config-ref="Database_Config">
+			<db:sql><![CDATA[SELECT EXISTS (SELECT 1 FROM mule_account WHERE name = :name)]]></db:sql>
+			<db:input-parameters><![CDATA[#[{name: vars.newName}]]]></db:input-parameters>
 		</db:select>
-		<logger level="INFO" doc:name="Logger" doc:id="839e9106-e1fd-4b4a-b7ad-02bbfc40033d" message="#[payload]" />
-		<choice doc:name="Choice" doc:id="aae306a2-605d-43b5-96cc-5ed8f5798497" >
-			<when expression="payload[0].exists == false" >
-				<db:insert doc:name="Insert" doc:id="7a761ca3-ea32-4982-988d-3cd45e4b7f75" config-ref="Database_Config" >
-					<db:sql ><![CDATA[INSERT INTO mule_account (name, balance) VALUES (:name, :balance);]]></db:sql>
-					<db:input-parameters ><![CDATA[#[{'name': vars.newName.name, 'balance': 0.00}]]]></db:input-parameters>
-				</db:insert>
-				<db:select doc:name="Select new inserted " doc:id="2139fb27-d82b-43db-8168-6fe33bfa9c55" config-ref="Database_Config" >
-					<db:sql ><![CDATA[SELECT * FROM mule_account WHERE name = :name]]></db:sql>
-					<db:input-parameters ><![CDATA[#[{name: vars.newName.name}]]]></db:input-parameters>
-				</db:select>
-				<logger level="INFO" doc:name="Logger" doc:id="3608be02-aec0-4d2a-abaf-3dcf258f3eab" message="payload" />
-				<ee:transform doc:name="Transform Message" doc:id="cfcc5643-379e-4275-8154-247be22ba280" >
-					<ee:message >
-						<ee:set-payload ><![CDATA[%dw 2.0
+		<logger level="INFO" doc:name="Logger"
+			doc:id="857f216e-4220-41f9-8e89-3285d51c53a7"
+			message="#['newName value: ' ++ vars.newName]" />
+		<choice doc:name="Choice"
+			doc:id="9a9c08ed-119f-4feb-829d-375c41074ea9">
+			<when expression="#[payload[0].EXISTS == true]">
+				<raise-error type="CUSTOM:INVALID_NAME"
+					description="Nome de conta já existe!" />
+			</when>
+			<otherwise>
+				<ee:transform doc:name="Transform Message"
+					doc:id="9e0b7a33-cd45-49f4-8053-1afbdf9d1d85">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+vars.newName]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+				<jms:publish doc:name="Publish"
+					doc:id="cb397b55-d07b-4a3e-9dca-71a1b652d147"
+					config-ref="JMS_Config" destination="stg-mule" />
+			</otherwise>
+		</choice>
+		<error-handler>
+			<on-error-propagate type="CUSTOM:INVALID_NAME"
+				enableNotifications="true" logException="true">
+				<logger level="ERROR"
+					message="Falha na execução da query. Possível conta inexistente." />
+				<ee:transform>
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+    'Mensagem': 'Nome de conta já existe!'
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</on-error-propagate>
+		</error-handler>
+
+	</flow>
+	<flow name="implementation-post-created-account-consumer"
+		doc:id="a6e70c8c-e89f-4adb-995a-4c2d40c4e68a">
+		<set-payload value="#[null]" doc:name="Set Payload"
+			doc:id="bad73086-acee-4a1b-9eb9-2edd0b428246" />
+		<set-variable value="#[null]"
+			doc:name="Initialize Variable as Null"
+			doc:id="33442b76-c055-4ae2-8243-287e8b478011"
+			variableName="newName" />
+		<logger level="INFO" doc:name="Logger"
+			doc:id="05d411ce-9afe-4936-a74b-a6a4382705b9" message="#[payload]" />
+		<jms:consume doc:name="Consume"
+			doc:id="5130a169-6b3c-441a-81d2-e77dca00ba45" config-ref="JMS_Config"
+			destination="stg-mule" maximumWait="30000" />
+		<logger level="INFO" doc:name="Logger" doc:id="43ae35f0-7d62-49ec-aed1-ebf65a667042" message="#[payload]"/>
+		<set-variable value="#[payload]" doc:name="Set Variable"
+			doc:id="02262d23-0fcf-491d-8ba3-806280169e56"
+			variableName="newName" />
+		<logger level="INFO" doc:name="Logger" doc:id="37325ddf-bf31-4e5e-b8b7-e12c4e452453" message="#[payload]" />
+		<db:insert doc:name="Insert"
+			doc:id="c0a4e155-4ab8-4b37-b42e-e49b00755bd3"
+			config-ref="Database_Config">
+			<db:sql><![CDATA[INSERT INTO mule_account (name, balance) VALUES (:name, :balance);]]></db:sql>
+			<db:input-parameters><![CDATA[#[{
+	'name': vars.newName, 'balance': 0.00
+}]]]></db:input-parameters>
+		</db:insert>
+		<db:select doc:name="Select new inserted "
+			doc:id="ca45d12d-fe2b-446e-b5ce-01de2dcea61c"
+			config-ref="Database_Config">
+			<db:sql><![CDATA[SELECT * FROM mule_account WHERE name = :name]]></db:sql>
+			<db:input-parameters><![CDATA[#[{
+	name: vars.newName
+}]]]></db:input-parameters>
+		</db:select>
+		<logger level="INFO" doc:name="Logger"
+			doc:id="a208d3d7-2151-4f39-8044-c012b5abf658" message="payload" />
+		<ee:transform doc:name="Transform Message"
+			doc:id="3ea54130-3115-4faa-9ddb-f9e818be0cfd">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 payload map (item) -> {
@@ -39,23 +140,7 @@ payload map (item) -> {
 }
 	
    ]]></ee:set-payload>
-					</ee:message>
-				</ee:transform>
-			</when>
-			<otherwise >
-				<logger level="INFO" doc:name="Logger" doc:id="ad64be89-e6fd-4b83-95e0-ee9febd8aa1e" message="Payload is null" />
-				<ee:transform doc:name="Transform Message" doc:id="b969f80c-3754-4378-b8bc-6133aaa02b66" >
-					<ee:message >
-						<ee:set-payload ><![CDATA[%dw 2.0
-output application/json
----
-{
-	Mensagem: "Conta já existe!"
-}]]></ee:set-payload>
-					</ee:message>
-				</ee:transform>
-				<set-variable value="200" doc:name="Set HTTP Status to 20" doc:id="4f4dcd8f-4c5e-4b10-b8dd-595450d36b22" variableName="httpStatus" />
-			</otherwise>
-		</choice>
-	</sub-flow>
+			</ee:message>
+		</ee:transform>
+	</flow>
 </mule>
