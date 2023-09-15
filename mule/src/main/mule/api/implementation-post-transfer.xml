@@ -1,0 +1,202 @@
+<mule xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd">
+	<flow  name="implementation-post-transfer-main"
+		doc:id="c3a1814b-5df8-45a6-abd4-24f1c2e08b8e">
+		<flow-ref doc:name="Flow Reference"
+			doc:id="7e422156-7ab2-4626-bc27-6d9c9ef080aa"
+			name="implementation-post-transfer-from" />
+		<flow-ref doc:name="Flow Reference"
+			doc:id="0e0c22db-9d02-4efd-ab53-a1b1841a5b12"
+			name="implementation-post-transfer-to" />
+		<flow-ref doc:name="Flow Reference"
+			doc:id="4193135f-237f-45e1-a4ab-d2faf8c158a2"
+			name="implementation-post-transfer-consume" />
+			<error-handler>
+    <on-error-propagate type="ANY">
+        <set-variable variableName="customErrorMessage" value="#[error.description]"/>
+        <logger level="ERROR" message="#['Erro encontrado: ' ++ vars.customErrorMessage]"/>
+        <ee:transform>
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+    'Mensagem': vars.customErrorMessage default 'Erro desconhecido'
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </on-error-propagate>
+</error-handler>
+			
+	</flow>
+	<flow name="implementation-post-transfer-from">
+		<logger level="INFO"
+			message="Transfer from account: #[vars.from_account_number] to account: #[vars.to_account_number] with amount: #[vars.amount]" />
+
+		<db:select config-ref="Database_Config">
+			<db:sql><![CDATA[SELECT * FROM mule_account WHERE account_number = :from_account_number]]></db:sql>
+			<db:input-parameters><![CDATA[#[{
+	'from_account_number': vars.from_account_number
+}]]]></db:input-parameters>
+		</db:select>
+		<choice>
+			<when
+				expression="#[(payload[0].account_number default 0) as Number != null and (vars.from_account_number default 0) as Number == (payload[0].account_number default 0) as Number]">
+				<set-variable value="#[payload[0]]"
+					variableName="fromAccountInfo" />
+			</when>
+			<otherwise>
+            <raise-error type="CUSTOM:INVALID_ACCOUNT" description="Número da conta de origem inválido."/>
+        </otherwise>
+    </choice>
+    <error-handler>
+        <on-error-propagate type="CUSTOM:INVALID_ACCOUNT">
+        <logger level="ERROR" message="Falha na execução da query. Possível conta inexistente." />
+        <ee:transform>
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+    'Mensagem': 'Falha na execução da query. Verifique as informações da conta.'
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+    </on-error-propagate>
+</error-handler>
+
+	</flow>
+	<flow name="implementation-post-transfer-to"
+		doc:id="d7167d03-6397-4ec9-8a24-15ae5256bb85">
+		<logger level="INFO" doc:name="Logger"
+			doc:id="3401282b-e76b-4dcd-95c4-ed52cab5a375" message="#[payload]" />
+		<db:select config-ref="Database_Config" doc:name="Select-to">
+			<db:sql><![CDATA[SELECT * FROM mule_account WHERE account_number = :to_account_number]]></db:sql>
+			<db:input-parameters><![CDATA[#[{
+	'to_account_number': vars.to_account_number
+}]]]></db:input-parameters>
+		</db:select>
+		<choice doc:name="Choice"
+			doc:id="98a73f6c-55d1-45c9-89ee-657be82679d1">
+			<when expression="#[(payload[0].account_number default 0) as Number != null and (vars.to_account_number default 0) as Number == (payload[0].account_number default 0) as Number]">
+				<set-variable value="#[payload[0]]"
+					variableName="toAccountInfo" />
+			</when>
+			<otherwise>
+				<raise-error doc:name="Raise error" doc:id="6fa617bf-d21f-46d0-a766-9b5d78968c24" type="CUSTOM:INVALID_ACCOUNT" description="Número da conta de destino inválido." />
+			</otherwise>
+		</choice>
+		<error-handler>
+			<on-error-propagate type="DB:QUERY_EXECUTION">
+				<logger level="ERROR"
+					message="Falha na execução da query. Possível conta inexistente." />
+				<ee:transform doc:name="Transform Message" doc:id="3ad7dbd6-ad56-4183-adc5-ca8e24c01f4b">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+'Mensagem': 'Falha na transferência: verifique o número da conta de destino'
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			
+</on-error-propagate>
+		</error-handler>
+	</flow>
+	<flow name="implementation-post-transfer-consume"
+		doc:id="9333a4a9-2bbe-4dc6-90ae-5d8630948e78">
+		<logger level="INFO" doc:name="Logger"
+			doc:id="31887d6a-35f7-4285-a6bf-58f6ba5983b6" message="#[payload]" />
+		<choice>
+			<when
+				expression="#[(vars.amount != null) and (vars.fromAccountInfo.balance != null) and (vars.amount &gt; 0) and (vars.amount &lt;= vars.fromAccountInfo.balance)]">
+				<!-- Update From Account Balance -->
+				<db:update config-ref="Database_Config"
+					doc:name="Update-get-amount">
+					<db:sql><![CDATA[UPDATE mule_account SET balance = balance - :amount WHERE account_id = :account_id]]></db:sql>
+					<db:input-parameters><![CDATA[#[{
+	'amount': vars.amount,
+	'account_id': vars.fromAccountInfo.account_id
+}]]]></db:input-parameters>
+				</db:update>
+				<db:update config-ref="Database_Config"
+					doc:name="Update-post-amount">
+					<db:sql><![CDATA[UPDATE mule_account SET balance = balance + :amount WHERE account_id = :account_id]]></db:sql>
+					<db:input-parameters><![CDATA[#[{
+	'amount': vars.amount,
+	'account_id': vars.toAccountInfo.account_id
+}]]]></db:input-parameters>
+				</db:update>
+				<db:insert config-ref="Database_Config"
+					doc:name="Insert-from">
+					<db:sql><![CDATA[INSERT INTO mule_transaction(account_id, from_account_id, types, amount, date_transaction) VALUES (:account_id, :from_account_id, :types, :amount, now())]]></db:sql>
+					<db:input-parameters><![CDATA[#[{
+	'account_id': vars.fromAccountInfo.account_id,
+	'from_account_id': vars.toAccountInfo.account_id,
+	'types': 'TRANSFER_OUT',
+	'amount': vars.amount
+}]]]></db:input-parameters>
+				</db:insert>
+				<db:insert config-ref="Database_Config"
+					doc:name="Insert-to">
+					<db:sql><![CDATA[INSERT INTO mule_transaction(account_id, from_account_id, types, amount, date_transaction) VALUES (:account_id, :from_account_id, :types, :amount, now())]]></db:sql>
+					<db:input-parameters><![CDATA[#[{
+	'account_id': vars.toAccountInfo.account_id,
+	'from_account_id': vars.fromAccountInfo.account_id,
+	'types': 'TRANSFER_IN',
+	'amount': vars.amount
+}]]]></db:input-parameters>
+				</db:insert>
+				<ee:transform doc:name="Transform Message"
+					doc:id="8d3c4ffa-6db9-469f-b3a5-1d55860e2840">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	'Mensagem': "Transferência feita com sucesso"
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</when>
+			<otherwise>
+				<ee:transform doc:name="Transform Message"
+					doc:id="6e69c3f7-3d55-4005-873c-58b32db2053a">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	'Mensagem': 'Falha na transferência: saldo insuficiente ou valor inválido'
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</otherwise>
+		</choice>
+		<error-handler>
+			<on-error-continue type="DB:QUERY_EXECUTION">
+				<logger level="ERROR"
+					message="Falha na execução da query. Possível conta inexistente." />
+				<ee:transform doc:name="Transform Message">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+     'Mensagem': 'Falha na execução da query. Verifique as informações da conta.'
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</on-error-continue>
+		</error-handler>
+	</flow>
+</mule>
