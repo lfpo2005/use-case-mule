@@ -24,3 +24,7 @@ spring:
     level:
       org.hibernate.SQL: DEBUG
       org.hibernate.type: TRACE
+  activemq:
+    broker-url: tcp://localhost:61616
+    user: admin
+    password: admin

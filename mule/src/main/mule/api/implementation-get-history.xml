@@ -68,7 +68,7 @@ output application/json
 ---
 {
 	"status": "erro",
-	"mensagem": "Não é permitido fazer mais de um extrato por mes"
+	"mensagem": "Ops! Não é permitido fazer mais de um extrato por mês!"
 }
 
 ]]></ee:set-payload>

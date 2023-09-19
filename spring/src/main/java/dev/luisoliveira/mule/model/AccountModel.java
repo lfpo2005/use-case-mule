@@ -9,14 +9,14 @@ import java.util.UUID;
 
 @Data
 @Entity
-@Table(name = "TB_CONTA")
-public class ContaModel implements Serializable {
+@Table(name = "TB_ACCOUNTS")
+public class AccountModel implements Serializable {
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
-    private UUID contaId;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private UUID accountId;
     @Column(nullable = false, unique = true)
-    private String nome;
-    private BigDecimal saldo;
+    private String name;
+    private BigDecimal balance;
 }

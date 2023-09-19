@@ -126,13 +126,12 @@ payload map (item) -> {
 				</ee:transform>
 			</when>
 			<otherwise >
-				<raise-error doc:name="Raise error" doc:id="6ecb1078-ba31-4ea3-871c-70929e55333c" type="CUSTOM:INVALID_ACCOUNT" description="Verifique o mumero da conta." />
+				<raise-error doc:name="Raise error" doc:id="6ecb1078-ba31-4ea3-871c-70929e55333c" type="CUSTOM:INVALID_ACCOUNT" description="Número da conta inválido!" />
 			</otherwise>
 		</choice>
 		<error-handler >
 			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="088a8d18-4068-4ca0-b1f6-6af59a3e243b" type="CUSTOM:INVALID_ACCOUNT" >
-				<logger level="ERROR" doc:name="Logger" doc:id="3f2911e7-3306-4901-8012-dd4711b173f5" message="Captured CUSTOM:INVALID_ACCOUNT" />
-				<logger level="ERROR" doc:name="Logger1" doc:id="31860e9e-2352-4618-b850-312fa9308dff" message="#[error]" />
+				<logger level="ERROR" doc:name="Logger" doc:id="31860e9e-2352-4618-b850-312fa9308dff" message="#[error]" />
 				<ee:transform doc:name="Transform Message" doc:id="bcc2aef8-900e-4588-9a26-8d0a8fa856f0" >
 					<ee:message >
 						<ee:set-payload ><![CDATA[%dw 2.0

@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class MuleBancoApplication {
+public class MuleBankApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(MuleBancoApplication.class, args);
+        SpringApplication.run(MuleBankApplication.class, args);
     }
 
 }
