@@ -102,7 +102,7 @@ payload map (transaction) -> {
 		<set-payload value="#[payload as Array]" doc:name="Set Payload" doc:id="57b966a9-41eb-45e9-a532-26ab78052ba9" />
 		<choice doc:name="Choice" doc:id="f4cbfe4b-9e96-4b31-a7fd-8f06072bb060" >
 			<when expression="#[sizeOf(payload) &gt; 0]" >
-				<db:select doc:name="Select Balance" doc:id="dbb17ecb-d87d-41d3-97af-83321d71e5ed" config-ref="Database_Config" >
+				<db:select doc:name="Select Account Number" doc:id="dbb17ecb-d87d-41d3-97af-83321d71e5ed" config-ref="Database_Config" >
 					<db:sql ><![CDATA[SELECT * FROM mule_account where account_number = :account_number]]></db:sql>
 					<db:input-parameters ><![CDATA[#[{
 	account_number: vars.account_number
