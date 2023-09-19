@@ -7,14 +7,33 @@
 	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-	<sub-flow name="implementation-post-withdraw-main"
+	<flow name="implementation-post-withdraw-main"
 		doc:id="b06c0ec9-41df-4c13-a5b9-c8dfaddc137d">
 		<flow-ref doc:name="Flow Reference"
 			doc:id="e47b7078-3788-42b5-8440-f3f5a80a01be"
 			name="implementation-post-withdraw" />
-	</sub-flow>
+		<error-handler>
+			<on-error-propagate type="ANY">
+				<set-variable variableName="customErrorMessage"
+					value="#[error.description]" />
+				<logger level="ERROR"
+					message="#['Erro encontrado: ' ++ vars.customErrorMessage]" />
+				<ee:transform>
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+    'Mensagem': vars.customErrorMessage default 'Erro desconhecido'
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</on-error-propagate>
+		</error-handler>
+	</flow>
 	<flow name="implementation-post-withdraw"
 		doc:id="ef69aed8-e7b6-4a93-a98d-48ff7e6ba8f4">
+		<flow-ref doc:name="Validate Account Number" doc:id="97e602f7-2d9f-4214-a8b2-5fc5d81928fc" name="validate-account-number"/>
 		<db:select doc:name="Select"
 			doc:id="1df13ac5-2c16-4e44-8bb0-2999295b9c5f"
 			config-ref="Database_Config">

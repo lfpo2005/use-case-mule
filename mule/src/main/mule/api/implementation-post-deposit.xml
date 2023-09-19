@@ -8,16 +8,35 @@
 	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-	<sub-flow name="implementation-post-deposit-main"
+	<flow name="implementation-post-deposit-main"
 		doc:id="3f3b10e3-6bb6-4624-938c-408d6fbaa9d0">
 		<flow-ref doc:name="Flow Reference"
 			doc:id="f0384227-82b0-497e-9ae2-0a1fe2fa0d82"
 			name="implementation-post-deposit-insert" />
-	</sub-flow>
+			<error-handler>
+			<on-error-propagate type="ANY">
+				<set-variable variableName="customErrorMessage"
+					value="#[error.description]" />
+				<logger level="ERROR"
+					message="#['Erro encontrado: ' ++ vars.customErrorMessage]" />
+				<ee:transform>
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+    'Mensagem': vars.customErrorMessage default 'Erro desconhecido'
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</on-error-propagate>
+		</error-handler>
+	</flow>
 	<flow name="implementation-post-deposit-insert"
 		doc:id="82b8bd5f-6387-4dcb-8084-3b3bd462aa10">
 		<logger level="INFO" doc:name="Logger"
 			message="URI Params: #[attributes.uriParams]" />
+		<flow-ref doc:name="Validate Account Number" doc:id="4a716575-31b0-4871-870d-7f6100690762" name="validate-account-number"/>
 		<db:select doc:name="Select" config-ref="Database_Config">
 			<db:sql><![CDATA[SELECT account_id FROM mule_account WHERE account_number = :account_number]]></db:sql>
 			<db:input-parameters><![CDATA[#[{'account_number': vars.account_number}]]]></db:input-parameters>

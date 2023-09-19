@@ -49,11 +49,15 @@ http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/
 }]]]></db:input-parameters>
 
 		</db:select>
-		<logger level="INFO" doc:name="Logger"
-			doc:id="2593f9a5-fc18-442a-9eeb-da5978a03b26" message="#[payload]" />
-		<ee:transform doc:name="Transform to CSV">
-			<ee:message>
-				<ee:set-payload><![CDATA[
+		<set-payload value="#[payload as Array]"
+			doc:name="Transform to Array" />
+		<logger level="INFO" doc:name="Logger" message="#[payload]" />
+		<choice doc:name="Choice"
+			doc:id="9164ebad-595f-4b73-94ba-7fb6e3e895af">
+			<when expression="sizeOf(payload) &gt; 0">
+				<ee:transform doc:name="Transform to CSV">
+					<ee:message>
+						<ee:set-payload><![CDATA[
 %dw 2.0
 output application/csv
 ---
@@ -65,13 +69,82 @@ payload map (transaction) -> {
     "Date": transaction.date_transaction
 }
                 ]]>
-				</ee:set-payload>
-			</ee:message>
-		</ee:transform>
-		<file:write doc:name="Write"
-			doc:id="0b8553b8-43ef-46c8-97b6-472dc68a3bd7"
-			config-ref="File_Config"
-			path="D:\WORKSPACE\MULE\USE CASE\data-csv\test.csv" />
-		<logger level="INFO" doc:name="Logger" message="#[payload]" />
+						</ee:set-payload>
+					</ee:message>
+				</ee:transform>
+				<file:write doc:name="Write"
+					doc:id="0b8553b8-43ef-46c8-97b6-472dc68a3bd7"
+					config-ref="File_Config"
+					path="D:\WORKSPACE\MULE\USE CASE\data-csv\test.csv" />
+				<logger level="INFO" doc:name="Logger" message="#[payload]" />
+			</when>
+			<otherwise>
+				<logger level="INFO" doc:name="Logger"
+					doc:id="7418fdad-1267-452b-a7d8-c6671d0c46b1"
+					message="Não houve transação no dia anterior" />
+			</otherwise>
+		</choice>
+		<error-handler>
+			<on-error-continue type="ANY"
+				enableNotifications="true" logException="true">
+				<logger level="INFO" doc:name="Logger" message="#[error]" />
+			</on-error-continue>
+		</error-handler>
 	</flow>
+	<flow name="validate-account-number" doc:id="b1fa3776-b387-4b20-be9d-1299dd67ea43" >
+		<logger level="INFO" doc:name="Logger" doc:id="5c2ca62a-255d-418f-8237-c52a59d253d2" message="#[payload]" />
+		<db:select doc:name="Select" doc:id="88618dec-fe28-486e-8f9e-d2662be678b1" config-ref="Database_Config">
+			<db:sql><![CDATA[SELECT * FROM mule_account WHERE account_number = :account_number]]></db:sql>
+			<db:input-parameters><![CDATA[#[{
+	'account_number': vars.account_number
+}]]]></db:input-parameters>
+		</db:select>
+		<set-payload value="#[payload as Array]" doc:name="Set Payload" doc:id="57b966a9-41eb-45e9-a532-26ab78052ba9" />
+		<choice doc:name="Choice" doc:id="f4cbfe4b-9e96-4b31-a7fd-8f06072bb060" >
+			<when expression="#[sizeOf(payload) &gt; 0]" >
+				<db:select doc:name="Select Balance" doc:id="dbb17ecb-d87d-41d3-97af-83321d71e5ed" config-ref="Database_Config" >
+					<db:sql ><![CDATA[SELECT * FROM mule_account where account_number = :account_number]]></db:sql>
+					<db:input-parameters ><![CDATA[#[{
+	account_number: vars.account_number
+}]]]></db:input-parameters>
+				</db:select>
+				<set-variable value="payload" doc:name="Set Variable" doc:id="9f7b7161-5199-4805-baed-dabba704f1e3" variableName="getBalance" />
+				<ee:transform doc:name="Transform Message" doc:id="fadb2bb9-e103-4cc2-b542-604997108486" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload map (item) -> {
+	"Data": now() as String {format: "dd-MM-yyyy"},
+	"Horas": now() as String {format: "HH:mm:ss"},    
+	"Numero da conta": item.account_number,
+    "Nome": item.name,
+    "Saldo": item.balance		
+}
+]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</when>
+			<otherwise >
+				<raise-error doc:name="Raise error" doc:id="6ecb1078-ba31-4ea3-871c-70929e55333c" type="CUSTOM:INVALID_ACCOUNT" description="Verifique o mumero da conta." />
+			</otherwise>
+		</choice>
+		<error-handler >
+			<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="088a8d18-4068-4ca0-b1f6-6af59a3e243b" type="CUSTOM:INVALID_ACCOUNT" >
+				<logger level="ERROR" doc:name="Logger" doc:id="3f2911e7-3306-4901-8012-dd4711b173f5" message="Captured CUSTOM:INVALID_ACCOUNT" />
+				<logger level="ERROR" doc:name="Logger1" doc:id="31860e9e-2352-4618-b850-312fa9308dff" message="#[error]" />
+				<ee:transform doc:name="Transform Message" doc:id="bcc2aef8-900e-4588-9a26-8d0a8fa856f0" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+    'Mensagem': 'Verifique o mumero da conta.'
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</on-error-propagate>
+		</error-handler>
+	</flow>
+	
 </mule>

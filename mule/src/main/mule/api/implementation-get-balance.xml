@@ -7,34 +7,44 @@
 	xsi:schemaLocation="
 http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd 
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
-	<sub-flow name="implementation-get-balance-main"
+	<flow name="implementation-get-balance-main"
 		doc:id="2b8b642f-d57c-4895-8095-31e4accd19da">
 		<flow-ref doc:name="Flow Reference"
 			doc:id="9a35bb56-9721-457f-b792-2e01e57f2e8d"
 			name="implementation-get-balance-select" />
-	</sub-flow>
+		<error-handler>
+			<on-error-propagate type="ANY">
+				<set-variable variableName="customErrorMessage"
+					value="#[error.description]" />
+				<logger level="ERROR"
+					message="#['Erro encontrado: ' ++ vars.customErrorMessage]" />
+				<ee:transform>
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+    'Mensagem': vars.customErrorMessage default 'Erro desconhecido'
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</on-error-propagate>
+		</error-handler>
+	</flow>
 	<flow name="implementation-get-balance-select"
 		doc:id="0bd37e07-d594-4fda-9f46-c38909bb449f">
-		<logger level="INFO" doc:name="Logger"
-			doc:id="be0b3744-a05f-414e-8020-0a5983820052" />
-		<db:select doc:name="Select Balance"
-			doc:id="273837f9-9ebc-470e-8d74-0097db8cc615"
-			config-ref="Database_Config">
+		<flow-ref doc:name="Validate Account Number" doc:id="67159b70-0f7d-4196-8e8b-c6e969982af7" name="validate-account-number"/>
+		<logger level="INFO" doc:name="Logger" doc:id="8ea26983-2a33-47eb-b6b2-a06bf95a4469" message="#[payload]" />
+		<db:select doc:name="Select Balance" doc:id="273837f9-9ebc-470e-8d74-0097db8cc615" config-ref="Database_Config">
 			<db:sql><![CDATA[SELECT * FROM mule_account where account_number = :account_number]]></db:sql>
 			<db:input-parameters><![CDATA[#[{
 	account_number: vars.account_number
 }]]]></db:input-parameters>
 		</db:select>
-		<logger level="INFO" doc:name="Logger"
-			doc:id="8ea26983-2a33-47eb-b6b2-a06bf95a4469"
-			message="Balance: #[payload]" />
-		<set-variable value="payload" doc:name="Set Variable"
-			doc:id="5aa31d1f-00c3-4e88-a0ce-cd4648a08102"
-			variableName="getBalance" />
-		<ee:transform doc:name="Transform Message"
-			doc:id="684bbc5a-c457-49d3-9637-fa7bbf9dc427">
-			<ee:message>
-				<ee:set-payload><![CDATA[%dw 2.0
+		<set-variable value="payload" doc:name="Set Variable" doc:id="5aa31d1f-00c3-4e88-a0ce-cd4648a08102" variableName="getBalance" />
+		<ee:transform doc:name="Transform Message" doc:id="684bbc5a-c457-49d3-9637-fa7bbf9dc427">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 payload map (item) -> {
@@ -45,7 +55,7 @@ payload map (item) -> {
     "Saldo": item.balance		
 }
 ]]></ee:set-payload>
-			</ee:message>
-		</ee:transform>
+					</ee:message>
+				</ee:transform>
 	</flow>
 </mule>
