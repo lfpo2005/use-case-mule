@@ -25,11 +25,14 @@ Este projeto é uma API desenvolvida com MuleSoft para gerenciamento de contas e
 
 1. Conecte-se ao banco de dados PostgreSQL usando qualquer cliente SQL ou faça isso pelo terminal.
    
-2. Execute os seguintes comandos SQL para criar o banco de dados e as tabelas:
+2. Execute o seguinte comando SQL para criar o banco de dados:
 
     ```sql
     create database banco_mule;
+    ```
+3. Execute os seguintes comandos SQL para criar as tabelas    
 
+    ```
     CREATE TABLE mule_account (
         account_id SERIAL PRIMARY KEY,
         name VARCHAR(100) NOT NULL UNIQUE,
@@ -62,7 +65,7 @@ Este projeto é uma API desenvolvida com MuleSoft para gerenciamento de contas e
 
 ## Testando a API
 
-Faça a importação da collection do postman, que esta na raiz do do projeto, ou utilise o o API console link a baixo e teste a api.
+Faça a importação da collection do postman, que esta na raiz do do projeto para o postman ou utilise o o API console no link a baixo e teste a api.
 
 ```
 http://localhost:8081/console/
@@ -82,6 +85,3 @@ http://localhost:8081/console/
 ### Extrato
 - Por período (limite de 1 mês)
 - Por mês (limite de 1 mês por consulta)
-
-
-
