@@ -1,0 +1,32 @@
+
+### Use case Mulesoft
+
+#### Pré-requisitos:
+- Experiência com alguma linguagem orientada a objetos;
+- Um entendimento básico de formatos de dados: XML, CSV e JSON;
+- Um entendimento básico das tecnologias de integração como HTTP, JMS, JDBC, REST e SOAP.
+
+#### Criação das APIs necessárias para as operações básicas de um banco:
+- Saque
+  * Limite de R$1000 entre 22h e 6h;
+- Depósito;
+- Transferência entre contas;
+  * Limite de R$1500 entre 22h e 6h;
+- Extrato
+  * Por período (limite de 1 mês);
+  * Por mês (limite de 1 mês por consulta);
+  * Esta API deve ser paginada, trazendo apenas 10 registros por página;
+  * Utilizar o APILed para desenhar a solução;
+  * Utilizar uma base relacional;
+  * As APIs devem seguir o padrão REST e estar expostas em JSON e XML.
+
+#### Entregáveis:
+- Desenho de Arquitetura da solução;
+- Documentação de contrato dos projetos;
+- Apresentação da solução.
+
+#### Avançado:
+- Fazer uma alteração nas APIs para persistir todas as transações na base com os seguintes dados: Tipo de Transação, Valor, Conta Origem, Conta Destino (quando houver). Este processo deve estar em um broker com processo de produção e consumo de mensagens;
+- Criar uma rotina batch que executa uma vez por dia para ler a tabela criada para a atividade anterior e gerar um arquivo com as transações ocorridas no dia anterior;
+- Fazer toda a implementação de controle de falhas das APIs;
+- Exemplos: Falha ao acessar a base de dados, demais falhas no processamento da requisição, demais falhas aplicáveis à solução.
