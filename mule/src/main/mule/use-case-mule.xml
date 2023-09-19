@@ -155,8 +155,14 @@ output application/json
 		</error-handler>
 	</flow>
 	<flow name="get:\accounts">
-		<set-variable value="#[attributes.queryParams.page default 1]" doc:name="Set Variable" doc:id="ad42ff6e-e925-4f2c-a756-7adbfeff7b68" variableName="page"/>
-		<set-variable value="#[attributes.queryParams.size default 10]" doc:name="Set Variable" doc:id="b9f27208-06fe-4c08-9424-23f2b15b7317" variableName="size"/>
+		<set-variable
+			value="#[attributes.queryParams.page default 1]"
+			doc:name="Set Variable" doc:id="ad42ff6e-e925-4f2c-a756-7adbfeff7b68"
+			variableName="page" />
+		<set-variable
+			value="#[attributes.queryParams.size default 10]"
+			doc:name="Set Variable" doc:id="b9f27208-06fe-4c08-9424-23f2b15b7317"
+			variableName="size" />
 		<flow-ref doc:name="Flow Reference"
 			doc:id="32077b63-cc96-4e53-9004-fe3d3a292963"
 			name="implementation-get-accounts-main" />
@@ -243,7 +249,6 @@ output application/json
 			doc:id="99426675-b3c4-4520-9bfc-4252d4c38e43"
 			name="implementation-post-withdraw-main" />
 	</flow>
-
 	<flow
 		name="post:\accounts\transfer\from\(from_account_number)\to\(to_account_number)"
 		initialState="started">
@@ -260,9 +265,13 @@ output application/json
 				</ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<flow-ref doc:name="Flow Reference" doc:id="7ac3ec36-0cc9-4ca6-b274-78fb8e33b603" name="implementation-post-transfer-main"/>
+		<flow-ref doc:name="Flow Reference"
+			doc:id="7ac3ec36-0cc9-4ca6-b274-78fb8e33b603"
+			name="implementation-post-transfer-main" />
 	</flow>
-	 <flow name="get:\health-check">
-		<flow-ref doc:name="Get Health Check" doc:id="8e4d2d80-754f-4d8d-bf36-6eb04174518c" name="implementation-health-check-main"/>
-    </flow>
+	<flow name="get:\health-check">
+		<flow-ref doc:name="Get Health Check"
+			doc:id="8e4d2d80-754f-4d8d-bf36-6eb04174518c"
+			name="implementation-health-check-main" />
+	</flow>
 </mule>

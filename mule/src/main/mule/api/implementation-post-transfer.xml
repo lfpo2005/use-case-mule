@@ -8,7 +8,7 @@
 http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
 http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd">
-	<flow  name="implementation-post-transfer-main"
+	<flow name="implementation-post-transfer-main"
 		doc:id="c3a1814b-5df8-45a6-abd4-24f1c2e08b8e">
 		<flow-ref doc:name="Flow Reference"
 			doc:id="7e422156-7ab2-4626-bc27-6d9c9ef080aa"
@@ -19,23 +19,24 @@ http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/
 		<flow-ref doc:name="Flow Reference"
 			doc:id="4193135f-237f-45e1-a4ab-d2faf8c158a2"
 			name="implementation-post-transfer-consume" />
-			<error-handler>
-    <on-error-propagate type="ANY">
-        <set-variable variableName="customErrorMessage" value="#[error.description]"/>
-        <logger level="ERROR" message="#['Erro encontrado: ' ++ vars.customErrorMessage]"/>
-        <ee:transform>
-            <ee:message>
-                <ee:set-payload><![CDATA[%dw 2.0
+		<error-handler>
+			<on-error-propagate type="ANY">
+				<set-variable variableName="customErrorMessage"
+					value="#[error.description]" />
+				<logger level="ERROR"
+					message="#['Erro encontrado: ' ++ vars.customErrorMessage]" />
+				<ee:transform>
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {
     'Mensagem': vars.customErrorMessage default 'Erro desconhecido'
 }]]></ee:set-payload>
-            </ee:message>
-        </ee:transform>
-    </on-error-propagate>
-</error-handler>
-			
+					</ee:message>
+				</ee:transform>
+			</on-error-propagate>
+		</error-handler>
 	</flow>
 	<flow name="implementation-post-transfer-from">
 		<logger level="INFO"
@@ -54,24 +55,26 @@ output application/json
 					variableName="fromAccountInfo" />
 			</when>
 			<otherwise>
-            <raise-error type="CUSTOM:INVALID_ACCOUNT" description="Número da conta de origem inválido."/>
-        </otherwise>
-    </choice>
-    <error-handler>
-        <on-error-propagate type="CUSTOM:INVALID_ACCOUNT">
-        <logger level="ERROR" message="Falha na execução da query. Possível conta inexistente." />
-        <ee:transform>
-            <ee:message>
-                <ee:set-payload><![CDATA[%dw 2.0
+				<raise-error type="CUSTOM:INVALID_ACCOUNT"
+					description="Número da conta de origem inválido." />
+			</otherwise>
+		</choice>
+		<error-handler>
+			<on-error-propagate type="CUSTOM:INVALID_ACCOUNT">
+				<logger level="ERROR"
+					message="Falha na execução da query. Possível conta inexistente." />
+				<ee:transform>
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {
     'Mensagem': 'Falha na execução da query. Verifique as informações da conta.'
 }]]></ee:set-payload>
-            </ee:message>
-        </ee:transform>
-    </on-error-propagate>
-</error-handler>
+					</ee:message>
+				</ee:transform>
+			</on-error-propagate>
+		</error-handler>
 
 	</flow>
 	<flow name="implementation-post-transfer-to"
@@ -86,19 +89,24 @@ output application/json
 		</db:select>
 		<choice doc:name="Choice"
 			doc:id="98a73f6c-55d1-45c9-89ee-657be82679d1">
-			<when expression="#[(payload[0].account_number default 0) as Number != null and (vars.to_account_number default 0) as Number == (payload[0].account_number default 0) as Number]">
+			<when
+				expression="#[(payload[0].account_number default 0) as Number != null and (vars.to_account_number default 0) as Number == (payload[0].account_number default 0) as Number]">
 				<set-variable value="#[payload[0]]"
 					variableName="toAccountInfo" />
 			</when>
 			<otherwise>
-				<raise-error doc:name="Raise error" doc:id="6fa617bf-d21f-46d0-a766-9b5d78968c24" type="CUSTOM:INVALID_ACCOUNT" description="Número da conta de destino inválido." />
+				<raise-error doc:name="Raise error"
+					doc:id="6fa617bf-d21f-46d0-a766-9b5d78968c24"
+					type="CUSTOM:INVALID_ACCOUNT"
+					description="Número da conta de destino inválido." />
 			</otherwise>
 		</choice>
 		<error-handler>
 			<on-error-propagate type="DB:QUERY_EXECUTION">
 				<logger level="ERROR"
 					message="Falha na execução da query. Possível conta inexistente." />
-				<ee:transform doc:name="Transform Message" doc:id="3ad7dbd6-ad56-4183-adc5-ca8e24c01f4b">
+				<ee:transform doc:name="Transform Message"
+					doc:id="3ad7dbd6-ad56-4183-adc5-ca8e24c01f4b">
 					<ee:message>
 						<ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -108,8 +116,7 @@ output application/json
 }]]></ee:set-payload>
 					</ee:message>
 				</ee:transform>
-			
-</on-error-propagate>
+			</on-error-propagate>
 		</error-handler>
 	</flow>
 	<flow name="implementation-post-transfer-consume"

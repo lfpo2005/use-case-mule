@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
 	xmlns:db="http://www.mulesoft.org/schema/mule/db"
 	xmlns="http://www.mulesoft.org/schema/mule/core"
@@ -16,18 +15,19 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 	</sub-flow>
 	<sub-flow name="implementation-get-accounts"
 		doc:id="f9e1a816-ab40-4863-b325-5e4f74bcb2d7">
-
 		<logger level="INFO" doc:name="Logger"
 			doc:id="7cba0157-c4ac-4d34-b861-d4c66bca90f5" message="#[payload]" />
-
-		<db:select doc:name="Select" doc:id="925955b8-01ae-4527-bcfa-7603891a082c" config-ref="Database_Config">
-			<db:sql ><![CDATA[SELECT * FROM mule_account LIMIT :size OFFSET :page]]></db:sql>
-			<db:input-parameters ><![CDATA[#[{
+		<db:select doc:name="Select"
+			doc:id="925955b8-01ae-4527-bcfa-7603891a082c"
+			config-ref="Database_Config">
+			<db:sql><![CDATA[SELECT * FROM mule_account LIMIT :size OFFSET :page]]></db:sql>
+			<db:input-parameters><![CDATA[#[{
 	'size': vars.size,
 	'page': vars.page
 }]]]></db:input-parameters>
 		</db:select>
-		<logger level="INFO" doc:name="Logger" doc:id="2b3a180c-7f1d-40b0-b89b-61802c378598" message="#[payload]"/>
+		<logger level="INFO" doc:name="Logger"
+			doc:id="2b3a180c-7f1d-40b0-b89b-61802c378598" message="#[payload]" />
 		<ee:transform doc:name="Transform Message"
 			doc:id="18bd705f-a70d-4b4f-a099-08b44e2ea120">
 			<ee:message>

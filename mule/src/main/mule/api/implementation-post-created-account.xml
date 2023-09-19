@@ -98,18 +98,18 @@ output application/json
 			doc:id="bad73086-acee-4a1b-9eb9-2edd0b428246" />
 		<set-variable value="#[null]"
 			doc:name="Initialize Variable as Null"
-			doc:id="33442b76-c055-4ae2-8243-287e8b478011"
-			variableName="newName" />
+			doc:id="33442b76-c055-4ae2-8243-287e8b478011" variableName="newName" />
 		<logger level="INFO" doc:name="Logger"
 			doc:id="05d411ce-9afe-4936-a74b-a6a4382705b9" message="#[payload]" />
 		<jms:consume doc:name="Consume"
 			doc:id="5130a169-6b3c-441a-81d2-e77dca00ba45" config-ref="JMS_Config"
 			destination="stg-mule" maximumWait="30000" />
-		<logger level="INFO" doc:name="Logger" doc:id="43ae35f0-7d62-49ec-aed1-ebf65a667042" message="#[payload]"/>
+		<logger level="INFO" doc:name="Logger"
+			doc:id="43ae35f0-7d62-49ec-aed1-ebf65a667042" message="#[payload]" />
 		<set-variable value="#[payload]" doc:name="Set Variable"
-			doc:id="02262d23-0fcf-491d-8ba3-806280169e56"
-			variableName="newName" />
-		<logger level="INFO" doc:name="Logger" doc:id="37325ddf-bf31-4e5e-b8b7-e12c4e452453" message="#[payload]" />
+			doc:id="02262d23-0fcf-491d-8ba3-806280169e56" variableName="newName" />
+		<logger level="INFO" doc:name="Logger"
+			doc:id="37325ddf-bf31-4e5e-b8b7-e12c4e452453" message="#[payload]" />
 		<db:insert doc:name="Insert"
 			doc:id="c0a4e155-4ab8-4b37-b42e-e49b00755bd3"
 			config-ref="Database_Config">
@@ -137,8 +137,7 @@ output application/json
 payload map (item) -> {
 	"Numero da conta": item.account_number,
     "Nome": item.name		
-}
-	
+}	
    ]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>

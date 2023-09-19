@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <mule xmlns:db="http://www.mulesoft.org/schema/mule/db"
 	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
 	xmlns="http://www.mulesoft.org/schema/mule/core"
@@ -39,11 +38,9 @@ AND EXTRACT(YEAR FROM last_query_date) = EXTRACT(YEAR FROM CURRENT_DATE);
         ]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-
 		<choice doc:name="Choice"
 			doc:id="9594f77f-86ff-488d-9a58-594fed7cc37c">
-			<when
-				expression="#[vars.isPayloadNotEmpty]">
+			<when expression="#[vars.isPayloadNotEmpty]">
 				<ee:transform doc:name="Transform Message"
 					doc:id="f3f0e82c-7a42-48db-985a-d34022846f8e">
 					<ee:message>
