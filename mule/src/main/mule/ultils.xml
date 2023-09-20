@@ -81,7 +81,7 @@ payload map (transaction) -> {
 			<otherwise>
 				<logger level="INFO" doc:name="Logger"
 					doc:id="7418fdad-1267-452b-a7d8-c6671d0c46b1"
-					message="Não houve transação no dia anterior" />
+					message="Não houve transação no dia anterior!" />
 			</otherwise>
 		</choice>
 		<error-handler>

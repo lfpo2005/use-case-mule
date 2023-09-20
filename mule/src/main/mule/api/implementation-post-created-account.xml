@@ -11,12 +11,12 @@ http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/cu
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
 http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd">
 	<flow name="implementation-post-created-account-main"
-		doc:id="f22676c5-65ba-48ca-b27c-239fb3cc7afb">
+		doc:id="bf382346-63e6-458b-a554-71b50b1b8a96">
 		<flow-ref doc:name="Flow Reference"
-			doc:id="0a9756e7-70c9-426d-b473-d35c302ee33d"
+			doc:id="3f61490d-152c-48d1-b723-0b1934408d05"
 			name="implementation-post-created-account-publish" />
 		<flow-ref doc:name="Flow Reference"
-			doc:id="4a053ae2-4401-4b53-b6f7-023a259346ee"
+			doc:id="8a60ace5-71fb-4453-8cb8-05c37fe3b799"
 			name="implementation-post-created-account-consumer" />
 		<error-handler>
 			<on-error-propagate type="ANY">
@@ -38,29 +38,26 @@ output application/json
 		</error-handler>
 	</flow>
 	<flow name="implementation-post-created-account-publish"
-		doc:id="c98e7584-6896-44fe-ba46-2ed7565fdc9c">
+		doc:id="e1ebdecd-16fa-4d37-ada7-20f8f49d69dc">
 		<logger level="INFO" doc:name="Logger"
-			doc:id="aee7667f-385b-419b-ab28-3917d8a48479" message="payload" />
+			doc:id="e2bc7947-12b1-455c-b9eb-07aa4bad01d0" message="payload" />
 		<set-variable value="#[payload.name]" doc:name="New Name"
-			doc:id="64d6e040-0fd7-4ea6-b1fe-c14f0ac4f4a9" variableName="newName" />
+			doc:id="c108908b-1a74-4be7-bfbd-7e9944e7a370" variableName="newName" />
 		<db:select doc:name="Select"
-			doc:id="5bb7704c-79a2-4100-b6b9-0e86b9cfe613"
+			doc:id="e0d0bb86-1d03-4ecf-ac22-3cbbe4947531"
 			config-ref="Database_Config">
 			<db:sql><![CDATA[SELECT EXISTS (SELECT 1 FROM mule_account WHERE name = :name)]]></db:sql>
-			<db:input-parameters><![CDATA[#[{name: vars.newName}]]]></db:input-parameters>
+			<db:input-parameters><![CDATA[#[{	
+	name: vars.newName
+}]]]></db:input-parameters>
 		</db:select>
 		<logger level="INFO" doc:name="Logger"
-			doc:id="857f216e-4220-41f9-8e89-3285d51c53a7"
-			message="#['newName value: ' ++ vars.newName]" />
+			doc:id="60671d05-98ff-4eb1-82da-f908dd494412"
+			message="#[payload]" />
 		<choice doc:name="Choice"
-			doc:id="9a9c08ed-119f-4feb-829d-375c41074ea9">
-			<when expression="#[payload[0].EXISTS == true]">
-				<raise-error type="CUSTOM:INVALID_NAME"
-					description="Nome de conta já existe!" />
-			</when>
-			<otherwise>
-				<ee:transform doc:name="Transform Message"
-					doc:id="9e0b7a33-cd45-49f4-8053-1afbdf9d1d85">
+			doc:id="bb133dd2-2655-4e60-9166-2a3b8a702e5c">
+			<when expression="#[payload[0].EXISTS == false]">
+				<ee:transform doc:name="Transform Message" doc:id="8ae2d6f4-34e5-4af1-830c-f4e3462ee5e9">
 					<ee:message>
 						<ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -68,11 +65,15 @@ output application/json
 vars.newName]]></ee:set-payload>
 					</ee:message>
 				</ee:transform>
-				<jms:publish doc:name="Publish"
-					doc:id="cb397b55-d07b-4a3e-9dca-71a1b652d147"
-					config-ref="JMS_Config" destination="stg-mule" />
+				<jms:publish doc:name="Publish" doc:id="9367a127-eb22-4c25-a277-006bb81d4e31" config-ref="JMS_Config" destination="stg-mule" />
+			
+</when>
+			<otherwise>
+				<raise-error type="CUSTOM:INVALID_NAME" description="Nome de conta já existe!" />
+
 			</otherwise>
-		</choice>
+		
+</choice>
 		<error-handler>
 			<on-error-propagate type="CUSTOM:INVALID_NAME"
 				enableNotifications="true" logException="true">
@@ -93,25 +94,25 @@ output application/json
 
 	</flow>
 	<flow name="implementation-post-created-account-consumer"
-		doc:id="a6e70c8c-e89f-4adb-995a-4c2d40c4e68a">
+		doc:id="8e8069fb-e684-4537-9524-8d5cbe2e6069">
 		<set-payload value="#[null]" doc:name="Set Payload"
-			doc:id="bad73086-acee-4a1b-9eb9-2edd0b428246" />
+			doc:id="42da8259-dd86-414a-b4cf-300adf20df9f" />
 		<set-variable value="#[null]"
 			doc:name="Initialize Variable as Null"
-			doc:id="33442b76-c055-4ae2-8243-287e8b478011" variableName="newName" />
+			doc:id="173db066-601f-41e9-b04c-d398235151cf" variableName="newName" />
 		<logger level="INFO" doc:name="Logger"
-			doc:id="05d411ce-9afe-4936-a74b-a6a4382705b9" message="#[payload]" />
+			doc:id="db2e243c-8021-478e-a681-b1995fead87e" message="#[payload]" />
 		<jms:consume doc:name="Consume"
-			doc:id="5130a169-6b3c-441a-81d2-e77dca00ba45" config-ref="JMS_Config"
+			doc:id="03882a0c-559f-457a-8009-f5ddd924e030" config-ref="JMS_Config"
 			destination="stg-mule" maximumWait="30000" />
 		<logger level="INFO" doc:name="Logger"
-			doc:id="43ae35f0-7d62-49ec-aed1-ebf65a667042" message="#[payload]" />
+			doc:id="df156f9a-a528-4166-a365-2bca32f34b86" message="#[payload]" />
 		<set-variable value="#[payload]" doc:name="Set Variable"
-			doc:id="02262d23-0fcf-491d-8ba3-806280169e56" variableName="newName" />
+			doc:id="fc394813-0495-44df-b2dd-993aac3e81e8" variableName="newName" />
 		<logger level="INFO" doc:name="Logger"
-			doc:id="37325ddf-bf31-4e5e-b8b7-e12c4e452453" message="#[payload]" />
+			doc:id="1f39f364-0b5b-494e-ba4d-c64c0b866f31" message="#[payload]" />
 		<db:insert doc:name="Insert"
-			doc:id="c0a4e155-4ab8-4b37-b42e-e49b00755bd3"
+			doc:id="c39b822a-4ee1-4033-b7fe-f11de3e6260f"
 			config-ref="Database_Config">
 			<db:sql><![CDATA[INSERT INTO mule_account (name, balance) VALUES (:name, :balance);]]></db:sql>
 			<db:input-parameters><![CDATA[#[{
@@ -119,7 +120,7 @@ output application/json
 }]]]></db:input-parameters>
 		</db:insert>
 		<db:select doc:name="Select new inserted "
-			doc:id="ca45d12d-fe2b-446e-b5ce-01de2dcea61c"
+			doc:id="37ee06b9-4322-4ee8-94d5-32abf42f6d2b"
 			config-ref="Database_Config">
 			<db:sql><![CDATA[SELECT * FROM mule_account WHERE name = :name]]></db:sql>
 			<db:input-parameters><![CDATA[#[{
@@ -127,9 +128,9 @@ output application/json
 }]]]></db:input-parameters>
 		</db:select>
 		<logger level="INFO" doc:name="Logger"
-			doc:id="a208d3d7-2151-4f39-8044-c012b5abf658" message="payload" />
+			doc:id="05177112-83c8-41ab-a81c-ac420ae9e7c8" message="payload" />
 		<ee:transform doc:name="Transform Message"
-			doc:id="3ea54130-3115-4faa-9ddb-f9e818be0cfd">
+			doc:id="cc19ff8d-b298-46ee-84e0-a686c87d32e9">
 			<ee:message>
 				<ee:set-payload><![CDATA[%dw 2.0
 output application/json
