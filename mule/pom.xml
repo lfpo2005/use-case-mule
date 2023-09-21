@@ -90,13 +90,6 @@
 			<classifier>mule-plugin</classifier>
 		</dependency>
 		<dependency>
-			<groupId>e8af90f8-c409-49df-a9f9-428fe20ea1e2</groupId>
-			<artifactId>use-case-mule</artifactId>
-			<version>1.0.11</version>
-			<classifier>raml</classifier>
-			<type>zip</type>
-		</dependency>
-		<dependency>
 			<groupId>org.mule.connectors</groupId>
 			<artifactId>mule-jms-connector</artifactId>
 			<version>1.9.0</version>
@@ -116,6 +109,13 @@
 			<groupId>org.apache.activemq</groupId>
 			<artifactId>activemq-client</artifactId>
 			<version>5.15.4</version>
+		</dependency>
+		<dependency>
+			<groupId>e8af90f8-c409-49df-a9f9-428fe20ea1e2</groupId>
+			<artifactId>use-case-mule</artifactId>
+			<version>1.0.12</version>
+			<classifier>raml</classifier>
+			<type>zip</type>
 		</dependency>
 	</dependencies>
 

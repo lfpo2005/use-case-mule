@@ -17,7 +17,7 @@ http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/cu
 			port="8081" />
 	</http:listener-config>
 	<apikit:config name="use-case-mule-config"
-		api="resource::e8af90f8-c409-49df-a9f9-428fe20ea1e2:use-case-mule:1.0.11:raml:zip:use-case-mule.raml"
+		api="resource::e8af90f8-c409-49df-a9f9-428fe20ea1e2:use-case-mule:1.0.12:raml:zip:use-case-mule.raml"
 		outboundHeadersMapName="outboundHeaders"
 		httpStatusVarName="httpStatus" />
 	<flow name="use-case-mule-main">
@@ -155,14 +155,14 @@ output application/json
 		</error-handler>
 	</flow>
 	<flow name="get:\accounts">
-		<set-variable
-			value="#[attributes.queryParams.page default 1]"
-			doc:name="Set Variable" doc:id="ad42ff6e-e925-4f2c-a756-7adbfeff7b68"
-			variableName="page" />
-		<set-variable
-			value="#[attributes.queryParams.size default 10]"
-			doc:name="Set Variable" doc:id="b9f27208-06fe-4c08-9424-23f2b15b7317"
-			variableName="size" />
+		<ee:transform doc:name="Transform Message" doc:id="352befe0-0ac2-49ab-98ef-f3a3ea142106" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="page" ><![CDATA[attributes.queryParams.page default 1]]></ee:set-variable>
+				<ee:set-variable variableName="size" ><![CDATA[attributes.queryParams.size default 10]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
 		<flow-ref doc:name="Flow Reference"
 			doc:id="32077b63-cc96-4e53-9004-fe3d3a292963"
 			name="implementation-get-accounts-main" />
@@ -212,21 +212,13 @@ output application/json
 			<ee:variables>
 				<ee:set-variable variableName="account_number"><![CDATA[attributes.uriParams.'account_number'
 				]]></ee:set-variable>
+				<ee:set-variable variableName="startDate" ><![CDATA[(attributes.queryParams.startDate default now() - |P1M|) as String {format: 'yyyy-MM-dd'}]]></ee:set-variable>
+				<ee:set-variable variableName="endDate" ><![CDATA[(attributes.queryParams.endDate default now()) as String {format: 'yyyy-MM-dd'}]]></ee:set-variable>
+				<ee:set-variable variableName="startDateComponents" ><![CDATA[vars.startDate splitBy '-']]></ee:set-variable>
+				<ee:set-variable variableName="currentMonth" ><![CDATA[vars.startDateComponents[1]]]></ee:set-variable>
+				<ee:set-variable variableName="currentYear" ><![CDATA[vars.startDateComponents[0]]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<set-variable variableName="startDate"
-			value="#[(attributes.queryParams.startDate default now() - |P1M|) as String {format: 'yyyy-MM-dd'}]"
-			doc:name="Set startDate" />
-		<set-variable variableName="endDate"
-			value="#[(attributes.queryParams.endDate default now()) as String {format: 'yyyy-MM-dd'}]"
-			doc:name="Set endDate" />
-		<set-variable variableName="startDateComponents"
-			value="#[vars.startDate splitBy '-']"
-			doc:name="Set startDateComponents" />
-		<set-variable variableName="currentMonth"
-			value="#[vars.startDateComponents[1]]" doc:name="Set currentMonth" />
-		<set-variable variableName="currentYear"
-			value="#[vars.startDateComponents[0]]" doc:name="Set currentYear" />
 
 
 		<logger level="INFO" doc:name="Logger"

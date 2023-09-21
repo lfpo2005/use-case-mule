@@ -1007,4 +1007,5 @@ type auto_b1fa3776_b387_4b20_be9d_1299dd67ea43_Output_Variables_depositValue = N
       </types:output-event>
     </types:processor-declaration>
   </types:enrichment>
+  <types:enrichment select="#352befe0-0ac2-49ab-98ef-f3a3ea142106"/>
 </types:mule>

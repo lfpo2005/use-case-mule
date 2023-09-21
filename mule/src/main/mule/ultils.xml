@@ -65,8 +65,9 @@ payload map (transaction) -> {
     "Transaction ID": transaction.transaction_id,
     "Account ID": transaction.account_id,
     "Type": transaction.types,
-    "Amount": transaction.amount,
-    "Date": transaction.date_transaction
+    "Amount": transaction.amount,   
+    "Data": transaction.date_transaction as String {format: "dd-MM-yyyy"},
+	"Horas": transaction.date_transaction as String {format: "HH:mm:ss"}    
 }
                 ]]>
 						</ee:set-payload>
