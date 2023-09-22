@@ -113,7 +113,7 @@
 		<dependency>
 			<groupId>e8af90f8-c409-49df-a9f9-428fe20ea1e2</groupId>
 			<artifactId>use-case-mule</artifactId>
-			<version>1.0.12</version>
+			<version>1.0.14</version>
 			<classifier>raml</classifier>
 			<type>zip</type>
 		</dependency>

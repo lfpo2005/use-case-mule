@@ -21,7 +21,7 @@ output application/json
 ---
 {
     api_rest: {
-        nome: "API Cadastro Clientes",
+        nome: "Use case Mulesoft",
         status: "OK"
     },
     banco_de_dados: {

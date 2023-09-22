@@ -17,7 +17,7 @@ http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/cu
 			port="8081" />
 	</http:listener-config>
 	<apikit:config name="use-case-mule-config"
-		api="resource::e8af90f8-c409-49df-a9f9-428fe20ea1e2:use-case-mule:1.0.12:raml:zip:use-case-mule.raml"
+		api="resource::e8af90f8-c409-49df-a9f9-428fe20ea1e2:use-case-mule:1.0.14:raml:zip:use-case-mule.raml"
 		outboundHeadersMapName="outboundHeaders"
 		httpStatusVarName="httpStatus" />
 	<flow name="use-case-mule-main">
@@ -184,23 +184,11 @@ output application/json
 			doc:id="9334c1e5-ef32-48aa-972d-a8fd5bc1320d"
 			name="implementation-post-deposit-main" />
 	</flow>
-	<flow name="get:\accounts\(account_number)">
+	<flow name="get:\accounts\(account_number)\balance">
 		<ee:transform doc:name="Transform Message">
 			<ee:variables>
 				<ee:set-variable variableName="account_number"><![CDATA[attributes.uriParams.'account_number'
 				]]></ee:set-variable>
-			</ee:variables>
-		</ee:transform>
-		<flow-ref doc:name="Flow Reference"
-			doc:id="4c47eff3-3fd0-4c02-a859-b4c35d88cb45"
-			name="implementation-get-balance-main" />
-
-	</flow>
-	<flow name="get:\accounts\(account_number)\balance">
-		<ee:transform doc:name="Transform Message">
-			<ee:variables>
-				<ee:set-variable variableName="accountId">attributes.uriParams.'accountId'
-				</ee:set-variable>
 			</ee:variables>
 		</ee:transform>
 		<flow-ref doc:name="Flow Reference"

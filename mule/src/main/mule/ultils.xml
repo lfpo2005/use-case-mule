@@ -43,7 +43,13 @@ http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/
 			variableName="date" />
 		<db:select config-ref="Database_Config"
 			doc:name="Select from mule_transaction">
-			<db:sql><![CDATA[SELECT * FROM mule_transaction WHERE DATE(date_transaction) = :yesterday]]></db:sql>
+			<db:sql><![CDATA[SELECT 
+    t.*,
+    a.account_number
+ FROM mule_transaction t 
+    JOIN mule_account a
+    ON t.account_id = a.account_id
+    WHERE DATE(date_transaction) = :yesterday]]></db:sql>
 			<db:input-parameters><![CDATA[#[{
    'yesterday' : vars.date
 }]]]></db:input-parameters>
@@ -62,10 +68,11 @@ http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/
 output application/csv
 ---
 payload map (transaction) -> {
-    "Transaction ID": transaction.transaction_id,
-    "Account ID": transaction.account_id,
-    "Type": transaction.types,
-    "Amount": transaction.amount,   
+    "ID da transação": transaction.transaction_id,
+    "ID da Conta": transaction.account_id,
+    "Numero da conta" : transaction.account_number,
+    "Tipo de transação": transaction.types,
+    "Valor": transaction.amount,   
     "Data": transaction.date_transaction as String {format: "dd-MM-yyyy"},
 	"Horas": transaction.date_transaction as String {format: "HH:mm:ss"}    
 }
@@ -76,7 +83,7 @@ payload map (transaction) -> {
 				<file:write doc:name="Write"
 					doc:id="0b8553b8-43ef-46c8-97b6-472dc68a3bd7"
 					config-ref="File_Config"
-					path="D:\WORKSPACE\MULE\USE CASE\data-csv\test.csv" />
+					path="D:\WORKSPACE\MULE\USE CASE\data-csv\test.csv"/>
 				<logger level="INFO" doc:name="Logger" message="#[payload]" />
 			</when>
 			<otherwise>
