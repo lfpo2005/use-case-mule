@@ -10,12 +10,12 @@
 			"name": "MULE",
 			"item": [
 				{
-					"name": "GET CONTAS",
+					"name": "GET HEALTH-CHECK",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8081/mule/accounts",
+							"raw": "http://localhost:8081/mule/health-check",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -23,34 +23,7 @@
 							"port": "8081",
 							"path": [
 								"mule",
-								"accounts"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GET SALDO",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:8081/mule/accounts/:account_number",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8081",
-							"path": [
-								"mule",
-								"accounts",
-								":account_number"
-							],
-							"variable": [
-								{
-									"key": "account_number",
-									"value": "827219"
-								}
+								"health-check"
 							]
 						}
 					},
@@ -63,7 +36,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"name\": \"Felipe\"\r\n}",
+							"raw": "{\r\n  \"name\": \"mule121\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -92,7 +65,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"amount\": 9175.00\r\n}",
+							"raw": "{\r\n  \"amount\": 1175.31\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -115,7 +88,7 @@
 							"variable": [
 								{
 									"key": "account_number",
-									"value": "398937"
+									"value": "645867"
 								}
 							]
 						}
@@ -129,7 +102,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"amount\": 434.00\r\n}",
+							"raw": "{\r\n  \"amount\": 34.00\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -152,47 +125,7 @@
 							"variable": [
 								{
 									"key": "account_number",
-									"value": "254937"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "POST EXTRATO",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:8081/mule/accounts/:account_number/history",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8081",
-							"path": [
-								"mule",
-								"accounts",
-								":account_number",
-								"history"
-							],
-							"query": [
-								{
-									"key": "startDate",
-									"value": "2023-09-01",
-									"disabled": true
-								},
-								{
-									"key": "endDate",
-									"value": "2023-09-12",
-									"disabled": true
-								}
-							],
-							"variable": [
-								{
-									"key": "account_number",
-									"value": "852386"
+									"value": "645867"
 								}
 							]
 						}
@@ -206,7 +139,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n  \"amount\": 75.00\r\n}",
+							"raw": "{\r\n  \"amount\": 222.00\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -232,11 +165,109 @@
 							"variable": [
 								{
 									"key": "from_account_number",
-									"value": "827219"
+									"value": "852386"
 								},
 								{
 									"key": "to_account_number",
-									"value": "604863"
+									"value": "645867"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST EXTRATO",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/mule/accounts/:account_number/history?startDate=2023-09-01&endDate=2023-09-22",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"mule",
+								"accounts",
+								":account_number",
+								"history"
+							],
+							"query": [
+								{
+									"key": "startDate",
+									"value": "2023-09-01"
+								},
+								{
+									"key": "endDate",
+									"value": "2023-09-22"
+								}
+							],
+							"variable": [
+								{
+									"key": "account_number",
+									"value": "645867"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET SALDO",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/mule/accounts/:account_number/balance",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"mule",
+								"accounts",
+								":account_number",
+								"balance"
+							],
+							"variable": [
+								{
+									"key": "account_number",
+									"value": "645867"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GET CONTAS",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8081/mule/accounts",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8081",
+							"path": [
+								"mule",
+								"accounts"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1",
+									"disabled": true
+								},
+								{
+									"key": "size",
+									"value": "2",
+									"disabled": true
 								}
 							]
 						}
