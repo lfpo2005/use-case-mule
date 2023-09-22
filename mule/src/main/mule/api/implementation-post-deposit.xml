@@ -97,7 +97,7 @@ output application/json
 ---
 {
     "Status": "error",
-	"Message": "O depósito não pôde ser concluído"
+	"Mensagem": "O depósito não pôde ser concluído"
 }]]></ee:set-payload>
 					</ee:message>
 				</ee:transform>

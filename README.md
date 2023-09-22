@@ -85,3 +85,19 @@ http://localhost:8081/console/
 ### Extrato
 - Por período (limite de 1 mês)
 - Por mês (limite de 1 mês por consulta)
+
+
+## Próximos Passos
+
+### Integração com GTW Kong e Keycloak
+
+1. **Adicionar GTW Kong**: O primeiro passo é adicionar o Gateway de API Kong ao projeto.
+2. **Chamada ao Keycloak**: O Kong fará uma chamada ao Keycloak para autenticação e autorização.
+3. **Busca de Informações do Usuário**: O Keycloak buscará informações do usuário na aplicação Spring.
+4. **Retorno de Token**: O token gerado pelo Keycloak, que contém as informações do usuário, será retornado para o Kong.
+
+### Integração com Mule e Kafka
+
+5. **Chamada ao Mule**: Após a autenticação e autorização, o Kong fará uma chamada ao Mule para prosseguir com o processamento.
+6. **Publicação no Kafka**: A aplicação Spring publicará informações do usuário no Kafka.
+7. **Consumo pelo Mule**: O Mule será responsável por consumir essas informações do Kafka para processamento adicional.
