@@ -23,6 +23,7 @@ http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/
 			<on-error-propagate type="ANY">
 				<set-variable variableName="customErrorMessage"
 					value="#[error.description]" />
+				<set-variable value="404" doc:name="Set HTTP Status" doc:id="84dee3a3-2f4c-4deb-9bda-1ce31b1add2e" variableName="httpStatus" />
 				<logger level="ERROR"
 					message="#['Erro encontrado: ' ++ vars.customErrorMessage]" />
 				<ee:transform>
@@ -35,7 +36,8 @@ output application/json
 }]]></ee:set-payload>
 					</ee:message>
 				</ee:transform>
-			</on-error-propagate>
+			
+</on-error-propagate>
 		</error-handler>
 	</flow>
 	<flow name="implementation-post-transfer-from">
@@ -73,7 +75,8 @@ output application/json
 }]]></ee:set-payload>
 					</ee:message>
 				</ee:transform>
-			</on-error-propagate>
+			
+</on-error-propagate>
 		</error-handler>
 
 	</flow>

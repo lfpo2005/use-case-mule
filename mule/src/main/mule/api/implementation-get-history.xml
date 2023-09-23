@@ -28,13 +28,15 @@ output application/json
 }]]></ee:set-payload>
 					</ee:message>
 				</ee:transform>
-			</on-error-propagate>
+			
+</on-error-propagate>
 		</error-handler>
 	</flow>
 	<flow name="implementation-get-history-select"
 		doc:id="efc5abf1-9e17-406b-818b-da3034d1c60e">
 		<logger level="INFO" message="#[payload]" />
 		<flow-ref doc:name="Validate Account Number" doc:id="f1d03138-d481-48c5-b808-70680ac3ec96" name="validate-account-number"/>
+		<logger level="INFO" doc:name="Logger" doc:id="da479f65-d1c7-4202-80db-49aa961329cb" message="#[payload]" />
 		<db:select doc:name="Check if extract already generated"
 			config-ref="Database_Config">
 			<db:sql><![CDATA[SELECT last_query_date 
@@ -60,6 +62,7 @@ AND EXTRACT(YEAR FROM last_query_date) = EXTRACT(YEAR FROM CURRENT_DATE);
 		<choice doc:name="Choice"
 			doc:id="9594f77f-86ff-488d-9a58-594fed7cc37c">
 			<when expression="#[vars.isPayloadNotEmpty]">
+				<set-variable value="404" doc:name="Set HTTP Status" doc:id="9e30da1f-6dd8-431f-8b34-28b6f206a4a5" variableName="httpStatus" />
 				<ee:transform doc:name="Transform Message"
 					doc:id="f3f0e82c-7a42-48db-985a-d34022846f8e">
 					<ee:message>
