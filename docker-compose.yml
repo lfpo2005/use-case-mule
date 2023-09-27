@@ -22,4 +22,6 @@ services:
       ACTIVEMQ_REMOVE_DEFAULT_ACCOUNT: "false"
       ACTIVEMQ_ADMIN_LOGIN: "admin"
       ACTIVEMQ_ADMIN_PASSWORD: "admin"
-
+    volumes:
+      - ./extras/activemq:/opt/activemq/data
+      

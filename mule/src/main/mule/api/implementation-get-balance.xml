@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule xmlns:db="http://www.mulesoft.org/schema/mule/db"
+<mule xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db"
 	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
 	xmlns="http://www.mulesoft.org/schema/mule/core"
 	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
 http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd 
-http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd">
 	<flow name="implementation-get-balance-main"
 		doc:id="2b8b642f-d57c-4895-8095-31e4accd19da">
 		<flow-ref doc:name="Flow Reference"
@@ -48,14 +49,45 @@ output application/json
 output application/json
 ---
 payload map (item) -> {
-	"Data": now() as String {format: "dd-MM-yyyy"},
-	"Horas": now() as String {format: "HH:mm:ss"},    
+	date: now() as String {format: "dd-MM-yyyy"},
+	hour: now() as String {format: "HH:mm:ss"},    
+	account_number: item.account_number,
+    name: item.name,
+    balance: item.balance		
+}
+]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+		<jms:publish doc:name="Publish" doc:id="2b1ad9c9-4350-4345-94ce-3cd8457ae4b9" config-ref="JMS_Config" destination="stg-balance"/>
+		<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="da0a4acc-1c51-4844-9c98-fe0a7cc76c79" type="ANY" >
+				<logger level="INFO" doc:name="Logger" doc:id="14d118ae-00dc-4c13-b588-2f8bd04159e9" message="#[error]" />
+			</on-error-continue>
+		</error-handler>
+	
+</flow>
+	<flow name="implementation-get-balanceFlow" doc:id="15317932-cec9-4423-b7f3-90dc27755aff" >
+		<set-payload value="#[null]" doc:name="Set Payload" doc:id="78da094d-da44-485c-9efb-4616f476ea16" />
+		<jms:consume doc:name="Consume" doc:id="26912571-9064-42b0-8be7-835ba30f6c0e" config-ref="JMS_Config" destination="stg-balance" maximumWait="30000"/>
+		<ee:transform doc:name="Transform Message" doc:id="e675c5eb-ba18-40de-8cd4-a9c42eaa1196" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload map (item) -> {
+	"Data": item.date,
+	"Horas": item.hour,    
 	"Numero da conta": item.account_number,
     "Nome": item.name,
     "Saldo": item.balance		
 }
 ]]></ee:set-payload>
-					</ee:message>
-				</ee:transform>
+			</ee:message>
+		</ee:transform>
+		<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="3dc2a2ae-3b68-4dd0-911b-c257771584df" type="ANY" >
+				<logger level="INFO" doc:name="Logger" doc:id="b3d20208-73a3-4961-a6cf-494e12860c88" message="#[error]" />
+			</on-error-continue>
+		</error-handler>
 	</flow>
 </mule>

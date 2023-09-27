@@ -40,9 +40,9 @@ output application/json
 	<flow name="implementation-post-created-account-publish"
 		doc:id="e1ebdecd-16fa-4d37-ada7-20f8f49d69dc">
 		<logger level="INFO" doc:name="Logger"
-			doc:id="e2bc7947-12b1-455c-b9eb-07aa4bad01d0" message="payload" />
-		<set-variable value="#[payload.name]" doc:name="New Name"
-			doc:id="c108908b-1a74-4be7-bfbd-7e9944e7a370" variableName="newName" />
+			doc:id="e2bc7947-12b1-455c-b9eb-07aa4bad01d0" message="#[payload]" />
+		<set-variable doc:name="New Name"
+			doc:id="c108908b-1a74-4be7-bfbd-7e9944e7a370" variableName="newName" value="#[payload.name]"/>
 		<db:select doc:name="Select"
 			doc:id="e0d0bb86-1d03-4ecf-ac22-3cbbe4947531"
 			config-ref="Database_Config">
@@ -65,7 +65,7 @@ output application/json
 vars.newName]]></ee:set-payload>
 					</ee:message>
 				</ee:transform>
-				<jms:publish doc:name="Publish" doc:id="9367a127-eb22-4c25-a277-006bb81d4e31" config-ref="JMS_Config" destination="stg-mule" />
+				<jms:publish doc:name="Publish" doc:id="9367a127-eb22-4c25-a277-006bb81d4e31" config-ref="JMS_Config" destination="stg-created-account" />
 			
 </when>
 			<otherwise>
@@ -104,7 +104,7 @@ output application/json
 			doc:id="db2e243c-8021-478e-a681-b1995fead87e" message="#[payload]" />
 		<jms:consume doc:name="Consume"
 			doc:id="03882a0c-559f-457a-8009-f5ddd924e030" config-ref="JMS_Config"
-			destination="stg-mule" maximumWait="30000" />
+			destination="stg-created-account" maximumWait="30000" />
 		<logger level="INFO" doc:name="Logger"
 			doc:id="df156f9a-a528-4166-a365-2bca32f34b86" message="#[payload]" />
 		<set-variable value="#[payload]" doc:name="Set Variable"
@@ -142,5 +142,11 @@ payload map (item) -> {
    ]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-	</flow>
+		<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="50b300f6-7e14-40d6-b565-7cd1142bf317" type="ANY" >
+				<logger level="INFO" doc:name="Logger" doc:id="7546967f-b02f-49bd-82d0-e91f567ed962" message="#[error]" />
+			</on-error-continue>
+		</error-handler>
+	
+</flow>
 </mule>

@@ -1,0 +1,9 @@
+%dw 2.0
+
+type auto_2a417427_fd24_45da_ad2e_f6dace8b8b44_Input_Variables_fromAccountInfo = {|
+  account_id: Number, 
+  name: String, 
+  account_number: Number, 
+  balance?: Number
+|}
+

@@ -33,7 +33,7 @@ http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/
 				brokerUrl="tcp://localhost:61616/" />
 		</jms:active-mq-connection>
 	</jms:config>
-	<flow name="batchJobFlow">
+	<flow name="batchJobFlow-Publish">
 		<scheduler doc:name="Scheduler">
 			<scheduling-strategy>
 				<fixed-frequency frequency="1" timeUnit="DAYS" />
@@ -59,45 +59,67 @@ http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/
 		</db:select>
 		<set-payload value="#[payload as Array]"
 			doc:name="Transform to Array" />
+		<ee:transform doc:name="Transform Message" doc:id="4f3faa79-61a1-4be0-b279-3b83ac0949fa" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload map (transaction) -> {
+    transaction_id: transaction.transaction_id,
+    account_id: transaction.account_id,
+    account_number: transaction.account_number,
+    types: transaction.types,
+    amount: transaction.amount,   
+    date: transaction.date_transaction as String {format: "dd-MM-yyyy"},
+	hour: transaction.date_transaction as String {format: "HH:mm:ss"}   
+
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<jms:publish doc:name="Publish" doc:id="97045763-4948-49c6-88c2-daef9a531e01" config-ref="JMS_Config" destination="stg-report"/>
+		<flow-ref doc:name="Flow Reference" doc:id="fdd4f985-b36c-46eb-8b46-68870c46d4df" name="batchJobFlow-Cosumer"/>
+		<error-handler>
+			<on-error-continue type="ANY"
+				enableNotifications="true" logException="true">
+				<logger level="INFO" doc:name="Logger" message='#[error]' />
+			</on-error-continue>
+		</error-handler>
+	</flow>
+	<flow name="batchJobFlow-Cosumer" doc:id="25fe9f22-03e1-46ce-95ec-c12da4439c5d" >
+		<set-payload value="#[null]" doc:name="Set Payload" doc:id="9f83534b-12f7-4606-9d84-786170014814" />
+		<logger level="INFO" doc:name="Logger" doc:id="2697cea0-44d2-4476-aeff-8c9e3d604f59" message="payload"/>
+		<jms:consume doc:name="Consume" doc:id="fcec5bd2-b67d-43a3-ba6f-ecb5fc9c360c" config-ref="JMS_Config" destination="stg-report" maximumWait="30000"/>
 		<logger level="INFO" doc:name="Logger" message="#[payload]" />
-		<choice doc:name="Choice"
-			doc:id="9164ebad-595f-4b73-94ba-7fb6e3e895af">
+		<choice doc:name="Choice" doc:id="9164ebad-595f-4b73-94ba-7fb6e3e895af">
 			<when expression="sizeOf(payload) &gt; 0">
-				<ee:transform doc:name="Transform to CSV">
+				<ee:transform doc:name="Transform to CSV" doc:id="eeb16542-d97e-437f-9e37-3babcacbf866">
 					<ee:message>
-						<ee:set-payload><![CDATA[
-%dw 2.0
+						<ee:set-payload><![CDATA[%dw 2.0
 output application/csv
 ---
 payload map (transaction) -> {
-    "ID da transação": transaction.transaction_id,
+	"ID da transação": transaction.transaction_id,
     "ID da Conta": transaction.account_id,
     "Numero da conta" : transaction.account_number,
     "Tipo de transação": transaction.types,
     "Valor": transaction.amount,   
-    "Data": transaction.date_transaction as String {format: "dd-MM-yyyy"},
-	"Horas": transaction.date_transaction as String {format: "HH:mm:ss"}    
+    "Data": transaction.date,
+	"Horas": transaction.hour    
 }
-                ]]>
+]]>
 						</ee:set-payload>
 					</ee:message>
 				</ee:transform>
-				<file:write doc:name="Write"
-					doc:id="0b8553b8-43ef-46c8-97b6-472dc68a3bd7"
-					config-ref="File_Config"
-					path='#["D:/WORKSPACE/MULE/USE CASE/data-csv/transaction_" ++ ((now() - |P1D|) as String {format: "dd-MM-yyyy"}) ++ ".csv"]' />
+				<file:write doc:name="Write" doc:id="0b8553b8-43ef-46c8-97b6-472dc68a3bd7" config-ref="File_Config" path='#["D:/WORKSPACE/MULE/USE CASE/data-csv/transaction_" ++ ((now() - |P1D|) as String {format: "dd-MM-yyyy"}) ++ ".csv"]' />
 				<logger level="INFO" doc:name="Logger" message="#[payload]" />
 			</when>
 			<otherwise>
-				<logger level="INFO" doc:name="Logger"
-					doc:id="7418fdad-1267-452b-a7d8-c6671d0c46b1"
-					message="Não houve transação no dia anterior!" />
+				<logger level="INFO" doc:name="Logger" doc:id="7418fdad-1267-452b-a7d8-c6671d0c46b1" message="Não houve transação no dia anterior!" />
 			</otherwise>
 		</choice>
-		<error-handler>
-			<on-error-continue type="ANY"
-				enableNotifications="true" logException="true">
-				<logger level="INFO" doc:name="Logger" message="#[error]" />
+		<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="43599a23-dd5c-4189-85d8-ad14e7359d80" type="ANY" >
+				<logger level="INFO" doc:name="Logger" doc:id="9acb9e85-d031-4452-864f-33970b633001" message='#[error]' />
 			</on-error-continue>
 		</error-handler>
 	</flow>
@@ -115,6 +137,7 @@ payload map (transaction) -> {
 		</db:select>
 		<set-payload value="#[payload as Array]"
 			doc:name="Set Payload" doc:id="57b966a9-41eb-45e9-a532-26ab78052ba9" />
+		<logger level="INFO" doc:name="Logger" doc:id="12728cc5-1a79-4327-8cfa-f3fb8c343243" message="#[payload]"/>
 		<choice doc:name="Choice"
 			doc:id="f4cbfe4b-9e96-4b31-a7fd-8f06072bb060">
 			<when expression="#[sizeOf(payload) &gt; 0]">
