@@ -55,23 +55,11 @@ output application/json
 						<flow-ref doc:name="Flow Reference"
 							doc:id="c0607100-f0c1-40e9-ab95-cda6e00b767c"
 							name="implementation-post-withdraw-insertAndUpdate" />
-						<ee:transform doc:name="Transform Message"
-							doc:id="ac17fc5f-a429-428e-b1a5-7c464ae45692">
-							<ee:message>
-								<ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{
-	"Mensagem": "Saque realizado com sucesso"
-}]]></ee:set-payload>
-							</ee:message>
-						</ee:transform>
 					</when>
 					<otherwise>
 						<logger level="INFO" doc:name="Logger"
 							doc:id="6dae1f8d-4976-4123-a768-d18f3b9a008b" />
-						<ee:transform doc:name="Transform Message"
-							doc:id="ada3eb18-23a8-467d-8f72-c995b9ed0848">
+						<ee:transform doc:name="Transform Message" doc:id="ada3eb18-23a8-467d-8f72-c995b9ed0848">
 							<ee:message>
 								<ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -124,5 +112,15 @@ output application/json
 'amount': vars.amount
 }]]]></db:input-parameters>
 		</db:insert>
+		<ee:transform doc:name="Transform Message" doc:id="ac17fc5f-a429-428e-b1a5-7c464ae45692">
+							<ee:message>
+								<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"Mensagem": "Saque realizado com sucesso"
+}]]></ee:set-payload>
+							</ee:message>
+						</ee:transform>
 	</flow>
 </mule>

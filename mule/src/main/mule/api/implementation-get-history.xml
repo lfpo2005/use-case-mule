@@ -59,7 +59,6 @@ AND EXTRACT(YEAR FROM last_query_date) = EXTRACT(YEAR FROM CURRENT_DATE);
         ]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<logger level="INFO" doc:name="Logger" doc:id="2336ce7c-81ac-43e9-bbe1-033096ab33cd" message="#[payload]"/>
 		<choice doc:name="Choice"
 			doc:id="9594f77f-86ff-488d-9a58-594fed7cc37c">
 			<when expression="#[vars.isPayloadNotEmpty]">
@@ -80,7 +79,7 @@ output application/json
 ---
 {
 	"status": "erro",
-	"mensagem": "Ops! Não é permitido fazer mais de um extrato por mês.\nSó poderá fazer uma consulta a partir de: " ++ (payload.last_query_date[0] + |P30D|) as String {format: "dd-MM-yyyy"}
+	"mensagem": "Ops! Não é permitido fazer mais de um extrato por mês.\n Só poderá fazer uma consulta a partir de: " ++ (payload.last_query_date[0] + |P30D|) as String {format: "dd-MM-yyyy"}
 }
 ]]></ee:set-payload>
 					</ee:message>

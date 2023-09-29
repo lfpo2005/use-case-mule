@@ -96,13 +96,14 @@ payload map (transaction) -> {
 					<ee:message>
 						<ee:set-payload><![CDATA[%dw 2.0
 output application/csv
+
 ---
 payload map (transaction) -> {
 	"ID da transação": transaction.transaction_id,
     "ID da Conta": transaction.account_id,
     "Numero da conta" : transaction.account_number,
     "Tipo de transação": transaction.types,
-    "Valor": transaction.amount,   
+    "Valor": ("R\$ " as String) ++ (transaction.amount as String),   
     "Data": transaction.date,
 	"Horas": transaction.hour    
 }
