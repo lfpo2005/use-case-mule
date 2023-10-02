@@ -63,11 +63,6 @@ output application/json
 			</ee:message>
 		</ee:transform>
 		<jms:publish doc:name="Publish" doc:id="ff2cc4ba-10ac-4a3b-9080-0eca69c4ea3d" config-ref="JMS_Config" destination="stg-deposit"/>
-		<error-handler>
-			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="8f3cd598-c0e9-43bf-b225-47135faacb62" type="ANY" >
-				<logger level="INFO" doc:name="Logger" doc:id="5d94d62e-9f7d-4d27-935c-a68e8b14bb97" message="#[error]" />
-			</on-error-continue>
-		</error-handler>
 	
 </flow>
 	<flow name="implementation-post-deposit-consumer" doc:id="58134742-ea18-41f2-9ae3-4654c0598171" >
