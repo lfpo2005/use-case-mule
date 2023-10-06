@@ -97,9 +97,7 @@ output application/json
 		doc:id="8e8069fb-e684-4537-9524-8d5cbe2e6069">
 		<set-payload value="#[null]" doc:name="Set Payload"
 			doc:id="42da8259-dd86-414a-b4cf-300adf20df9f" />
-		<set-variable value="#[null]"
-			doc:name="Initialize Variable as Null"
-			doc:id="173db066-601f-41e9-b04c-d398235151cf" variableName="newName" />
+		<remove-variable doc:name="Initialize Variable as Null" doc:id="69297446-6222-4b29-991d-b089ab5d1bc5" variableName="newName"/>
 		<logger level="INFO" doc:name="Logger"
 			doc:id="db2e243c-8021-478e-a681-b1995fead87e" message="#[payload]" />
 		<jms:consume doc:name="Consume"
@@ -107,7 +105,7 @@ output application/json
 			destination="stg-created-account" maximumWait="30000" />
 		<logger level="INFO" doc:name="Logger"
 			doc:id="df156f9a-a528-4166-a365-2bca32f34b86" message="#[payload]" />
-		<set-variable value="#[payload]" doc:name="Set Variable"
+		<set-variable value="#[payload]" doc:name="Set newName"
 			doc:id="fc394813-0495-44df-b2dd-993aac3e81e8" variableName="newName" />
 		<logger level="INFO" doc:name="Logger"
 			doc:id="1f39f364-0b5b-494e-ba4d-c64c0b866f31" message="#[payload]" />

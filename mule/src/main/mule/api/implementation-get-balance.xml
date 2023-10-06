@@ -97,11 +97,11 @@ output application/xml
 {
 	balances: {
 		item: {
-			date: payload.date,
-			hour: payload.hour,
-			account_number: payload.account_number,
-			name: payload.name,
-			balance: payload.balance
+			Data: payload.date,
+			Hora: payload.hour,
+			NumeroConta: payload.account_number,
+			Nome: payload.name,
+			Saldo: payload.balance
 		}
 	}
 }
