@@ -22,7 +22,8 @@ output application/json
 {
     api_rest: {
         nome: "Use case Mulesoft",
-        status: "OK"
+        status: "OK",
+        data: now()  as Date {format: "dd/MM/yyyy"} as String {format: "MMM dd, yyyy"}
     },
     banco_de_dados: {
         nome: "Postgresql",

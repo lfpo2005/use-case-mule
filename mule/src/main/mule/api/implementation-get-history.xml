@@ -163,6 +163,7 @@ output application/json
 	"Numero da conta": payload[0].account_number,
 	"Nome": payload[0].to_account_name,
 	"Saldo": payload[0].balance,
+	"Data": now() as Date {format: "dd/MM/yyyy"} as String {format: "dd MMM, yyyy"},
 	"Transações": payload map (item) -> {
 		"Data": item.date_transaction as String {format: "dd-MM-yyyy"},
 		"Horas": item.date_transaction as String {format: "HH:mm:ss"},    
