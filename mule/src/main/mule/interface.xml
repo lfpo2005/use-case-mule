@@ -155,12 +155,12 @@ output application/json
 				<ee:set-variable variableName="size" ><![CDATA[attributes.queryParams.size]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<flow-ref doc:name="Flow Reference"
+		<flow-ref doc:name="implementation-get-accounts-main"
 			doc:id="3e2a7786-5aec-4824-a974-d00b062cbe7e"
 			name="implementation-get-accounts-main" />
 	</flow>
 	<flow name="post:\accounts">
-		<flow-ref doc:name="Flow Reference"
+		<flow-ref doc:name="implementation-post-created-account-main"
 			doc:id="70339d50-3602-4575-a3d3-18075c5f21f1"
 			name="implementation-post-created-account-main" />
 	</flow>
@@ -172,18 +172,18 @@ output application/json
 				<ee:set-variable variableName="account_number"><![CDATA[attributes.uriParams.'account_number']]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<flow-ref doc:name="Flow Reference"
+		<flow-ref doc:name="implementation-post-deposit-main"
 			doc:id="db8a60b8-5936-4513-9dd3-79b46494aa74"
 			name="implementation-post-deposit-main" />
 	</flow>
 	<flow name="get:\accounts\(account_number)\balance">
-		<ee:transform doc:name="Transform Message">
+		<ee:transform doc:name="Extract accountId">
 			<ee:variables>
 				<ee:set-variable variableName="account_number"><![CDATA[attributes.uriParams.'account_number'
 				]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<flow-ref doc:name="Flow Reference"
+		<flow-ref doc:name="implementation-get-balance-main"
 			doc:id="a1f0ceda-e7d5-42c6-a613-355d7419c5ed"
 			name="implementation-get-balance-main" />
 	</flow>
@@ -199,12 +199,7 @@ output application/json
 				<ee:set-variable variableName="currentYear" ><![CDATA[vars.startDateComponents[0]]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-
-
-		<logger level="INFO" doc:name="Logger"
-			doc:id="92a84936-6ee9-435a-99bf-92356242a1a2"
-			message="#['Start Date: ' ++ vars.startDate ++ ', End Date: ' ++ vars.endDate]" />
-		<flow-ref doc:name="Flow Reference"
+		<flow-ref doc:name="implementation-get-history-main"
 			doc:id="12e7cb32-5cc4-4ed4-bf2d-4400a1729d1a"
 			name="implementation-get-history-main" />
 	</flow>
@@ -217,7 +212,7 @@ output application/json
 				]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<flow-ref doc:name="Flow Reference"
+		<flow-ref doc:name="implementation-post-withdraw-main"
 			doc:id="6ebc47bf-2bf6-47df-8b0c-3d6f08c3b910"
 			name="implementation-post-withdraw-main" />
 	</flow>
@@ -237,7 +232,7 @@ output application/json
 				</ee:set-variable>
 			</ee:variables>
 		</ee:transform>
-		<flow-ref doc:name="Flow Reference"
+		<flow-ref doc:name="implementation-post-transfer-main"
 			doc:id="7ebfd7f9-9714-44f4-93ed-fcb25ae3117a"
 			name="implementation-post-transfer-main" />
 	</flow>
