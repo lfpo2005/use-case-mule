@@ -9,15 +9,15 @@ http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/cu
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
 	<flow name="implementation-get-history-main"
 		doc:id="b56fb690-0f14-49b3-a024-7f326a5940c7">
-		<flow-ref doc:name="Flow Reference"
+		<flow-ref doc:name="implementation-get-history-select"
 			doc:id="be8db970-43b0-49cb-8dab-a5786cfc7cc5"
 			name="implementation-get-history-select" />
 			<error-handler>
 			<on-error-propagate type="ANY">
 				<set-variable variableName="customErrorMessage"
-					value="#[error.description]" />
+					value="#[error.description]" doc:name="customErrorMessage"/>
 				<logger level="ERROR"
-					message="#['Erro encontrado: ' ++ vars.customErrorMessage]" />
+					message="#['Erro encontrado: ' ++ vars.customErrorMessage]" doc:name="customErrorMessage"/>
 				<ee:transform>
 					<ee:message>
 						<ee:set-payload><![CDATA[%dw 2.0
@@ -34,9 +34,9 @@ output application/json
 	</flow>
 	<flow name="implementation-get-history-select"
 		doc:id="efc5abf1-9e17-406b-818b-da3034d1c60e">
-		<logger level="INFO" message="#[payload]" />
+		<logger level="INFO" message="#[payload]" doc:name="payload"/>
 		<flow-ref doc:name="Validate Account Number" doc:id="f1d03138-d481-48c5-b808-70680ac3ec96" name="validate-account-number"/>
-		<logger level="INFO" doc:name="Logger" doc:id="da479f65-d1c7-4202-80db-49aa961329cb" message="#[payload]" />
+		<logger level="INFO" doc:name="payload" doc:id="da479f65-d1c7-4202-80db-49aa961329cb" message="#[payload]" />
 		<db:select doc:name="Check if extract already generated"
 			config-ref="Database_Config">
 			<db:sql><![CDATA[SELECT last_query_date 
@@ -51,7 +51,7 @@ AND EXTRACT(YEAR FROM last_query_date) = EXTRACT(YEAR FROM CURRENT_DATE);
     currentYear: vars.currentYear  
 }]]]></db:input-parameters>
 		</db:select>
-		<logger level="INFO" doc:name="Logger"
+		<logger level="INFO" doc:name="getName"
 			message="#[payload.getClass().getName()]" />
 		<ee:transform doc:name="Set Condition Variable">
 			<ee:variables>
@@ -63,14 +63,14 @@ AND EXTRACT(YEAR FROM last_query_date) = EXTRACT(YEAR FROM CURRENT_DATE);
 			doc:id="9594f77f-86ff-488d-9a58-594fed7cc37c">
 			<when expression="#[vars.isPayloadNotEmpty]">
 				<set-variable value="404" doc:name="Set HTTP Status" doc:id="9e30da1f-6dd8-431f-8b34-28b6f206a4a5" variableName="httpStatus" />
-				<db:select doc:name="Select" doc:id="0844dba2-a6c3-468c-a128-93a27bd3310e" config-ref="Database_Config">
+				<db:select doc:name="Select account_number" doc:id="0844dba2-a6c3-468c-a128-93a27bd3310e" config-ref="Database_Config">
 					<db:sql ><![CDATA[   SELECT 
     *
   FROM queries_extracts
    WHERE account_number = :account_number]]></db:sql>
 					<db:input-parameters ><![CDATA[#[account_number: vars.account_number]]]></db:input-parameters>
 				</db:select>
-				<logger level="INFO" doc:name="Logger" doc:id="bee9cdc0-b712-44fa-9f81-7cca4b68c7c7" message="#[payload]"/>
+				<logger level="INFO" doc:name="payload" doc:id="bee9cdc0-b712-44fa-9f81-7cca4b68c7c7" message="#[payload]"/>
 				<ee:transform doc:name="Transform Message"
 					doc:id="f3f0e82c-7a42-48db-985a-d34022846f8e">
 					<ee:message>
@@ -84,7 +84,7 @@ output application/json
 ]]></ee:set-payload>
 					</ee:message>
 				</ee:transform>
-				<logger level="INFO" doc:name="Logger" doc:id="b7d2978f-e5ad-45dc-b8dd-5a3680b91e91" message="#[payload]"/>
+				<logger level="INFO" doc:name="payload" doc:id="b7d2978f-e5ad-45dc-b8dd-5a3680b91e91" message="#[payload]"/>
 			</when>
 			<otherwise>
 				<db:insert doc:name="Insert or Update Last Query Date"
@@ -107,7 +107,7 @@ ON CONFLICT (account_number) DO UPDATE SET last_query_date = CURRENT_DATE;
 	account_number: vars.account_number
 }]]]></db:input-parameters>
 				</db:select>
-				<logger level="INFO" doc:name="Logger"
+				<logger level="INFO" doc:name="account_id"
 					doc:id="f68ef773-4f61-447d-bef8-3950891cd567"
 					message="#[payload.account_id]" />
 				<db:select doc:name="Get History"
@@ -153,7 +153,7 @@ output application/json
     </when>
     <otherwise>
         <!-- Your existing logic for when payload is not empty -->
-						<logger level="INFO" doc:name="Logger" doc:id="2383bb0e-728c-4a50-833b-d139720bd994" message="#[payload]" />
+						<logger level="INFO" doc:name="payload" doc:id="2383bb0e-728c-4a50-833b-d139720bd994" message="#[payload]" />
 						<ee:transform doc:name="Transform Message" doc:id="b983c757-5b48-421c-aecb-5dd5fe3929c4">
 					<ee:message>
 						<ee:set-payload><![CDATA[%dw 2.0

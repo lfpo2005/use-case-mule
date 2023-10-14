@@ -11,16 +11,16 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd">
 	<flow name="implementation-get-balance-main"
 		doc:id="2b8b642f-d57c-4895-8095-31e4accd19da">
-		<flow-ref doc:name="Flow Reference"
+		<flow-ref doc:name="implementation-get-balance-publish"
 			doc:id="9a35bb56-9721-457f-b792-2e01e57f2e8d"
 			name="implementation-get-balance-publish" />
-		<flow-ref doc:name="Flow Reference" doc:id="fbe89d0c-3c51-483d-999c-22d551c4a3cf" name="implementation-get-balance-consumer"/>
+		<flow-ref doc:name="implementation-get-balance-consumer" doc:id="fbe89d0c-3c51-483d-999c-22d551c4a3cf" name="implementation-get-balance-consumer"/>
 		<error-handler>
 			<on-error-propagate type="ANY">
 				<set-variable variableName="customErrorMessage"
-					value="#[error.description]" />
+					value="#[error.description]" doc:name="customErrorMessage"/>
 				<logger level="ERROR"
-					message="#['Erro encontrado: ' ++ vars.customErrorMessage]" />
+					message="#['Erro encontrado: ' ++ vars.customErrorMessage]" doc:name="customErrorMessage"/>
 				<ee:transform>
 					<ee:message>
 						<ee:set-payload><![CDATA[%dw 2.0
@@ -39,7 +39,7 @@ output application/xml
 		<flow-ref doc:name="Validate Account Number"
 			doc:id="67159b70-0f7d-4196-8e8b-c6e969982af7"
 			name="validate-account-number" />
-		<logger level="INFO" doc:name="Logger"
+		<logger level="INFO" doc:name="payload"
 			doc:id="8ea26983-2a33-47eb-b6b2-a06bf95a4469" message="#[payload]" />
 		<db:select doc:name="Select Balance"
 			doc:id="273837f9-9ebc-470e-8d74-0097db8cc615"
@@ -49,7 +49,7 @@ output application/xml
 	account_number: vars.account_number
 }]]]></db:input-parameters>
 		</db:select>
-		<set-variable value="payload" doc:name="Set Variable"
+		<set-variable value="payload" doc:name="getBalance"
 			doc:id="5aa31d1f-00c3-4e88-a0ce-cd4648a08102"
 			variableName="getBalance" />
 		<ee:transform doc:name="Transform Message"
@@ -68,26 +68,26 @@ payload map (item) -> {
 ]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<jms:publish doc:name="Publish"
+		<jms:publish doc:name="Publish-stg-balance"
 			doc:id="2b1ad9c9-4350-4345-94ce-3cd8457ae4b9" config-ref="JMS_Config"
 			destination="stg-balance" />
 		<error-handler>
 			<on-error-continue enableNotifications="true"
 				logException="true" doc:name="On Error Continue"
 				doc:id="da0a4acc-1c51-4844-9c98-fe0a7cc76c79" type="ANY">
-				<logger level="INFO" doc:name="Logger"
+				<logger level="INFO" doc:name="error"
 					doc:id="14d118ae-00dc-4c13-b588-2f8bd04159e9" message="#[error]" />
 			</on-error-continue>
 		</error-handler>
 	</flow>
 	<flow name="implementation-get-balance-consumer"
 		doc:id="15317932-cec9-4423-b7f3-90dc27755aff">
-		<set-payload value="#[null]" doc:name="Set Payload"
+		<set-payload value="#[null]" doc:name="null"
 			doc:id="78da094d-da44-485c-9efb-4616f476ea16" />
-		<jms:consume doc:name="Consume"
+		<jms:consume doc:name="Consume-stg-balance"
 			doc:id="26912571-9064-42b0-8be7-835ba30f6c0e" config-ref="JMS_Config"
 			destination="stg-balance" maximumWait="30000" />
-		<logger level="INFO" doc:name="Logger" doc:id="32699133-ffc0-4d10-9b44-18e80af48579" message="#[payload]"/>
+		<logger level="INFO" doc:name="payload" doc:id="32699133-ffc0-4d10-9b44-18e80af48579" message="#[payload]"/>
 		<ee:transform doc:name="Transform Message"
 			doc:id="9f364738-4d31-41e7-a381-02488f515c42">
 			<ee:message>
@@ -112,7 +112,7 @@ output application/xml
 			<on-error-continue enableNotifications="true"
 				logException="true" doc:name="On Error Continue"
 				doc:id="3dc2a2ae-3b68-4dd0-911b-c257771584df" type="ANY">
-				<logger level="INFO" doc:name="Logger"
+				<logger level="INFO" doc:name="error"
 					doc:id="b3d20208-73a3-4961-a6cf-494e12860c88" message="#[error]" />
 			</on-error-continue>
 		</error-handler>

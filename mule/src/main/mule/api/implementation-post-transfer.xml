@@ -23,10 +23,10 @@ http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/
 		<error-handler>
 			<on-error-propagate type="ANY">
 				<set-variable variableName="customErrorMessage"
-					value="#[error.description]" />
+					value="#[error.description]" doc:name="customErrorMessage"/>
 				<set-variable value="404" doc:name="Set HTTP Status" doc:id="1da8a590-bf34-4698-bbc1-1369d0a78f60" variableName="httpStatus" />
 				<logger level="ERROR"
-					message="#['Erro encontrado: ' ++ vars.customErrorMessage]" />
+					message="#['Erro encontrado: ' ++ vars.customErrorMessage]" doc:name="customErrorMessage"/>
 				<ee:transform>
 					<ee:message>
 						<ee:set-payload><![CDATA[%dw 2.0
@@ -43,9 +43,9 @@ output application/json
 	</flow>
 	<flow name="implementation-post-transfer-from">
 		<logger level="INFO"
-			message="Transfer from account: #[vars.from_account_number] to account: #[vars.to_account_number] with amount: #[vars.amount]" />
+			message="Transfer from account: #[vars.from_account_number] to account: #[vars.to_account_number] with amount: #[vars.amount]" doc:name="customMessage"/>
 
-		<db:select config-ref="Database_Config">
+		<db:select config-ref="Database_Config" doc:name="Select from_account_number">
 			<db:sql><![CDATA[SELECT * FROM mule_account WHERE account_number = :from_account_number]]></db:sql>
 			<db:input-parameters><![CDATA[#[{
 	'from_account_number': vars.from_account_number
@@ -55,17 +55,17 @@ output application/json
 			<when
 				expression="#[(payload[0].account_number default 0) as Number != null and (vars.from_account_number default 0) as Number == (payload[0].account_number default 0) as Number]">
 				<set-variable value="#[payload[0]]"
-					variableName="fromAccountInfo" />
+					variableName="fromAccountInfo" doc:name="fromAccountInfo"/>
 			</when>
 			<otherwise>
 				<raise-error type="CUSTOM:INVALID_ACCOUNT"
-					description="Número da conta de origem inválido." />
+					description="Número da conta de origem inválido." doc:name="CUSTOM:INVALID_ACCOUNT"/>
 			</otherwise>
 		</choice>
 		<error-handler>
 			<on-error-propagate type="CUSTOM:INVALID_ACCOUNT">
 				<logger level="ERROR"
-					message="Falha na execução da query. Possível conta inexistente." />
+					message="Falha na execução da query. Possível conta inexistente." doc:name="CUSTOM:INVALID_ACCOUNT"/>
 				<ee:transform>
 					<ee:message>
 						<ee:set-payload><![CDATA[%dw 2.0
@@ -83,9 +83,9 @@ output application/json
 	</flow>
 	<flow name="implementation-post-transfer-to"
 		doc:id="56157ebc-ba1b-4290-957d-b8af8f8aebbf">
-		<logger level="INFO" doc:name="Logger"
+		<logger level="INFO" doc:name="payload"
 			doc:id="08ca6443-697e-49fa-bfd6-f97e2e1c5a9e" message="#[payload]" />
-		<db:select config-ref="Database_Config" doc:name="Select-to">
+		<db:select config-ref="Database_Config" doc:name="Select to_account_number">
 			<db:sql><![CDATA[SELECT * FROM mule_account WHERE account_number = :to_account_number]]></db:sql>
 			<db:input-parameters><![CDATA[#[{
 	'to_account_number': vars.to_account_number
@@ -96,10 +96,10 @@ output application/json
 			<when
 				expression="#[(payload[0].account_number default 0) as Number != null and (vars.to_account_number default 0) as Number == (payload[0].account_number default 0) as Number]">
 				<set-variable value="#[payload[0]]"
-					variableName="toAccountInfo" />
+					variableName="toAccountInfo" doc:name="toAccountInfo"/>
 			</when>
 			<otherwise>
-				<raise-error doc:name="Raise error"
+				<raise-error doc:name="CUSTOM:INVALID_ACCOUNT"
 					doc:id="8b83d376-535a-4acd-b536-5800a533b2c7"
 					type="CUSTOM:INVALID_ACCOUNT"
 					description="Número da conta de destino inválido." />
@@ -108,7 +108,7 @@ output application/json
 		<error-handler>
 			<on-error-propagate type="DB:QUERY_EXECUTION">
 				<logger level="ERROR"
-					message="Falha na execução da query. Possível conta inexistente." />
+					message="Falha na execução da query. Possível conta inexistente." doc:name="CUSTOM:INVALID_ACCOUNT"/>
 				<ee:transform doc:name="Transform Message"
 					doc:id="62e44593-ef38-45be-98c3-e3a96006b3fc">
 					<ee:message>
@@ -124,7 +124,7 @@ output application/json
 		</error-handler>
 	</flow>
 	<flow name="implementation-post-transfer-publish" doc:id="f6d2689b-bf22-4344-acd7-910391d46cd7" >
-		<logger level="INFO" doc:name="Logger" doc:id="c12c79d3-2470-4f24-a508-67ed6fd9111f" message="payload"/>
+		<logger level="INFO" doc:name="payload" doc:id="c12c79d3-2470-4f24-a508-67ed6fd9111f" message="payload"/>
 		<ee:transform doc:name="Transform Message" doc:id="9048a130-46f7-44f8-9e8a-5f2b04714c4b" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
@@ -154,17 +154,14 @@ output application/json
 ]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<jms:publish doc:name="Publish" doc:id="8c9d02cf-e94a-4645-8917-57245f4b6f7c" config-ref="JMS_Config" destination="stg-transfer"/>
-		<logger level="INFO" doc:name="Logger" doc:id="574ea851-e2e7-4041-8faf-5012aebec481" />
+		<jms:publish doc:name="Publish-stg-transfer" doc:id="8c9d02cf-e94a-4645-8917-57245f4b6f7c" config-ref="JMS_Config" destination="stg-transfer"/>
 	</flow>
 	<flow name="implementation-post-transfer-consume"
 		doc:id="ed84f3a0-c289-4107-8fbc-6e6c85169649">
-		<set-payload value="#[null]" doc:name="Set Payload" doc:id="04588d48-e31e-41b2-9842-2aeeb673556e" />
-		<jms:consume doc:name="Consume" doc:id="780779f7-1734-40f4-ae59-8811e0203658" config-ref="JMS_Config" destination="stg-transfer" maximumWait="30000"/>
-		<logger level="INFO" doc:name="Logger"
-			doc:id="bc0a3f92-d1c3-4087-aff0-2a5ca59b95d6" message="#[payload]" />
-		<set-variable value="#[payload]" doc:name="Set Variable" doc:id="69a83f90-a9f7-4948-ba27-b9f70a865911" variableName="newData"/>
-		<logger level="INFO" doc:name="Logger" doc:id="bcc6348d-ccdd-45b1-b142-f398424f067b" message="#[payload]"/>
+		<set-payload value="#[null]" doc:name="null" doc:id="04588d48-e31e-41b2-9842-2aeeb673556e" />
+		<jms:consume doc:name="Consume-stg-transfer" doc:id="780779f7-1734-40f4-ae59-8811e0203658" config-ref="JMS_Config" destination="stg-transfer" maximumWait="30000"/>
+		<set-variable value="#[payload]" doc:name="newData" doc:id="69a83f90-a9f7-4948-ba27-b9f70a865911" variableName="newData"/>
+		<logger level="INFO" doc:name="payload" doc:id="bcc6348d-ccdd-45b1-b142-f398424f067b" message="#[payload]"/>
 		<choice>
 			<when
 				expression="#[(vars.amount != null) and (vars.fromAccountInfo.balance != null) and (vars.amount &gt; 0) and (vars.amount &lt;= vars.fromAccountInfo.balance)]">
@@ -236,7 +233,7 @@ output application/json
 		<error-handler>
 			<on-error-continue type="DB:QUERY_EXECUTION">
 				<logger level="ERROR"
-					message="Falha na execução da query. Possível conta inexistente." />
+					message="Falha na execução da query. Possível conta inexistente." doc:name="Custom:ErroMsg"/>
 				<ee:transform doc:name="Transform Message">
 					<ee:message>
 						<ee:set-payload><![CDATA[%dw 2.0

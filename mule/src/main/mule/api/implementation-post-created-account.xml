@@ -12,18 +12,18 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd">
 	<flow name="implementation-post-created-account-main"
 		doc:id="bf382346-63e6-458b-a554-71b50b1b8a96">
-		<flow-ref doc:name="Flow Reference"
+		<flow-ref doc:name="implementation-post-created-account-publish"
 			doc:id="3f61490d-152c-48d1-b723-0b1934408d05"
 			name="implementation-post-created-account-publish" />
-		<flow-ref doc:name="Flow Reference"
+		<flow-ref doc:name="implementation-post-created-account-consumer"
 			doc:id="8a60ace5-71fb-4453-8cb8-05c37fe3b799"
 			name="implementation-post-created-account-consumer" />
 		<error-handler>
 			<on-error-propagate type="ANY">
 				<set-variable variableName="customErrorMessage"
-					value="#[error.description]" />
+					value="#[error.description]" doc:name="customErrorMessage"/>
 				<logger level="ERROR"
-					message="#['Erro encontrado: ' ++ vars.customErrorMessage]" />
+					message="#['Erro encontrado: ' ++ vars.customErrorMessage]" doc:name="customErrorMessage"/>
 				<ee:transform>
 					<ee:message>
 						<ee:set-payload><![CDATA[%dw 2.0
@@ -39,11 +39,11 @@ output application/json
 	</flow>
 	<flow name="implementation-post-created-account-publish"
 		doc:id="e1ebdecd-16fa-4d37-ada7-20f8f49d69dc">
-		<logger level="INFO" doc:name="Logger"
+		<logger level="INFO" doc:name="payload"
 			doc:id="e2bc7947-12b1-455c-b9eb-07aa4bad01d0" message="#[payload]" />
 		<set-variable doc:name="New Name"
 			doc:id="c108908b-1a74-4be7-bfbd-7e9944e7a370" variableName="newName" value="#[payload.name]"/>
-		<db:select doc:name="Select"
+		<db:select doc:name="exists name"
 			doc:id="e0d0bb86-1d03-4ecf-ac22-3cbbe4947531"
 			config-ref="Database_Config">
 			<db:sql><![CDATA[SELECT EXISTS (SELECT 1 FROM mule_account WHERE name = :name)]]></db:sql>
@@ -51,7 +51,7 @@ output application/json
 	name: vars.newName
 }]]]></db:input-parameters>
 		</db:select>
-		<logger level="INFO" doc:name="Logger"
+		<logger level="INFO" doc:name="payload"
 			doc:id="60671d05-98ff-4eb1-82da-f908dd494412"
 			message="#[payload]" />
 		<choice doc:name="Choice"
@@ -65,11 +65,11 @@ output application/json
 vars.newName]]></ee:set-payload>
 					</ee:message>
 				</ee:transform>
-				<jms:publish doc:name="Publish" doc:id="9367a127-eb22-4c25-a277-006bb81d4e31" config-ref="JMS_Config" destination="stg-created-account" />
+				<jms:publish doc:name="Publish-stg-created-account" doc:id="9367a127-eb22-4c25-a277-006bb81d4e31" config-ref="JMS_Config" destination="stg-created-account" />
 			
 </when>
 			<otherwise>
-				<raise-error type="CUSTOM:INVALID_NAME" description="Nome de conta já existe!" />
+				<raise-error type="CUSTOM:INVALID_NAME" description="Nome de conta já existe!" doc:name="INVALID_NAME"/>
 
 			</otherwise>
 		
@@ -77,8 +77,8 @@ vars.newName]]></ee:set-payload>
 		<error-handler>
 			<on-error-propagate type="CUSTOM:INVALID_NAME"
 				enableNotifications="true" logException="true">
-				<logger level="ERROR"
-					message="Falha na execução da query. Possível conta inexistente." />
+				<logger level="INFO"
+					message="Falha na execução da query. Possível conta inexistente." doc:name="msg erro custom"/>
 				<ee:transform>
 					<ee:message>
 						<ee:set-payload><![CDATA[%dw 2.0
@@ -95,19 +95,19 @@ output application/json
 	</flow>
 	<flow name="implementation-post-created-account-consumer"
 		doc:id="8e8069fb-e684-4537-9524-8d5cbe2e6069">
-		<set-payload value="#[null]" doc:name="Set Payload"
+		<set-payload value="#[null]" doc:name="null"
 			doc:id="42da8259-dd86-414a-b4cf-300adf20df9f" />
 		<remove-variable doc:name="Initialize Variable as Null" doc:id="69297446-6222-4b29-991d-b089ab5d1bc5" variableName="newName"/>
-		<logger level="INFO" doc:name="Logger"
+		<logger level="INFO" doc:name="payload"
 			doc:id="db2e243c-8021-478e-a681-b1995fead87e" message="#[payload]" />
-		<jms:consume doc:name="Consume"
+		<jms:consume doc:name="Consume-stg-created-account"
 			doc:id="03882a0c-559f-457a-8009-f5ddd924e030" config-ref="JMS_Config"
 			destination="stg-created-account" maximumWait="30000" />
-		<logger level="INFO" doc:name="Logger"
+		<logger level="INFO" doc:name="payload"
 			doc:id="df156f9a-a528-4166-a365-2bca32f34b86" message="#[payload]" />
 		<set-variable value="#[payload]" doc:name="Set newName"
 			doc:id="fc394813-0495-44df-b2dd-993aac3e81e8" variableName="newName" />
-		<logger level="INFO" doc:name="Logger"
+		<logger level="INFO" doc:name="payload"
 			doc:id="1f39f364-0b5b-494e-ba4d-c64c0b866f31" message="#[payload]" />
 		<db:insert doc:name="Insert"
 			doc:id="c39b822a-4ee1-4033-b7fe-f11de3e6260f"
@@ -125,8 +125,8 @@ output application/json
 	name: vars.newName
 }]]]></db:input-parameters>
 		</db:select>
-		<logger level="INFO" doc:name="Logger"
-			doc:id="05177112-83c8-41ab-a81c-ac420ae9e7c8" message="payload" />
+		<logger level="INFO" doc:name="payload"
+			doc:id="05177112-83c8-41ab-a81c-ac420ae9e7c8" message="#[payload]" />
 		<ee:transform doc:name="Transform Message"
 			doc:id="cc19ff8d-b298-46ee-84e0-a686c87d32e9">
 			<ee:message>
@@ -142,7 +142,7 @@ payload map (item) -> {
 		</ee:transform>
 		<error-handler >
 			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="50b300f6-7e14-40d6-b565-7cd1142bf317" type="ANY" >
-				<logger level="INFO" doc:name="Logger" doc:id="7546967f-b02f-49bd-82d0-e91f567ed962" message="#[error]" />
+				<logger level="INFO" doc:name="error" doc:id="7546967f-b02f-49bd-82d0-e91f567ed962" message="#[error]" />
 			</on-error-continue>
 		</error-handler>
 	

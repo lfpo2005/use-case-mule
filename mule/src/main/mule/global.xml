@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:http="http://www.mulesoft.org/schema/mule/http"
+<mule
+	xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
 	xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
 	xmlns:file="http://www.mulesoft.org/schema/mule/file"
 	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
@@ -13,26 +15,40 @@ http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/htt
 http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd 
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
-http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd">
+http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
+http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd">
 	<db:config name="Database_Config" doc:name="Database Config"
 		doc:id="9f16b284-747f-4c19-98f4-169f0493c8c6">
 		<db:generic-connection
-			url="jdbc:postgresql://localhost:5432/banco_mule"
-			driverClassName="org.postgresql.Driver" user="postgres"
-			password="postgres" />
+			url="jdbc:postgresql://localhost:${db.port}/${db.database}"
+			driverClassName="org.postgresql.Driver" user="${db.user}"
+			password="${db.password}" />
 	</db:config>
 	<file:config name="File_Config" doc:name="File Config"
 		doc:id="52e92226-a113-4a8e-a535-28d07a051210">
 		<file:connection
-			workingDir="D:\WORKSPACE\MULE\USE CASE\data-csv" />
+			workingDir="${file.accountsDir}" />
 	</file:config>
 	<jms:config name="JMS_Config" doc:name="JMS Config"
 		doc:id="da9e9f86-bda7-4e60-acb2-576c35f8f40c">
-		<jms:active-mq-connection username="admin">
+		<jms:active-mq-connection username="${activemq.user}" password="${activemq.password}">
+			<jms:caching-strategy >
+				<jms:no-caching />
+			</jms:caching-strategy>
 			<jms:factory-configuration
-				brokerUrl="tcp://localhost:61616/" />
+				brokerUrl="${activemq.broker}" />
 		</jms:active-mq-connection>
 	</jms:config>
+	<apikit:config name="use-case-mule-config"
+		api="resource::e8af90f8-c409-49df-a9f9-428fe20ea1e2:use-case-mule:1.0.19:raml:zip:use-case-mule.raml"
+		outboundHeadersMapName="outboundHeaders"
+		httpStatusVarName="httpStatus" />
+	<configuration-properties
+		doc:name="Configuration properties"
+		doc:id="5bf199be-a2f5-416e-89f4-9ea5338f1c8a" file="config.yaml" />
+	<http:listener-config name="httpListenerConfig" doc:name="HTTP Listener config" doc:id="cfea9da7-ba0b-4c7e-a805-ba6e4a87219f" >
+		<http:listener-connection host="0.0.0.0" port="${http.port}" />
+	</http:listener-config>
 	<flow name="batchJobFlow-Publish">
 		<scheduler doc:name="Scheduler">
 			<scheduling-strategy>
@@ -41,7 +57,7 @@ http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/
 		</scheduler>
 		<set-variable
 			value='#[(now() - |P1D|) as String {format: "yyyy-MM-dd"}]'
-			doc:name="Set Variable" doc:id="0406b644-9e1e-428c-ac56-02da45bfdac7"
+			doc:name="date" doc:id="0406b644-9e1e-428c-ac56-02da45bfdac7"
 			variableName="date" />
 		<db:select config-ref="Database_Config"
 			doc:name="Select from mule_transaction">
@@ -76,20 +92,20 @@ payload map (transaction) -> {
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<jms:publish doc:name="Publish" doc:id="1f26200b-5a73-4f20-9f89-8e3667120d9a" config-ref="JMS_Config" destination="stg-report"/>
-		<flow-ref doc:name="Flow Reference" doc:id="904ec78b-41ee-464d-9a37-d66f0c7ad4c6" name="batchJobFlow-Cosumer"/>
+		<jms:publish doc:name="Publish-stg-report" doc:id="1f26200b-5a73-4f20-9f89-8e3667120d9a" config-ref="JMS_Config" destination="stg-report"/>
+		<flow-ref doc:name="batchJobFlow-Cosumer" doc:id="904ec78b-41ee-464d-9a37-d66f0c7ad4c6" name="batchJobFlow-Cosumer"/>
 		<error-handler>
 			<on-error-continue type="ANY"
 				enableNotifications="true" logException="true">
-				<logger level="INFO" doc:name="Logger" message='#[error]' />
+				<logger level="INFO" doc:name="error" message='#[error]' />
 			</on-error-continue>
 		</error-handler>
 	</flow>
 	<flow name="batchJobFlow-Cosumer" doc:id="53c2a76b-4f2c-4bd5-83e1-990bc98c5453" >
-		<set-payload value="#[null]" doc:name="Set Payload" doc:id="6d20e45b-31ca-4aba-b782-782e2273e45e" />
-		<logger level="INFO" doc:name="Logger" doc:id="c1e7ca51-2c54-4d75-884c-432f2e328b6c" message="payload"/>
-		<jms:consume doc:name="Consume" doc:id="0c33fc34-300f-44ca-9d56-e5844a501f6c" config-ref="JMS_Config" destination="stg-report" maximumWait="30000"/>
-		<logger level="INFO" doc:name="Logger" message="#[payload]" />
+		<set-payload value="#[null]" doc:name="null" doc:id="6d20e45b-31ca-4aba-b782-782e2273e45e" />
+		<logger level="INFO" doc:name="payload" doc:id="c1e7ca51-2c54-4d75-884c-432f2e328b6c" message="#[payload]"/>
+		<jms:consume doc:name="Consume-stg-report" doc:id="0c33fc34-300f-44ca-9d56-e5844a501f6c" config-ref="JMS_Config" destination="stg-report" maximumWait="30000"/>
+		<logger level="INFO" doc:name="payload" message="#[payload]" />
 		<choice doc:name="Choice" doc:id="bfc943c2-54d2-4c20-9872-853523aac581">
 			<when expression="sizeOf(payload) &gt; 0">
 				<ee:transform doc:name="Transform to CSV" doc:id="547d0338-84de-44cf-91ac-916c32f57d36">
@@ -112,23 +128,23 @@ payload map (transaction) -> {
 					</ee:message>
 				</ee:transform>
 				<file:write doc:name="Write" doc:id="3b95dd6a-078d-45c2-b0b3-476151622828" config-ref="File_Config" path='#["D:/WORKSPACE/MULE/USE CASE/data-csv/transaction_" ++ ((now() - |P1D|) as String {format: "dd-MM-yyyy"}) ++ ".csv"]' />
-				<logger level="INFO" doc:name="Logger" message="#[payload]" />
+				<logger level="INFO" doc:name="payload" message="#[payload]" />
 			</when>
 			<otherwise>
-				<logger level="INFO" doc:name="Logger" doc:id="14f7834a-ec56-434d-8330-8f2738e2dc2d" message="Não houve transação no dia anterior!" />
+				<logger level="INFO" doc:name="Não houve transação no dia anterior!" doc:id="14f7834a-ec56-434d-8330-8f2738e2dc2d" message="Não houve transação no dia anterior!" />
 			</otherwise>
 		</choice>
 		<error-handler >
 			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="2fa0d6c8-bd27-4aae-b3a0-302b57158d13" type="ANY" >
-				<logger level="INFO" doc:name="Logger" doc:id="22f3ea56-7670-4bd1-844d-765c8632db40" message='#[error]' />
+				<logger level="INFO" doc:name="error" doc:id="22f3ea56-7670-4bd1-844d-765c8632db40" message='#[error]' />
 			</on-error-continue>
 		</error-handler>
 	</flow>
 	<flow name="validate-account-number"
 		doc:id="189f38d5-b6ea-4ed9-b67f-d96ea2708c6e">
-		<logger level="INFO" doc:name="Logger"
+		<logger level="INFO" doc:name="payload"
 			doc:id="accca30e-035d-465f-9e46-66bfe8fed334" message="#[payload]" />
-		<db:select doc:name="Select"
+		<db:select doc:name="Select account_number"
 			doc:id="53012948-3a1d-4be1-9226-4e59c81c6eb1"
 			config-ref="Database_Config">
 			<db:sql><![CDATA[SELECT * FROM mule_account WHERE account_number = :account_number]]></db:sql>
@@ -137,8 +153,8 @@ payload map (transaction) -> {
 }]]]></db:input-parameters>
 		</db:select>
 		<set-payload value="#[payload as Array]"
-			doc:name="Set Payload" doc:id="e9e788b5-799e-480a-ac6b-6ca9bfb104d1" />
-		<logger level="INFO" doc:name="Logger" doc:id="82fcf069-b483-43a5-bc1c-e70d534e3fb4" message="#[payload]"/>
+			doc:name="payload as Array" doc:id="e9e788b5-799e-480a-ac6b-6ca9bfb104d1" />
+		<logger level="INFO" doc:name="payload" doc:id="82fcf069-b483-43a5-bc1c-e70d534e3fb4" message="#[payload]"/>
 		<choice doc:name="Choice"
 			doc:id="83f560ae-27e5-46f0-9a5e-94cde287a7d1">
 			<when expression="#[sizeOf(payload) &gt; 0]">
@@ -150,7 +166,7 @@ payload map (transaction) -> {
 	account_number: vars.account_number
 }]]]></db:input-parameters>
 				</db:select>
-				<set-variable value="payload" doc:name="Set Variable"
+				<set-variable value="payload" doc:name="getBalance"
 					doc:id="68f1a443-6468-4734-b573-264450fe3cfa"
 					variableName="getBalance" />
 				<ee:transform doc:name="Transform Message"
@@ -171,7 +187,7 @@ payload map (item) -> {
 				</ee:transform>
 			</when>
 			<otherwise>
-				<raise-error doc:name="Raise error"
+				<raise-error doc:name="CUSTOM:INVALID_ACCOUNT"
 					doc:id="a2bd4a0f-5b87-4628-8bba-93483cfb9bb3"
 					type="CUSTOM:INVALID_ACCOUNT"
 					description="Número da conta inválido!" />
@@ -182,9 +198,9 @@ payload map (item) -> {
 				logException="true" doc:name="On Error Propagate"
 				doc:id="30921e8d-c0bd-4bd3-b62f-adce005a3ae9"
 				type="CUSTOM:INVALID_ACCOUNT">
-				<logger level="ERROR" doc:name="Logger"
+				<logger level="ERROR" doc:name="error"
 					doc:id="129d2046-efea-44cb-a0e6-361361aa74a4" message="#[error]" />
-				<set-variable value="404" doc:name="Set HTTP Status"
+				<set-variable value="404" doc:name="httpStatus"
 					variableName="httpStatus" />
 				<ee:transform doc:name="Transform Message"
 					doc:id="7eaf614d-c86a-4c6c-8f78-f9efaf473512">

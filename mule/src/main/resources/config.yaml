@@ -1,0 +1,20 @@
+http:
+  port: "8081"
+  
+db:
+  host: "jdbc:postgresql://localhost:5432/banco_mule"
+  user: "postgres"
+  password: "postgres"  
+  port: "5432"
+  database: "banco_mule"
+    
+activemq:
+  user: "admin"
+  password: "admin"
+  broker: "tcp://localhost:61616/"
+  
+file:
+  accountsDir: "D:/WORKSPACE/MULE/use_case_mule/data-csv"
+
+
+

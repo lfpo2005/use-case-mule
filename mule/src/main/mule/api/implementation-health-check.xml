@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
 	xmlns:db="http://www.mulesoft.org/schema/mule/db"
 	xmlns="http://www.mulesoft.org/schema/mule/core"
 	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
 http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
 	<sub-flow name="implementation-health-check-main"
@@ -13,7 +15,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 		<flow-ref doc:name="Status DB"
 			doc:id="11d76577-377d-4708-96b1-470eee840fd0"
 			name="implementation-health-check-db" target="statusDB" />
-		<ee:transform doc:name="Transform Message"
+		<ee:transform doc:name="Health-check"
 			doc:id="790750d3-1a24-4a2f-8d3a-187896e8c4bf">
 			<ee:message>
 				<ee:set-payload><![CDATA[%dw 2.0
@@ -22,8 +24,8 @@ output application/json
 {
     api_rest: {
         nome: "Use case Mulesoft",
-        status: "OK",
-        data: now()  as Date {format: "dd/MM/yyyy"} as String {format: "MMM dd, yyyy"}
+        data: now() as Date {format: "dd/MM/yyyy"} as String {format: "MMM dd, yyyy"},
+        horas: now() as String {format: "HH:mm:ss"}
     },
     banco_de_dados: {
         nome: "Postgresql",
@@ -36,21 +38,21 @@ output application/json
 	<sub-flow name="implementation-health-check-db"
 		doc:id="f8da1414-e519-4629-a4a2-9bc02e493893">
 		<try doc:name="Try" doc:id="6d507c85-2513-4939-b93d-fa720a286ddf">
-			<db:select doc:name="Select"
+			<db:select doc:name="SELECT 0"
 				doc:id="868d40ac-da19-435b-8c71-8f09e9a25303"
 				config-ref="Database_Config">
-				<db:sql><![CDATA[select 0]]></db:sql>
+				<db:sql><![CDATA[SELECT 0]]></db:sql>
 			</db:select>
 			<set-payload value="OK" doc:name="Status Ok"
 				doc:id="a590ac88-de92-4dd6-bf40-ef5b5304e1be" />
 			<error-handler>
 				<on-error-continue enableNotifications="true"
 					logException="true" doc:name="On Error Continue"
-					doc:id="d59739a8-ad2d-4cb8-86fc-eac56f04423c">
+					doc:id="8b611c55-c903-4145-b7d9-a67e4b7fa94d">
 					<set-payload
 						value='#["NOK: " ++ error.description as String default error.errorMessage as String]'
 						doc:name="Status Nok"
-						doc:id="301dbbf7-8661-4e51-a37e-d461e5a0f30f" />
+						doc:id="b9ef8547-b858-49bd-a084-31105eae0e17" />
 				</on-error-continue>
 			</error-handler>
 		</try>
