@@ -1,0 +1,14 @@
+%dw 2.0
+
+type auto_a3a40881_4875_4438_8faa_2c0791933a3b_Output_Payload = {|
+  api_rest: {|
+    nome: String, 
+    data: String, 
+    horas: String {"format": "HH:mm:ss"}
+  |}, 
+  banco_de_dados: {|
+    nome: String, 
+    status: String
+  |}
+|}
+

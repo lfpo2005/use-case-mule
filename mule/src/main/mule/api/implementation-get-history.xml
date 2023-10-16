@@ -8,16 +8,17 @@
 http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd 
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
 	<flow name="implementation-get-history-main"
-		doc:id="b56fb690-0f14-49b3-a024-7f326a5940c7">
+		doc:id="e018119f-75a3-4ba2-b1e4-d2968827e476">
 		<flow-ref doc:name="implementation-get-history-select"
-			doc:id="be8db970-43b0-49cb-8dab-a5786cfc7cc5"
+			doc:id="dbe1737f-9a89-4ce5-bc43-f70842603b4a"
 			name="implementation-get-history-select" />
-			<error-handler>
+		<error-handler>
 			<on-error-propagate type="ANY">
 				<set-variable variableName="customErrorMessage"
-					value="#[error.description]" doc:name="customErrorMessage"/>
+					value="#[error.description]" doc:name="customErrorMessage" />
 				<logger level="ERROR"
-					message="#['Erro encontrado: ' ++ vars.customErrorMessage]" doc:name="customErrorMessage"/>
+					message="#['Erro encontrado: ' ++ vars.customErrorMessage]"
+					doc:name="customErrorMessage" />
 				<ee:transform>
 					<ee:message>
 						<ee:set-payload><![CDATA[%dw 2.0
@@ -28,15 +29,16 @@ output application/json
 }]]></ee:set-payload>
 					</ee:message>
 				</ee:transform>
-			
-</on-error-propagate>
+
+			</on-error-propagate>
 		</error-handler>
 	</flow>
 	<flow name="implementation-get-history-select"
-		doc:id="efc5abf1-9e17-406b-818b-da3034d1c60e">
-		<logger level="INFO" message="#[payload]" doc:name="payload"/>
-		<flow-ref doc:name="Validate Account Number" doc:id="f1d03138-d481-48c5-b808-70680ac3ec96" name="validate-account-number"/>
-		<logger level="INFO" doc:name="payload" doc:id="da479f65-d1c7-4202-80db-49aa961329cb" message="#[payload]" />
+		doc:id="4930464d-7003-4d04-a036-d26292b60943">
+		<logger level="INFO" message="#[payload]" doc:name="payload" />
+		<flow-ref doc:name="Validate Account Number"
+			doc:id="c82f3915-e285-479a-8b1b-4a411c9c0132"
+			name="validate-account-number" />
 		<db:select doc:name="Check if extract already generated"
 			config-ref="Database_Config">
 			<db:sql><![CDATA[SELECT last_query_date 
@@ -51,67 +53,85 @@ AND EXTRACT(YEAR FROM last_query_date) = EXTRACT(YEAR FROM CURRENT_DATE);
     currentYear: vars.currentYear  
 }]]]></db:input-parameters>
 		</db:select>
-		<logger level="INFO" doc:name="getName"
-			message="#[payload.getClass().getName()]" />
 		<ee:transform doc:name="Set Condition Variable">
 			<ee:variables>
 				<ee:set-variable variableName="isPayloadNotEmpty"><![CDATA[ payload != null and sizeOf(payload) > 0
         ]]></ee:set-variable>
+				<ee:set-variable variableName="isDateValid"><![CDATA[if (vars.startDate as Date {format: "yyyy-MM-dd"} < (now() - |P31D|)) false else true]]>
+				</ee:set-variable>
 			</ee:variables>
 		</ee:transform>
 		<choice doc:name="Choice"
-			doc:id="9594f77f-86ff-488d-9a58-594fed7cc37c">
-			<when expression="#[vars.isPayloadNotEmpty]">
-				<set-variable value="404" doc:name="Set HTTP Status" doc:id="9e30da1f-6dd8-431f-8b34-28b6f206a4a5" variableName="httpStatus" />
-				<db:select doc:name="Select account_number" doc:id="0844dba2-a6c3-468c-a128-93a27bd3310e" config-ref="Database_Config">
-					<db:sql ><![CDATA[   SELECT 
-    *
-  FROM queries_extracts
-   WHERE account_number = :account_number]]></db:sql>
-					<db:input-parameters ><![CDATA[#[account_number: vars.account_number]]]></db:input-parameters>
-				</db:select>
-				<logger level="INFO" doc:name="payload" doc:id="bee9cdc0-b712-44fa-9f81-7cca4b68c7c7" message="#[payload]"/>
+			doc:id="6c0e392e-1da1-4c9f-a76b-3437612ee6b8">
+			<when expression="#[vars.isDateValid == false]">
 				<ee:transform doc:name="Transform Message"
-					doc:id="f3f0e82c-7a42-48db-985a-d34022846f8e">
+					doc:id="006a6884-0aba-47b3-b6c5-bfc5251f7dc3">
 					<ee:message>
 						<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {
-	"status": "erro",
-	"mensagem": "Ops! Não é permitido fazer mais de um extrato por mês.\n Só poderá fazer uma consulta a partir de: " ++ (payload.last_query_date[0] + |P30D|) as String {format: "dd-MM-yyyy"}
+    "status": "erro",
+    "mensagem": "O intervalo de datas fornecido não é válido. Por favor, escolha um intervalo dentro do último 30 dias."
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+				<logger level="INFO" doc:name="payload"
+					doc:id="42d88d41-f58f-49a4-83ee-b0a022291337" message="#[payload]" />
+			</when>
+			<when expression="#[vars.isPayloadNotEmpty]">
+				<flow-ref doc:name="implementation-get-balance-main"
+					doc:id="582f8709-9ec3-4117-8082-73a762980b85"
+					name="implementation-get-balance-main" />
+				<set-variable value="#[payload]" doc:name="getBalance"
+					doc:id="248a0c25-dba0-4b8c-b2d8-17236b67d187"
+					variableName="getBalance" />
+				<set-variable value="404" doc:name="Set HTTP Status"
+					doc:id="031b0eea-a280-4930-bc96-58760428a4af"
+					variableName="httpStatus" />
+				<db:select doc:name="Select account_number"
+					doc:id="f0460df4-203b-462a-8119-354f8f66934d"
+					config-ref="Database_Config">
+					<db:sql><![CDATA[   SELECT 
+    *
+  FROM queries_extracts
+   WHERE account_number = :account_number]]></db:sql>
+					<db:input-parameters><![CDATA[#[account_number: vars.account_number]]]></db:input-parameters>
+				</db:select>
+				<ee:transform doc:name="Transform Message"
+					doc:id="cce77b79-4109-4be5-970f-54d34e26bf35">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{	"Data": vars.getBalance.balances.item.Data,
+	"Saldo": vars.getBalance.balances.item.Saldo,
+	"Numero Conta": vars.getBalance.balances.item.NumeroConta,
+	"Extrato":{
+		"status": "erro",
+		"mensagem": "Ops! Não é permitido fazer mais de um extrato por mês.\nSó poderá fazer uma consulta a partir de: " ++ (payload.last_query_date[0] + |P30D|) as String {format: "dd-MM-yyyy"}
+	} 
 }
 ]]></ee:set-payload>
 					</ee:message>
 				</ee:transform>
-				<logger level="INFO" doc:name="payload" doc:id="b7d2978f-e5ad-45dc-b8dd-5a3680b91e91" message="#[payload]"/>
+				<logger level="INFO" doc:name="payload"
+					doc:id="133d260a-8552-4332-a4b7-f1c238a3250c" message="#[payload]" />
 			</when>
 			<otherwise>
-				<db:insert doc:name="Insert or Update Last Query Date"
-					config-ref="Database_Config">
-					<db:sql><![CDATA[INSERT INTO queries_extracts (account_number, last_query_date)
-VALUES (:account_number, CURRENT_DATE)
-ON CONFLICT (account_number) DO UPDATE SET last_query_date = CURRENT_DATE;
-]]>
-            </db:sql>
-					<db:input-parameters><![CDATA[#[{
-   account_number: vars.account_number,
-}]]]>
-            </db:input-parameters>
-				</db:insert>
 				<db:select doc:name="Get Accont-Id"
-					doc:id="2cd89b64-4c24-4e3c-9f53-c2f18dec28b7"
+					doc:id="bf387acc-194e-4b67-ac01-4a53d161e3ec"
 					config-ref="Database_Config">
 					<db:sql><![CDATA[select account_id from mule_account where account_number = :account_number]]></db:sql>
 					<db:input-parameters><![CDATA[#[{
 	account_number: vars.account_number
 }]]]></db:input-parameters>
 				</db:select>
-				<logger level="INFO" doc:name="account_id"
-					doc:id="f68ef773-4f61-447d-bef8-3950891cd567"
-					message="#[payload.account_id]" />
+				<set-variable value="#[payload.account_id]"
+					doc:name="account_id" doc:id="62d6a33d-c079-452a-810d-cff9b33291ba"
+					variableName="account_id" />
 				<db:select doc:name="Get History"
-					doc:id="7d81c48f-4849-4a62-9d48-9951d8168439"
+					doc:id="4027e348-43b3-4c53-b542-fb52362825fa"
 					config-ref="Database_Config">
 					<db:sql><![CDATA[SELECT
     t.*,
@@ -136,11 +156,16 @@ ORDER BY t.date_transaction DESC;
     endDate: vars.endDate
 }]]]></db:input-parameters>
 				</db:select>
-<choice doc:name="Check if Payload is Empty">
-    <when expression="#[payload == null or sizeOf(payload) == 0]">
-        <ee:transform doc:name="Set Payload for Empty Result">
-            <ee:message>
-                <ee:set-payload><![CDATA[%dw 2.0
+				<set-variable value="#[payload]" doc:name="getHistory"
+					doc:id="96ae3d85-11d4-4a3f-a0dc-26f474f63e7d"
+					variableName="getHistory" />
+				<logger level="INFO" doc:name="payload"
+					doc:id="9aa82989-3ddb-40a4-9ea8-7f814ef89532" message="#[payload]" />
+				<choice doc:name="Check if Payload is Empty">
+					<when expression="#[payload == null or sizeOf(payload) == 0]">
+						<ee:transform doc:name="Set Payload for Empty Result">
+							<ee:message>
+								<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {
@@ -148,23 +173,38 @@ output application/json
     "message": "Não há transações no período especificado."
 }
 ]]></ee:set-payload>
-            </ee:message>
-        </ee:transform>
-    </when>
-    <otherwise>
-        <!-- Your existing logic for when payload is not empty -->
-						<logger level="INFO" doc:name="payload" doc:id="2383bb0e-728c-4a50-833b-d139720bd994" message="#[payload]" />
-						<ee:transform doc:name="Transform Message" doc:id="b983c757-5b48-421c-aecb-5dd5fe3929c4">
-					<ee:message>
-						<ee:set-payload><![CDATA[%dw 2.0
+							</ee:message>
+						</ee:transform>
+						<logger level="INFO" doc:name="payload"
+							doc:id="ac4c10eb-e1d1-4692-8958-f6cea6e3cb02"
+							message="#[payload]" />
+					</when>
+					<otherwise>
+						<!-- Your existing logic for when payload is not empty -->
+						<db:insert doc:name="Insert or Update Last Query Date"
+							config-ref="Database_Config">
+							<db:sql><![CDATA[INSERT INTO queries_extracts (account_number, last_query_date)
+VALUES (:account_number, CURRENT_DATE)
+ON CONFLICT (account_number) DO UPDATE SET last_query_date = CURRENT_DATE;
+]]>
+            </db:sql>
+							<db:input-parameters><![CDATA[#[{
+   account_number: vars.account_number,
+}]]]>
+            </db:input-parameters>
+						</db:insert>
+						<ee:transform doc:name="Transform Message"
+							doc:id="301266c9-34b0-4a3d-a14a-499eb9fef2ef">
+							<ee:message>
+								<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {
-	"Numero da conta": payload[0].account_number,
-	"Nome": payload[0].to_account_name,
-	"Saldo": payload[0].balance,
+	"Numero da conta": vars.getHistory[0].account_number,
+	"Nome": vars.getHistory[0].to_account_name,
+	"Saldo": vars.getHistory[0].balance,
 	"Data": now() as Date {format: "dd/MM/yyyy"} as String {format: "dd MMM, yyyy"},
-	"Transações": payload map (item) -> {
+	"Transações": vars.getHistory map (item) -> {
 		"Data": item.date_transaction as String {format: "dd-MM-yyyy"},
 		"Horas": item.date_transaction as String {format: "HH:mm:ss"},    
 	    "Tipo de transação": item.types,
@@ -172,11 +212,14 @@ output application/json
 	    "De": item.from_account_name
 	}filterObject (value, key) -> value != null
 }]]></ee:set-payload>
-					</ee:message>
-				</ee:transform>
-    
-</otherwise>
-</choice>
+							</ee:message>
+						</ee:transform>
+						<logger level="INFO" doc:name="payload"
+							doc:id="3597d00a-38fe-414d-acf6-24312079cdc6"
+							message="#[payload]" />
+
+					</otherwise>
+				</choice>
 			</otherwise>
 		</choice>
 	</flow>

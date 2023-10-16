@@ -103,7 +103,9 @@ output application/json
 }]]></ee:set-payload>
 					</ee:message>
 				</ee:transform>
-			</when>
+				<logger level="INFO" doc:name="payload" doc:id="049d45fc-1213-4c9e-b6cc-2779b6568457" message="#[payload]" />
+			
+</when>
 			<otherwise>
 				<ee:transform doc:name="Transform Message" doc:id="a31ae47e-8c77-41cd-9512-dbb033d1af8e">
 					<ee:message>
@@ -116,6 +118,7 @@ output application/json
 }]]></ee:set-payload>
 					</ee:message>
 				</ee:transform>
+				<logger level="INFO" doc:name="payload" doc:id="d30c38b9-cf7e-42ed-9985-1bc49c19fd27" message="#[payload]" />
 			
 </otherwise>
 		</choice>

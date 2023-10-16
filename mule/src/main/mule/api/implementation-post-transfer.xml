@@ -215,7 +215,9 @@ output application/json
 }]]></ee:set-payload>
 					</ee:message>
 				</ee:transform>
-			</when>
+				<logger level="INFO" doc:name="payload" doc:id="0cdef7a8-64cc-41fc-ba5b-dfbb941e4f2b" message="#[payload]" />
+			
+</when>
 			<otherwise>
 				<ee:transform doc:name="Transform Message"
 					doc:id="a6a36b50-ce7d-4933-9c79-cdeb37bbad64">
@@ -228,7 +230,9 @@ output application/json
 }]]></ee:set-payload>
 					</ee:message>
 				</ee:transform>
-			</otherwise>
+				<logger level="INFO" doc:name="payload" doc:id="bf0173e7-8b17-4e13-b030-aaaf39e68ad6" message="#[payload]" />
+			
+</otherwise>
 		</choice>
 		<error-handler>
 			<on-error-continue type="DB:QUERY_EXECUTION">

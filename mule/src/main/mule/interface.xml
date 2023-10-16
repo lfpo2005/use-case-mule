@@ -192,7 +192,7 @@ output application/json
 			<ee:variables>
 				<ee:set-variable variableName="account_number"><![CDATA[attributes.uriParams.'account_number'
 				]]></ee:set-variable>
-				<ee:set-variable variableName="startDate" ><![CDATA[(attributes.queryParams.startDate default now() - |P1M|) as String {format: 'yyyy-MM-dd'}]]></ee:set-variable>
+				<ee:set-variable variableName="startDate" ><![CDATA[(attributes.queryParams.startDate default now() - |P30D|) as String {format: 'yyyy-MM-dd'}]]></ee:set-variable>
 				<ee:set-variable variableName="endDate" ><![CDATA[(attributes.queryParams.endDate default now()) as String {format: 'yyyy-MM-dd'}]]></ee:set-variable>
 				<ee:set-variable variableName="startDateComponents" ><![CDATA[vars.startDate splitBy '-']]></ee:set-variable>
 				<ee:set-variable variableName="currentMonth" ><![CDATA[vars.startDateComponents[1]]]></ee:set-variable>

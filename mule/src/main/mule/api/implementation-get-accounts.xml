@@ -67,8 +67,7 @@ payload map (item) -> {
 		<jms:consume doc:name="Consume-stg-mule"
 			doc:id="6a1afb70-08d8-43e3-af85-01daf44b88ea" config-ref="JMS_Config"
 			destination="stg-mule" maximumWait="30000" />
-		<logger level="INFO" doc:name="payload"
-			doc:id="966bcc35-e65e-41b9-970c-1b9f909903f4" message="#[payload]" />
+		<logger level="INFO" doc:name="payload" doc:id="966bcc35-e65e-41b9-970c-1b9f909903f4" message="#[payload]" />
 		<ee:transform doc:name="Transform Message"
 			doc:id="ab80a7d9-6085-4cb8-bf78-49a7073e617e">
 			<ee:message>

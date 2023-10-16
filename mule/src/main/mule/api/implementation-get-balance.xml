@@ -87,7 +87,6 @@ payload map (item) -> {
 		<jms:consume doc:name="Consume-stg-balance"
 			doc:id="26912571-9064-42b0-8be7-835ba30f6c0e" config-ref="JMS_Config"
 			destination="stg-balance" maximumWait="30000" />
-		<logger level="INFO" doc:name="payload" doc:id="32699133-ffc0-4d10-9b44-18e80af48579" message="#[payload]"/>
 		<ee:transform doc:name="Transform Message"
 			doc:id="9f364738-4d31-41e7-a381-02488f515c42">
 			<ee:message>
@@ -108,6 +107,7 @@ output application/xml
 ]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
+		<logger level="INFO" doc:name="payload" doc:id="32699133-ffc0-4d10-9b44-18e80af48579" message="#[payload]" />
 		<error-handler>
 			<on-error-continue enableNotifications="true"
 				logException="true" doc:name="On Error Continue"

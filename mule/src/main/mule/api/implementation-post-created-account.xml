@@ -125,8 +125,6 @@ output application/json
 	name: vars.newName
 }]]]></db:input-parameters>
 		</db:select>
-		<logger level="INFO" doc:name="payload"
-			doc:id="05177112-83c8-41ab-a81c-ac420ae9e7c8" message="#[payload]" />
 		<ee:transform doc:name="Transform Message"
 			doc:id="cc19ff8d-b298-46ee-84e0-a686c87d32e9">
 			<ee:message>
@@ -140,6 +138,7 @@ payload map (item) -> {
    ]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
+		<logger level="INFO" doc:name="payload" doc:id="05177112-83c8-41ab-a81c-ac420ae9e7c8" message="#[payload]" />
 		<error-handler >
 			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="50b300f6-7e14-40d6-b565-7cd1142bf317" type="ANY" >
 				<logger level="INFO" doc:name="error" doc:id="7546967f-b02f-49bd-82d0-e91f567ed962" message="#[error]" />

@@ -1,4 +1,0 @@
-%dw 2.0
-
-type auto_25fe9f22_03e1_46ce_95ec_c12da4439c5d_Input_Payload = Array<{|  transaction_id: Number,   account_id: Number,   account_number: Number,   types: String,   amount: Number,   date_transaction: Date|}>
-
