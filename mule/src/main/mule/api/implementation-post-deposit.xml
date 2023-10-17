@@ -11,19 +11,19 @@ http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/cu
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
 http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd">
 	<flow name="implementation-post-deposit-main"
-		doc:id="3f3b10e3-6bb6-4624-938c-408d6fbaa9d0">
+		doc:id="70fabb0f-46a9-4d0e-8ece-6179981935c8">
 		<flow-ref doc:name="implementation-post-deposit-publish"
-			doc:id="f0384227-82b0-497e-9ae2-0a1fe2fa0d82"
+			doc:id="22fc23bc-b3bb-49f2-8f1f-b59b958645bf"
 			name="implementation-post-deposit-publish" />
 		<flow-ref doc:name="implementation-post-deposit-consumer"
-			doc:id="f985d7e0-c60f-4f5f-9d19-4a026775a353"
+			doc:id="77fb2841-dd5d-41ff-af64-d8f6249eabef"
 			name="implementation-post-deposit-consumer" />
 		<error-handler>
 			<on-error-propagate type="ANY">
 				<set-variable variableName="customErrorMessage"
 					value="#[error.description]" doc:name="customErrorMessage"/>
 				<logger level="ERROR"
-					message="#['Erro encontrado: ' ++ vars.customErrorMessage]" doc:name="customErrorMessage"/>
+					message="#['Erro encontrado: ' ++ vars.customErrorMessage]" doc:name="CustomErrorMessage"/>
 				<ee:transform>
 					<ee:message>
 						<ee:set-payload><![CDATA[%dw 2.0
@@ -38,19 +38,18 @@ output application/json
 		</error-handler>
 	</flow>
 	<flow name="implementation-post-deposit-publish"
-		doc:id="82b8bd5f-6387-4dcb-8084-3b3bd462aa10">
-		<logger level="INFO" doc:name="customMessage-attributes.uriParams"
-			message="URI Params: #[attributes.uriParams]" />
-		<flow-ref doc:name="Validate Account Number" doc:id="4a716575-31b0-4871-870d-7f6100690762" name="validate-account-number"/>
+		doc:id="f501f5bc-8144-40a2-80ee-12812df292f5">
+		<flow-ref doc:name="Validate Account Number" doc:id="e29a84ac-9334-4bee-9cf1-fa54cadffcd4" name="validate-account-number"/>
+		<flow-ref doc:name="Validate Amount" doc:id="e302d096-3251-4f0f-8ef2-83e7e02c1444" name="validate-amount"/>
 		<db:select doc:name="Select account_number" config-ref="Database_Config">
 			<db:sql><![CDATA[SELECT account_id FROM mule_account WHERE account_number = :account_number]]></db:sql>
 			<db:input-parameters><![CDATA[#[{'account_number': vars.account_number}]]]></db:input-parameters>
 		</db:select>
 		<set-variable variableName="accountId"
 			value="#[payload[0].account_id]" doc:name="account_id" />
-		<logger level="INFO" doc:name="payload"
+		<logger level="INFO" doc:name="Payload"
 			message="#[payload]" />
-		<ee:transform doc:name="Transform Message" doc:id="dfd7dfea-64ff-417f-9d0d-46d2f762313d" >
+		<ee:transform doc:name="Transform Message" doc:id="59d2e1f3-c0c8-41cb-bcca-5f6062037498" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
@@ -58,41 +57,38 @@ output application/json
 {
 	'account_id': vars.accountId,
 	'types': 'DEPOSIT',
-	'amount': vars.depositValue
+	'amount': vars.amount
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<jms:publish doc:name="Publish-stg-deposit" doc:id="ff2cc4ba-10ac-4a3b-9080-0eca69c4ea3d" config-ref="JMS_Config" destination="stg-deposit"/>
+		<logger level="INFO" doc:name="Payload" doc:id="5e2a2f4f-2947-4851-b3fb-18da25a4b5c0" message="payload"/>
+		<jms:publish doc:name="Publish-stg-deposit" doc:id="38923927-fe59-41f1-ab59-d19c237127ac" config-ref="JMS_Config" destination="stg-deposit"/>
 	
 </flow>
-	<flow name="implementation-post-deposit-consumer" doc:id="58134742-ea18-41f2-9ae3-4654c0598171" >
-		<set-payload value="#[null]" doc:name="null" doc:id="34308e2c-88e9-49ee-8af3-18b3871759c4" />
-		<logger level="INFO" doc:name="payload" doc:id="49678529-9a5b-445e-a0e9-fdf9541cc32b" message="#[payload]" />
-		<jms:consume doc:name="Consume-stg-deposit" doc:id="2b2c8a9d-d565-4ad2-abe2-3bc9d565991a" config-ref="JMS_Config" destination="stg-deposit" maximumWait="30000"/>
-		<logger level="INFO" doc:name="payload" doc:id="272c273c-90d8-4b35-afd5-aa7b83a9ff84" message="#[payload]" />
+	<flow name="implementation-post-deposit-consumer" doc:id="e321df5a-3ca4-44a4-b611-b3ded2b2cf37" >
+		<set-payload value="#[null]" doc:name="null" doc:id="a5bb7f8c-9da7-44bf-b0de-f45116760c96" />
+		<jms:consume doc:name="Consume-stg-deposit" doc:id="4935d707-12a8-4fcc-a105-f22df7c15ba9" config-ref="JMS_Config" destination="stg-deposit" maximumWait="30000"/>
+		<set-variable value="#[payload]" doc:name="Deposit" doc:id="a05a0af6-2e4d-4ad0-a2f1-15e07fdaf8a5" variableName="deposit"/>
 		<db:insert doc:name="Insert transaction" config-ref="Database_Config">
 			<db:sql><![CDATA[INSERT INTO mule_transaction (account_id, types, amount, date_transaction) VALUES (:account_id, :types, :amount, NOW())]]></db:sql>
 			<db:input-parameters><![CDATA[#[{
-	'account_id': payload.account_id,
-	'types': payload.types,
-	'amount': payload.amount
+	'account_id': vars.deposit.account_id,
+	'types': vars.deposit.types,
+	'amount': vars.deposit.amount
 }]]]></db:input-parameters>
 		</db:insert>
 		<db:update doc:name="Update balance" config-ref="Database_Config">
-			<db:sql><![CDATA[UPDATE mule_account SET balance = balance + :depositAmount WHERE account_id = :accountId]]></db:sql>
-			<db:input-parameters><![CDATA[#[%dw 2.0
-output application/json
----
-{
-    'depositAmount': vars.depositValue,
-    'accountId': vars.accountId
+			<db:sql><![CDATA[UPDATE mule_account SET balance = balance + :amount WHERE account_id = :account_id]]></db:sql>
+			<db:input-parameters><![CDATA[#[{
+    'amount': vars.deposit.amount,
+    'account_id': vars.deposit.account_id
 }]]]></db:input-parameters>
 		</db:update>
 		<set-variable variableName="transactionSuccess" value="#[true]" doc:name="Set transactionSuccess" />
 		<logger level="DEBUG" message="#[payload]" doc:name="After Insertion" />
-		<choice doc:name="Choice" doc:id="19c77201-17f8-4e98-a80c-240844084e1e">
+		<choice doc:name="Choice" doc:id="0e9b2d4e-e0cf-4aa4-b7e5-563f317dd391">
 			<when expression="#[vars.transactionSuccess == true]">
-				<ee:transform doc:name="Transform Message" doc:id="ca58050a-933c-4977-855e-e583515560eb">
+				<ee:transform doc:name="Transform Message" doc:id="747ca809-a0e2-4f04-88af-ba2be4cfd1f9">
 					<ee:message>
 						<ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -103,11 +99,11 @@ output application/json
 }]]></ee:set-payload>
 					</ee:message>
 				</ee:transform>
-				<logger level="INFO" doc:name="payload" doc:id="049d45fc-1213-4c9e-b6cc-2779b6568457" message="#[payload]" />
+				<logger level="INFO" doc:name="Payload" doc:id="85275d0a-d45c-421a-a1ee-646539dc380d" message="#[payload]" />
 			
 </when>
 			<otherwise>
-				<ee:transform doc:name="Transform Message" doc:id="a31ae47e-8c77-41cd-9512-dbb033d1af8e">
+				<ee:transform doc:name="Transform Message" doc:id="a743a75b-c5ee-41ab-94ef-a646c42856ca">
 					<ee:message>
 						<ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -118,13 +114,13 @@ output application/json
 }]]></ee:set-payload>
 					</ee:message>
 				</ee:transform>
-				<logger level="INFO" doc:name="payload" doc:id="d30c38b9-cf7e-42ed-9985-1bc49c19fd27" message="#[payload]" />
+				<logger level="INFO" doc:name="Payload" doc:id="62a92d16-2e25-4993-9c31-874aa59d40ad" message="#[payload]" />
 			
 </otherwise>
 		</choice>
 		<error-handler >
-			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="7886e96e-b6c3-43b7-9108-f0ed4f6f2997" type="ANY" >
-				<logger level="INFO" doc:name="error" doc:id="8a8b4329-df20-4460-9e05-e2117ab2c682" message="#[error]" />
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="238f8a4a-0592-4ea7-8c9d-5eb504b238eb" type="ANY" >
+				<logger level="INFO" doc:name="Error" doc:id="083c0b35-2dd0-4111-90ea-c9d1b657e73f" message="#[error]" />
 			</on-error-continue>
 		</error-handler>
 	</flow>

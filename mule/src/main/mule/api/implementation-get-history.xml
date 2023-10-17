@@ -18,7 +18,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 					value="#[error.description]" doc:name="customErrorMessage" />
 				<logger level="ERROR"
 					message="#['Erro encontrado: ' ++ vars.customErrorMessage]"
-					doc:name="customErrorMessage" />
+					doc:name="CustomErrorMessage" />
 				<ee:transform>
 					<ee:message>
 						<ee:set-payload><![CDATA[%dw 2.0
@@ -35,7 +35,7 @@ output application/json
 	</flow>
 	<flow name="implementation-get-history-select"
 		doc:id="4930464d-7003-4d04-a036-d26292b60943">
-		<logger level="INFO" message="#[payload]" doc:name="payload" />
+		<logger level="INFO" message="#[payload]" doc:name="Payload" />
 		<flow-ref doc:name="Validate Account Number"
 			doc:id="c82f3915-e285-479a-8b1b-4a411c9c0132"
 			name="validate-account-number" />
@@ -76,7 +76,7 @@ output application/json
 }]]></ee:set-payload>
 					</ee:message>
 				</ee:transform>
-				<logger level="INFO" doc:name="payload"
+				<logger level="INFO" doc:name="Payload"
 					doc:id="42d88d41-f58f-49a4-83ee-b0a022291337" message="#[payload]" />
 			</when>
 			<when expression="#[vars.isPayloadNotEmpty]">
@@ -115,7 +115,7 @@ output application/json
 ]]></ee:set-payload>
 					</ee:message>
 				</ee:transform>
-				<logger level="INFO" doc:name="payload"
+				<logger level="INFO" doc:name="Payload"
 					doc:id="133d260a-8552-4332-a4b7-f1c238a3250c" message="#[payload]" />
 			</when>
 			<otherwise>
@@ -159,7 +159,7 @@ ORDER BY t.date_transaction DESC;
 				<set-variable value="#[payload]" doc:name="getHistory"
 					doc:id="96ae3d85-11d4-4a3f-a0dc-26f474f63e7d"
 					variableName="getHistory" />
-				<logger level="INFO" doc:name="payload"
+				<logger level="INFO" doc:name="Payload"
 					doc:id="9aa82989-3ddb-40a4-9ea8-7f814ef89532" message="#[payload]" />
 				<choice doc:name="Check if Payload is Empty">
 					<when expression="#[payload == null or sizeOf(payload) == 0]">
@@ -175,7 +175,7 @@ output application/json
 ]]></ee:set-payload>
 							</ee:message>
 						</ee:transform>
-						<logger level="INFO" doc:name="payload"
+						<logger level="INFO" doc:name="Payload"
 							doc:id="ac4c10eb-e1d1-4692-8958-f6cea6e3cb02"
 							message="#[payload]" />
 					</when>
@@ -214,7 +214,7 @@ output application/json
 }]]></ee:set-payload>
 							</ee:message>
 						</ee:transform>
-						<logger level="INFO" doc:name="payload"
+						<logger level="INFO" doc:name="Payload"
 							doc:id="3597d00a-38fe-414d-acf6-24312079cdc6"
 							message="#[payload]" />
 

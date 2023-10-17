@@ -10,20 +10,20 @@ http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/cu
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
 http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd">
 	<sub-flow name="implementation-get-accounts-main"
-		doc:id="83af61fe-be42-4e1f-971e-4643876c248d">
+		doc:id="6eaba440-373a-4c97-a468-a497deed9395">
 		<flow-ref doc:name="implementation-get-accounts-publish"
-			doc:id="095dd07e-bd92-455f-be33-bae750ca2668"
+			doc:id="d31592fa-ad35-403c-8c9a-3f960b9c3c05"
 			name="implementation-get-accounts-publish" />
 		<flow-ref doc:name="implementation-get-accounts-consumer"
-			doc:id="4193ff20-5171-4370-95ab-bd46e7b7e6b0"
+			doc:id="1e7e85a0-6b00-42ac-968e-00ba78f18e62"
 			name="implementation-get-accounts-consumer" />
 	</sub-flow>
 	<flow name="implementation-get-accounts-publish"
-		doc:id="f9e1a816-ab40-4863-b325-5e4f74bcb2d7">
-		<logger level="INFO" doc:name="payload"
-			doc:id="7cba0157-c4ac-4d34-b861-d4c66bca90f5" message="#[payload]" />
+		doc:id="07e33c80-c00b-4ef9-a068-99293868a81c">
+		<logger level="INFO" doc:name="Payload"
+			doc:id="ce8e2a5e-8c19-4bcf-bfbf-47cea0d57ba3" message="#[payload]" />
 		<db:select doc:name="Select Limit and OffSet"
-			doc:id="925955b8-01ae-4527-bcfa-7603891a082c"
+			doc:id="754748c7-a493-451d-b978-19e9d3f8e788"
 			config-ref="Database_Config">
 			<db:sql><![CDATA[SELECT * FROM mule_account LIMIT :size OFFSET :page]]></db:sql>
 			<db:input-parameters><![CDATA[#[{
@@ -31,10 +31,10 @@ http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/
 	'page': vars.page
 }]]]></db:input-parameters>
 		</db:select>
-		<logger level="INFO" doc:name="payload"
-			doc:id="2b3a180c-7f1d-40b0-b89b-61802c378598" message="#[payload]" />
+		<logger level="INFO" doc:name="Payload"
+			doc:id="2cf27c16-824e-46fd-a15d-6da7444c8604" message="#[payload]" />
 		<ee:transform doc:name="Transform Message"
-			doc:id="18bd705f-a70d-4b4f-a099-08b44e2ea120">
+			doc:id="e4137268-3480-4bdb-9c39-c93f467b6b2f">
 			<ee:message>
 				<ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -47,29 +47,29 @@ payload map (item) -> {
 			</ee:message>
 		</ee:transform>
 		<jms:publish doc:name="Publish-stg-mule"
-			doc:id="541a93da-af36-4ba2-80f4-18f5e973113f" config-ref="JMS_Config"
+			doc:id="53cb0669-7f17-470c-a57a-f5aff8152000" config-ref="JMS_Config"
 			destination="stg-mule" />
 		<error-handler>
 			<on-error-continue enableNotifications="true"
 				logException="true" doc:name="On Error Continue"
-				doc:id="6f55fc9a-a5f7-4489-b9ab-1356c79c4b6b" type="ANY">
+				doc:id="045d6738-b450-49be-8127-41395162d4be" type="ANY">
 				<logger level="INFO" doc:name="error"
-					doc:id="5e0d8298-fce9-4c74-81cb-a7d452cdc1f5" message="#[error]" />
+					doc:id="5ca882ac-0216-4cca-8775-f73cd2a58727" message="#[error]" />
 			</on-error-continue>
 		</error-handler>
 	</flow>
 	<flow name="implementation-get-accounts-consumer"
-		doc:id="99a2b8c7-6a77-4575-bf31-63c5e8628277">
+		doc:id="c48b32c0-cdc2-49e5-adb2-6a91211781e1">
 		<set-payload value="#[null]" doc:name="null"
-			doc:id="a951bb6d-dd61-46d7-a39e-5a192d2ec89e" />
-		<logger level="INFO" doc:name="payload"
-			doc:id="9523d075-3fb6-47a5-be74-ccbdc6e0dd01" message="#[payload]" />
+			doc:id="2d510897-ec24-4dea-884d-c7fecd728f9b" />
+		<logger level="INFO" doc:name="Payload"
+			doc:id="32522c5f-b160-42bd-b3dd-5aa7c1a4520b" message="#[payload]" />
 		<jms:consume doc:name="Consume-stg-mule"
-			doc:id="6a1afb70-08d8-43e3-af85-01daf44b88ea" config-ref="JMS_Config"
+			doc:id="71ff84a8-6b01-452e-a996-7b72400b11aa" config-ref="JMS_Config"
 			destination="stg-mule" maximumWait="30000" />
-		<logger level="INFO" doc:name="payload" doc:id="966bcc35-e65e-41b9-970c-1b9f909903f4" message="#[payload]" />
+		<logger level="INFO" doc:name="Payload" doc:id="7e76a303-942e-4c1b-9ccb-afb6f4cf680b" message="#[payload]" />
 		<ee:transform doc:name="Transform Message"
-			doc:id="ab80a7d9-6085-4cb8-bf78-49a7073e617e">
+			doc:id="1b65e1e6-8006-4033-ae30-58819adfe2cb">
 			<ee:message>
 				<ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -81,7 +81,8 @@ output application/json
     },
     "data": payload map (item) -> {
         "Numero da conta": item.account_number,
-        "Nome": item.name		
+        "Nome": item.name,
+        "Link": "http://localhost:8081/mule/accounts/" ++ item.account_number ++ "/balance"		
     }
 }]]></ee:set-payload>
 			</ee:message>
@@ -89,9 +90,9 @@ output application/json
 		<error-handler>
 			<on-error-continue enableNotifications="true"
 				logException="true" doc:name="On Error Continue"
-				doc:id="a58cc11b-9341-4110-ad8e-adf1a797241f" type="ANY">
-				<logger level="INFO" doc:name="error"
-					doc:id="9d6e4be1-f74c-48a3-b918-de28ef4c84bd" message="#[error]" />
+				doc:id="75f3f6d5-a44b-4d70-9f91-7b121bd28294" type="ANY">
+				<logger level="INFO" doc:name="Error"
+					doc:id="0f199302-2778-402c-8f08-519f2a0c39d2" message="#[error]" />
 			</on-error-continue>
 		</error-handler>
 	</flow>

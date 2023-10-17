@@ -20,7 +20,7 @@ http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/
 				<set-variable variableName="customErrorMessage"
 					value="#[error.description]" doc:name="customErrorMessage"/>
 				<logger level="ERROR"
-					message="#['Erro encontrado: ' ++ vars.customErrorMessage]" doc:name="customErrorMessage"/>
+					message="#['Erro encontrado: ' ++ vars.customErrorMessage]" doc:name="CustomErrorMessage"/>
 				<ee:transform>
 					<ee:message>
 						<ee:set-payload><![CDATA[%dw 2.0
@@ -39,7 +39,7 @@ output application/xml
 		<flow-ref doc:name="Validate Account Number"
 			doc:id="67159b70-0f7d-4196-8e8b-c6e969982af7"
 			name="validate-account-number" />
-		<logger level="INFO" doc:name="payload"
+		<logger level="INFO" doc:name="Payload"
 			doc:id="8ea26983-2a33-47eb-b6b2-a06bf95a4469" message="#[payload]" />
 		<db:select doc:name="Select Balance"
 			doc:id="273837f9-9ebc-470e-8d74-0097db8cc615"
@@ -107,12 +107,12 @@ output application/xml
 ]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<logger level="INFO" doc:name="payload" doc:id="32699133-ffc0-4d10-9b44-18e80af48579" message="#[payload]" />
+		<logger level="INFO" doc:name="Payload" doc:id="32699133-ffc0-4d10-9b44-18e80af48579" message="#[payload]" />
 		<error-handler>
 			<on-error-continue enableNotifications="true"
 				logException="true" doc:name="On Error Continue"
 				doc:id="3dc2a2ae-3b68-4dd0-911b-c257771584df" type="ANY">
-				<logger level="INFO" doc:name="error"
+				<logger level="INFO" doc:name="Error"
 					doc:id="b3d20208-73a3-4961-a6cf-494e12860c88" message="#[error]" />
 			</on-error-continue>
 		</error-handler>

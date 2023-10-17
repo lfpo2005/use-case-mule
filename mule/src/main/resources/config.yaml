@@ -1,5 +1,6 @@
 http:
   port: "8081"
+  host: "localhost"
   
 db:
   host: "jdbc:postgresql://localhost:5432/banco_mule"

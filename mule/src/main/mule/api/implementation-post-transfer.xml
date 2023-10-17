@@ -9,22 +9,22 @@ http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/cu
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
 http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd">
 	<flow name="implementation-post-transfer-main"
-		doc:id="2bb8e8ef-b79a-4d28-86d9-3161b5ef7e4a">
+		doc:id="410eb2b9-8a33-44ad-a33b-c41e3f5d2965">
 		<flow-ref doc:name="Flow Reference-Fron"
-			doc:id="0adeccba-db49-4cbd-836a-da5c7acb9a17"
+			doc:id="ba2fc54b-f349-4b43-b90d-48a1571020ff"
 			name="implementation-post-transfer-from" />
 		<flow-ref doc:name="Flow Reference-To"
-			doc:id="6215587a-b90e-4850-8078-4ecc091bee10"
+			doc:id="50f38237-3a2a-421c-a2f6-8e2de2e2dd5b"
 			name="implementation-post-transfer-to" />
-		<flow-ref doc:name="Flow Reference-Publish" doc:id="edb22b22-67a7-4bc0-99fc-8252cbb39e08" name="implementation-post-transfer-publish"/>
+		<flow-ref doc:name="Flow Reference-Publish" doc:id="8489e4e4-00bb-4733-8e8c-38f23459681c" name="implementation-post-transfer-publish"/>
 		<flow-ref doc:name="Flow Reference-Consume"
-			doc:id="16d8009e-e822-46f5-b105-2f17dcd096cf"
+			doc:id="17f2d30e-0b3c-43e3-9f62-2069150b0c51"
 			name="implementation-post-transfer-consume" />
 		<error-handler>
 			<on-error-propagate type="ANY">
 				<set-variable variableName="customErrorMessage"
 					value="#[error.description]" doc:name="customErrorMessage"/>
-				<set-variable value="404" doc:name="Set HTTP Status" doc:id="1da8a590-bf34-4698-bbc1-1369d0a78f60" variableName="httpStatus" />
+				<set-variable value="404" doc:name="Set HTTP Status" doc:id="6f1302f1-093d-4bb3-beb4-670c5116e5b4" variableName="httpStatus" />
 				<logger level="ERROR"
 					message="#['Erro encontrado: ' ++ vars.customErrorMessage]" doc:name="customErrorMessage"/>
 				<ee:transform>
@@ -45,6 +45,7 @@ output application/json
 		<logger level="INFO"
 			message="Transfer from account: #[vars.from_account_number] to account: #[vars.to_account_number] with amount: #[vars.amount]" doc:name="customMessage"/>
 
+		<flow-ref doc:name="Flow Reference" doc:id="daf7efda-f73d-45ec-a899-f76755320490" name="validate-amount"/>
 		<db:select config-ref="Database_Config" doc:name="Select from_account_number">
 			<db:sql><![CDATA[SELECT * FROM mule_account WHERE account_number = :from_account_number]]></db:sql>
 			<db:input-parameters><![CDATA[#[{
@@ -82,9 +83,9 @@ output application/json
 
 	</flow>
 	<flow name="implementation-post-transfer-to"
-		doc:id="56157ebc-ba1b-4290-957d-b8af8f8aebbf">
-		<logger level="INFO" doc:name="payload"
-			doc:id="08ca6443-697e-49fa-bfd6-f97e2e1c5a9e" message="#[payload]" />
+		doc:id="2d167c67-b0c6-4d87-908d-42450f17713e">
+		<logger level="INFO" doc:name="Payload"
+			doc:id="aa06db9c-e34a-4f16-95b0-1988c77cf122" message="#[payload]" />
 		<db:select config-ref="Database_Config" doc:name="Select to_account_number">
 			<db:sql><![CDATA[SELECT * FROM mule_account WHERE account_number = :to_account_number]]></db:sql>
 			<db:input-parameters><![CDATA[#[{
@@ -92,7 +93,7 @@ output application/json
 }]]]></db:input-parameters>
 		</db:select>
 		<choice doc:name="Choice"
-			doc:id="1595cbdd-50d4-47c3-9763-1942e7329df3">
+			doc:id="1e4e492a-31f4-4034-afbb-13a43dd2bdf4">
 			<when
 				expression="#[(payload[0].account_number default 0) as Number != null and (vars.to_account_number default 0) as Number == (payload[0].account_number default 0) as Number]">
 				<set-variable value="#[payload[0]]"
@@ -100,7 +101,7 @@ output application/json
 			</when>
 			<otherwise>
 				<raise-error doc:name="CUSTOM:INVALID_ACCOUNT"
-					doc:id="8b83d376-535a-4acd-b536-5800a533b2c7"
+					doc:id="8df9c2e8-46f1-4dba-ab3b-1a91b2bb785c"
 					type="CUSTOM:INVALID_ACCOUNT"
 					description="Número da conta de destino inválido." />
 			</otherwise>
@@ -110,7 +111,7 @@ output application/json
 				<logger level="ERROR"
 					message="Falha na execução da query. Possível conta inexistente." doc:name="CUSTOM:INVALID_ACCOUNT"/>
 				<ee:transform doc:name="Transform Message"
-					doc:id="62e44593-ef38-45be-98c3-e3a96006b3fc">
+					doc:id="7105c733-4120-4977-8dec-4aa17961104e">
 					<ee:message>
 						<ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -123,9 +124,9 @@ output application/json
 			</on-error-propagate>
 		</error-handler>
 	</flow>
-	<flow name="implementation-post-transfer-publish" doc:id="f6d2689b-bf22-4344-acd7-910391d46cd7" >
-		<logger level="INFO" doc:name="payload" doc:id="c12c79d3-2470-4f24-a508-67ed6fd9111f" message="payload"/>
-		<ee:transform doc:name="Transform Message" doc:id="9048a130-46f7-44f8-9e8a-5f2b04714c4b" >
+	<flow name="implementation-post-transfer-publish" doc:id="4830ddee-dc88-4344-90dc-d8bbeef7d2cd" >
+		<logger level="INFO" doc:name="Payload" doc:id="bf5b18bc-816e-4396-81fc-f7dfe719023c" message="payload"/>
+		<ee:transform doc:name="Transform Message" doc:id="369f0c93-858f-47ad-9b9c-23740cf60d37" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
@@ -154,14 +155,14 @@ output application/json
 ]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<jms:publish doc:name="Publish-stg-transfer" doc:id="8c9d02cf-e94a-4645-8917-57245f4b6f7c" config-ref="JMS_Config" destination="stg-transfer"/>
+		<jms:publish doc:name="Publish-stg-transfer" doc:id="9f3999cc-2a42-45e2-9fb1-e65e750acbe5" config-ref="JMS_Config" destination="stg-transfer"/>
 	</flow>
 	<flow name="implementation-post-transfer-consume"
-		doc:id="ed84f3a0-c289-4107-8fbc-6e6c85169649">
-		<set-payload value="#[null]" doc:name="null" doc:id="04588d48-e31e-41b2-9842-2aeeb673556e" />
-		<jms:consume doc:name="Consume-stg-transfer" doc:id="780779f7-1734-40f4-ae59-8811e0203658" config-ref="JMS_Config" destination="stg-transfer" maximumWait="30000"/>
-		<set-variable value="#[payload]" doc:name="newData" doc:id="69a83f90-a9f7-4948-ba27-b9f70a865911" variableName="newData"/>
-		<logger level="INFO" doc:name="payload" doc:id="bcc6348d-ccdd-45b1-b142-f398424f067b" message="#[payload]"/>
+		doc:id="310c7195-bfc5-4969-a2b7-6002c8ebd492">
+		<set-payload value="#[null]" doc:name="null" doc:id="12d7bf21-d3cd-4c20-80cf-ee059eec4072" />
+		<jms:consume doc:name="Consume-stg-transfer" doc:id="c8820b07-7c7e-4d6e-9e89-f7c2a3bdd6e8" config-ref="JMS_Config" destination="stg-transfer" maximumWait="30000"/>
+		<set-variable value="#[payload]" doc:name="newData" doc:id="c6238447-047d-4a51-b69c-c2a8718d7054" variableName="newData"/>
+		<logger level="INFO" doc:name="Payload" doc:id="00fb43f1-9a3d-4799-985c-ad8e249fb0d0" message="#[payload]"/>
 		<choice>
 			<when
 				expression="#[(vars.amount != null) and (vars.fromAccountInfo.balance != null) and (vars.amount &gt; 0) and (vars.amount &lt;= vars.fromAccountInfo.balance)]">
@@ -205,7 +206,7 @@ output application/json
 }]]]></db:input-parameters>
 				</db:insert>
 				<ee:transform doc:name="Transform Message"
-					doc:id="e5296340-5f50-4f38-baad-4eed70b099a2">
+					doc:id="66096158-2264-4b2d-9b4b-f2c537fb9a56">
 					<ee:message>
 						<ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -215,12 +216,12 @@ output application/json
 }]]></ee:set-payload>
 					</ee:message>
 				</ee:transform>
-				<logger level="INFO" doc:name="payload" doc:id="0cdef7a8-64cc-41fc-ba5b-dfbb941e4f2b" message="#[payload]" />
+				<logger level="INFO" doc:name="Payload" doc:id="a2aa6ce1-c91d-4112-b960-6654317b58eb" message="#[payload]" />
 			
 </when>
 			<otherwise>
 				<ee:transform doc:name="Transform Message"
-					doc:id="a6a36b50-ce7d-4933-9c79-cdeb37bbad64">
+					doc:id="95dc9509-9062-4f55-84f2-9e9fc59f1e0e">
 					<ee:message>
 						<ee:set-payload><![CDATA[%dw 2.0
 output application/json
@@ -230,7 +231,7 @@ output application/json
 }]]></ee:set-payload>
 					</ee:message>
 				</ee:transform>
-				<logger level="INFO" doc:name="payload" doc:id="bf0173e7-8b17-4e13-b030-aaaf39e68ad6" message="#[payload]" />
+				<logger level="INFO" doc:name="Payload" doc:id="e61fcd47-e495-4e1c-99fd-4683778a8802" message="#[payload]" />
 			
 </otherwise>
 		</choice>

@@ -23,7 +23,7 @@ http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/
 				<set-variable variableName="customErrorMessage"
 					value="#[error.description]" doc:name="customErrorMessage"/>
 				<logger level="ERROR"
-					message="#['Erro encontrado: ' ++ vars.customErrorMessage]" doc:name="customErrorMessage"/>
+					message="#['Erro encontrado: ' ++ vars.customErrorMessage]" doc:name="CustomErrorMessage"/>
 				<ee:transform>
 					<ee:message>
 						<ee:set-payload><![CDATA[%dw 2.0
@@ -98,16 +98,16 @@ output application/json
 		<set-payload value="#[null]" doc:name="null"
 			doc:id="42da8259-dd86-414a-b4cf-300adf20df9f" />
 		<remove-variable doc:name="Initialize Variable as Null" doc:id="69297446-6222-4b29-991d-b089ab5d1bc5" variableName="newName"/>
-		<logger level="INFO" doc:name="payload"
+		<logger level="INFO" doc:name="Payload"
 			doc:id="db2e243c-8021-478e-a681-b1995fead87e" message="#[payload]" />
 		<jms:consume doc:name="Consume-stg-created-account"
 			doc:id="03882a0c-559f-457a-8009-f5ddd924e030" config-ref="JMS_Config"
 			destination="stg-created-account" maximumWait="30000" />
-		<logger level="INFO" doc:name="payload"
+		<logger level="INFO" doc:name="Payload"
 			doc:id="df156f9a-a528-4166-a365-2bca32f34b86" message="#[payload]" />
 		<set-variable value="#[payload]" doc:name="Set newName"
 			doc:id="fc394813-0495-44df-b2dd-993aac3e81e8" variableName="newName" />
-		<logger level="INFO" doc:name="payload"
+		<logger level="INFO" doc:name="Payload"
 			doc:id="1f39f364-0b5b-494e-ba4d-c64c0b866f31" message="#[payload]" />
 		<db:insert doc:name="Insert"
 			doc:id="c39b822a-4ee1-4033-b7fe-f11de3e6260f"
@@ -138,10 +138,10 @@ payload map (item) -> {
    ]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<logger level="INFO" doc:name="payload" doc:id="05177112-83c8-41ab-a81c-ac420ae9e7c8" message="#[payload]" />
+		<logger level="INFO" doc:name="Payload" doc:id="05177112-83c8-41ab-a81c-ac420ae9e7c8" message="#[payload]" />
 		<error-handler >
 			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="50b300f6-7e14-40d6-b565-7cd1142bf317" type="ANY" >
-				<logger level="INFO" doc:name="error" doc:id="7546967f-b02f-49bd-82d0-e91f567ed962" message="#[error]" />
+				<logger level="INFO" doc:name="Error" doc:id="7546967f-b02f-49bd-82d0-e91f567ed962" message="#[error]" />
 			</on-error-continue>
 		</error-handler>
 	
