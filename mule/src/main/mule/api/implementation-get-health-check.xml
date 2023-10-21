@@ -21,6 +21,7 @@ output application/json
 {
     api_rest: {
         nome: "Use case Mulesoft",
+        'versão': "v2",
         data: now() as Date {format: "dd/MM/yyyy"} as String {format: "MMM dd, yyyy"},
         horas: now() as String {format: "HH:mm:ss"}
     },

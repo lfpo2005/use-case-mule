@@ -14,7 +14,7 @@ http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/cu
 
 	<flow name="use-case-mule-main">
 		<http:listener
-			path="/mule/*" config-ref="httpListenerConfig">
+			path="/mule/v2/*" config-ref="httpListenerConfig">
 			<http:response
 				statusCode="#[vars.httpStatus default 200]">
 				<http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
