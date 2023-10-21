@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <title>project-mule · Anypoint Studio Documentation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Le styles -->
+    <link href="assets/bootstrap.css" rel="stylesheet">
+    <link href="assets/bootstrap-responsive.css" rel="stylesheet">
+    <link href="assets/docs.css" rel="stylesheet">
+    <link href="assets/prettify.css" rel="stylesheet">
+    <link href="assets/scroller.css" rel="stylesheet">
+
+  </head>
+
+  <body data-twttr-rendered="true" data-spy="scroll" data-target=".bs-docs-sidebar"><iframe style="display: none;" id="rufous-sandbox" name="uid13460061790411"></iframe>
+
+    <!-- Navbar
+    ================================================== -->
+
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container-fluid">
+          <p class="navbar-text pull-right">
+              <a href="https://www.mulesoft.com" class="navbar-link">
+                <img src="./assets/images/mulesoft-logo-final.png" alt="MuleSoft" id="mulesoftlogo">
+              </a>
+          </p>
+          <div class="scroller scroller-left"><img src="./assets/icons/glyphicons_chevron-left.png" alt="scrollLeft"></div>
+          <div class="scroller scroller-right"><img src="./assets/icons/glyphicons_chevron-right.png" alt="scrollRight"></div>
+          <div class="wrapper">
+            <ul class="nav nav-tabs list" id="myTab">
+                    <li><a href="./index.html">implementation-health-check</a></li>
+                      <li><a href="./implementation-post-withdraw.html">implementation-post-withdraw</a></li>
+                      <li><a href="./implementation-post-created-account.html">implementation-post-created-account</a></li>
+                      <li><a href="./interface.html">interface</a></li>
+                      <li class="active"><a href="./implementation-get-history.html">implementation-get-history</a></li>
+                      <li><a href="./implementation-post-transfer.html">implementation-post-transfer</a></li>
+                      <li><a href="./implementation-get-accounts.html">implementation-get-accounts</a></li>
+                      <li><a href="./implementation-get-balance.html">implementation-get-balance</a></li>
+                      <li><a href="./global.html">global</a></li>
+                      <li><a href="./implementation-post-deposit.html">implementation-post-deposit</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+
+  <header class="jumbotron subhead" id="overview">
+    <div class="container">
+      <h1>project-mule</h1>
+    </div>
+  </header>
+
+  <div class="container">
+
+    <!-- Docs nav
+    ================================================== -->
+    <div class="row">
+      <div class="span3 bs-docs-sidebar">
+        <ul class="nav nav-list bs-docs-sidenav affix">
+          <li class="nav-header">Flows</li>
+            <li data-toggle="collapse" data-target="#_implementation_get_history_mainNav"><a href="#_implementation_get_history_main"><i class="icon-chevron-right"></i> implementation-get-history-main</a>
+            </li>
+            <div id="_implementation_get_history_mainNav" class="accordion-body collapse" style="height: 0px;">
+              <div class="accordion-inner">
+                <ul>
+                </ul>
+              </div>
+            </div>
+            <li data-toggle="collapse" data-target="#_implementation_get_history_selectNav"><a href="#_implementation_get_history_select"><i class="icon-chevron-right"></i> implementation-get-history-select</a>
+            </li>
+            <div id="_implementation_get_history_selectNav" class="accordion-body collapse" style="height: 0px;">
+              <div class="accordion-inner">
+                <ul>
+                </ul>
+              </div>
+            </div>
+        </ul>
+      </div>
+      <div class="span9">
+
+        <!-- Elements and their descriptions
+        ================================================== -->
+        <div style="max-height: 640px;width:100%;overflow:auto;">
+            <img src="img/implementation_get_history.png" usemap="#mFlowMap" alt="Mule Configuration Image">
+            <map name="mFlowMap">
+          </map>
+        </div>
+        <!--Mule configuration xml code-->
+        <div class="accordion-heading">
+          <a class="accordion-toggle" data-toggle="collapse" href="#collapseMuleConfiguration">
+            Show Mule Configuration XML code...
+          </a>
+        </div>
+        <div id="collapseMuleConfiguration" class="accordion-body collapse" style="height: 0px;">
+          <div class="accordion-inner">
+              <pre><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+
+&lt;mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd"&gt;
+    &lt;flow name="implementation-get-history-main" doc:id="e018119f-75a3-4ba2-b1e4-d2968827e476"&gt; 
+        &lt;flow-ref doc:name="implementation-get-history-select" doc:id="dbe1737f-9a89-4ce5-bc43-f70842603b4a" name="implementation-get-history-select"/&gt;  
+        &lt;error-handler&gt; 
+            &lt;on-error-propagate type="ANY"&gt; 
+                &lt;set-variable variableName="customErrorMessage" value="#[error.description]" doc:name="customErrorMessage"/&gt;  
+                &lt;logger level="ERROR" message="#['Erro encontrado: ' ++ vars.customErrorMessage]" doc:name="CustomErrorMessage"/&gt;  
+                &lt;ee:transform&gt; 
+                    &lt;ee:message&gt; 
+                        &lt;ee:set-payload&gt;&lt;![CDATA[%dw 2.0
+
+output application/json
+
+---
+
+{
+
+    'Mensagem': vars.customErrorMessage default 'Erro desconhecido'
+
+}]]&gt;    &lt;/ee:set-payload&gt;
+                    &lt;/ee:message&gt; 
+                &lt;/ee:transform&gt; 
+            &lt;/on-error-propagate&gt; 
+        &lt;/error-handler&gt; 
+    &lt;/flow&gt;  
+    &lt;flow name="implementation-get-history-select" doc:id="4930464d-7003-4d04-a036-d26292b60943"&gt; 
+        &lt;logger level="INFO" message="#[payload]" doc:name="Payload"/&gt;  
+        &lt;flow-ref doc:name="Validate Account Number" doc:id="c82f3915-e285-479a-8b1b-4a411c9c0132" name="validate-account-number"/&gt;  
+        &lt;db:select doc:name="Check if extract already generated" config-ref="Database_Config"&gt; 
+            &lt;db:sql&gt;&lt;![CDATA[SELECT last_query_date 
+
+FROM queries_extracts
+
+WHERE account_number = :account_number
+
+AND EXTRACT(MONTH FROM last_query_date) = EXTRACT(MONTH FROM CURRENT_DATE)
+
+AND EXTRACT(YEAR FROM last_query_date) = EXTRACT(YEAR FROM CURRENT_DATE);
+
+]]&gt; &lt;/db:sql&gt;
+            &lt;db:input-parameters&gt;&lt;![CDATA[#[{
+
+    account_number: vars.account_number,
+
+    currentMonth: vars.currentMonth,
+
+    currentYear: vars.currentYear
+
+}]]]&gt;   &lt;/db:input-parameters&gt;
+        &lt;/db:select&gt;  
+        &lt;ee:transform doc:name="Set Condition Variable"&gt; 
+            &lt;ee:variables&gt; 
+                &lt;ee:set-variable variableName="isPayloadNotEmpty"&gt;&lt;![CDATA[ payload != null and sizeOf(payload) &gt; 0
+
+        ]]&gt; &lt;/ee:set-variable&gt;
+                &lt;ee:set-variable variableName="isDateValid"&gt;&lt;![CDATA[if (vars.startDate as Date {format: "yyyy-MM-dd"}  &lt; (now() - |P31D|)) false else true]]&gt;  &lt;/ee:set-variable&gt; 
+            &lt;/ee:variables&gt; 
+        &lt;/ee:transform&gt;  
+        &lt;choice doc:name="Choice" doc:id="6c0e392e-1da1-4c9f-a76b-3437612ee6b8"&gt; 
+            &lt;when expression="#[vars.isDateValid == false]"&gt; 
+                &lt;ee:transform doc:name="Transform Message" doc:id="006a6884-0aba-47b3-b6c5-bfc5251f7dc3"&gt; 
+                    &lt;ee:message&gt; 
+                        &lt;ee:set-payload&gt;&lt;![CDATA[%dw 2.0
+
+output application/json
+
+---
+
+{
+
+    "status": "erro",
+
+    "mensagem": "O intervalo de datas fornecido não é válido. Por favor, escolha um intervalo dentro do último 30 dias."
+
+}]]&gt;    &lt;/ee:set-payload&gt;
+                    &lt;/ee:message&gt; 
+                &lt;/ee:transform&gt;  
+                &lt;logger level="INFO" doc:name="Payload" doc:id="42d88d41-f58f-49a4-83ee-b0a022291337" message="#[payload]"/&gt; 
+            &lt;/when&gt;  
+            &lt;when expression="#[vars.isPayloadNotEmpty]"&gt; 
+                &lt;flow-ref doc:name="implementation-get-balance-main" doc:id="582f8709-9ec3-4117-8082-73a762980b85" name="implementation-get-balance-main"/&gt;  
+                &lt;set-variable value="#[payload]" doc:name="getBalance" doc:id="248a0c25-dba0-4b8c-b2d8-17236b67d187" variableName="getBalance"/&gt;  
+                &lt;set-variable value="404" doc:name="Set HTTP Status" doc:id="031b0eea-a280-4930-bc96-58760428a4af" variableName="httpStatus"/&gt;  
+                &lt;db:select doc:name="Select account_number" doc:id="f0460df4-203b-462a-8119-354f8f66934d" config-ref="Database_Config"&gt; 
+                    &lt;db:sql&gt;&lt;![CDATA[   SELECT 
+
+    *
+
+  FROM queries_extracts
+
+   WHERE account_number = :account_number]]&gt;    &lt;/db:sql&gt;
+                    &lt;db:input-parameters&gt;&lt;![CDATA[#[account_number: vars.account_number]]]&gt; &lt;/db:input-parameters&gt; 
+                &lt;/db:select&gt;  
+                &lt;ee:transform doc:name="Transform Message" doc:id="cce77b79-4109-4be5-970f-54d34e26bf35"&gt; 
+                    &lt;ee:message&gt; 
+                        &lt;ee:set-payload&gt;&lt;![CDATA[%dw 2.0
+
+output application/json
+
+---
+
+{   "Data": vars.getBalance.balances.item.Data,
+
+    "Saldo": vars.getBalance.balances.item.Saldo,
+
+    "Numero Conta": vars.getBalance.balances.item.NumeroConta,
+
+    "Extrato":{
+
+        "status": "erro",
+
+        "mensagem": "Ops! Não é permitido fazer mais de um extrato por mês.\nSó poderá fazer uma nova consulta a partir do dia: " ++ (payload.last_query_date[0] + |P30D|) as String {format: "dd-MM-yyyy"}
+
+    }
+
+}
+
+]]&gt; &lt;/ee:set-payload&gt;
+                    &lt;/ee:message&gt; 
+                &lt;/ee:transform&gt;  
+                &lt;logger level="INFO" doc:name="Payload" doc:id="133d260a-8552-4332-a4b7-f1c238a3250c" message="#[payload]"/&gt; 
+            &lt;/when&gt;  
+            &lt;otherwise&gt; 
+                &lt;db:select doc:name="Get Accont-Id" doc:id="bf387acc-194e-4b67-ac01-4a53d161e3ec" config-ref="Database_Config"&gt; 
+                    &lt;db:sql&gt;&lt;![CDATA[select account_id from mule_account where account_number = :account_number]]&gt;  &lt;/db:sql&gt;  
+                    &lt;db:input-parameters&gt;&lt;![CDATA[#[{
+
+    account_number: vars.account_number
+
+}]]]&gt;   &lt;/db:input-parameters&gt;
+                &lt;/db:select&gt;  
+                &lt;set-variable value="#[payload.account_id]" doc:name="account_id" doc:id="62d6a33d-c079-452a-810d-cff9b33291ba" variableName="account_id"/&gt;  
+                &lt;db:select doc:name="Get History" doc:id="4027e348-43b3-4c53-b542-fb52362825fa" config-ref="Database_Config"&gt; 
+                    &lt;db:sql&gt;&lt;![CDATA[SELECT
+
+    t.*,
+
+    a.name as to_account_name,
+
+    a.balance,
+
+    a.account_number,
+
+    CASE
+
+        WHEN t.types = 'DEPOSIT' THEN a.name
+
+        WHEN t.types = 'WITHDRAWAL' THEN a.name
+
+        ELSE f.name
+
+    END as from_account_name
+
+FROM mule_transaction t
+
+    JOIN mule_account a ON t.account_id = a.account_id
+
+    LEFT JOIN mule_account f ON t.from_account_id = f.account_id
+
+WHERE t.account_id = :account_id
+
+    AND DATE(t.date_transaction) BETWEEN :startDate AND :endDate
+
+ORDER BY t.date_transaction DESC;
+
+]]&gt; &lt;/db:sql&gt;
+                    &lt;db:input-parameters&gt;&lt;![CDATA[#[{
+
+    account_id: payload[0].account_id,
+
+    startDate: vars.startDate,
+
+    endDate: vars.endDate
+
+}]]]&gt;   &lt;/db:input-parameters&gt;
+                &lt;/db:select&gt;  
+                &lt;set-variable value="#[payload]" doc:name="getHistory" doc:id="96ae3d85-11d4-4a3f-a0dc-26f474f63e7d" variableName="getHistory"/&gt;  
+                &lt;logger level="INFO" doc:name="Payload" doc:id="9aa82989-3ddb-40a4-9ea8-7f814ef89532" message="#[payload]"/&gt;  
+                &lt;choice doc:name="Check if Payload is Empty"&gt; 
+                    &lt;when expression="#[payload == null or sizeOf(payload) == 0]"&gt; 
+                        &lt;ee:transform doc:name="Set Payload for Empty Result"&gt; 
+                            &lt;ee:message&gt; 
+                                &lt;ee:set-payload&gt;&lt;![CDATA[%dw 2.0
+
+output application/json
+
+---
+
+{
+
+    "status": "info",
+
+    "message": "Não há transações no período especificado."
+
+}
+
+]]&gt; &lt;/ee:set-payload&gt;
+                            &lt;/ee:message&gt; 
+                        &lt;/ee:transform&gt;  
+                        &lt;logger level="INFO" doc:name="Payload" doc:id="ac4c10eb-e1d1-4692-8958-f6cea6e3cb02" message="#[payload]"/&gt; 
+                    &lt;/when&gt;  
+                    &lt;otherwise&gt; 
+                        &lt;!-- Your existing logic for when payload is not empty --&gt;  
+                        &lt;db:insert doc:name="Insert or Update Last Query Date" config-ref="Database_Config"&gt; 
+                            &lt;db:sql&gt;&lt;![CDATA[INSERT INTO queries_extracts (account_number, last_query_date)
+
+VALUES (:account_number, CURRENT_DATE)
+
+ON CONFLICT (account_number) DO UPDATE SET last_query_date = CURRENT_DATE;
+
+]]&gt;     &lt;/db:sql&gt;
+                            &lt;db:input-parameters&gt;&lt;![CDATA[#[{
+
+   account_number: vars.account_number,
+
+}]]]&gt;   &lt;/db:input-parameters&gt;
+                        &lt;/db:insert&gt;  
+                        &lt;ee:transform doc:name="Transform Message" doc:id="301266c9-34b0-4a3d-a14a-499eb9fef2ef"&gt; 
+                            &lt;ee:message&gt; 
+                                &lt;ee:set-payload&gt;&lt;![CDATA[%dw 2.0
+
+output application/json
+
+---
+
+{
+
+    "Numero da conta": vars.getHistory[0].account_number,
+
+    "Nome": vars.getHistory[0].to_account_name,
+
+    "Saldo": vars.getHistory[0].balance,
+
+    "Data": now() as Date {format: "dd/MM/yyyy"} as String {format: "dd MMM, yyyy"},
+
+    "Transações": vars.getHistory map (item) -&gt; {
+
+        "Data": item.date_transaction as String {format: "dd-MM-yyyy"},
+
+        "Horas": item.date_transaction as String {format: "HH:mm:ss"},
+
+        "Tipo de transação": item.types,
+
+        "Valor": item.amount,
+
+        "De": item.from_account_name
+
+    }filterObject (value, key) -&gt; value != null
+
+}]]&gt;    &lt;/ee:set-payload&gt;
+                            &lt;/ee:message&gt; 
+                        &lt;/ee:transform&gt;  
+                        &lt;logger level="INFO" doc:name="Payload" doc:id="3597d00a-38fe-414d-acf6-24312079cdc6" message="#[payload]"/&gt; 
+                    &lt;/otherwise&gt; 
+                &lt;/choice&gt; 
+            &lt;/otherwise&gt; 
+        &lt;/choice&gt; 
+    &lt;/flow&gt; 
+&lt;/mule&gt;
+</code></pre>
+
+          </div>
+        </div>
+
+          <section id="_implementation_get_history_main">
+            <div class="page-header">
+                <h1>implementation-get-history-main <img src="./assets/icons/flow.png"></h1>
+            </div>
+            <div class="documentation-indented" style="height:100%;width:100%;overflow:auto;">
+                <img src="img/implementation_get_history_main.png" usemap="#flowMapimplementation_get_history_main" alt="implementation_get_history_main image">
+                <map name="flowMapimplementation_get_history_main">
+                </map>
+            </div>
+            <div class="documentation-indented">
+              <div class="accordion-heading">
+                <a class="accordion-toggle" data-toggle="collapse" href="#_implementation_get_history_mainxml_code">
+                  Show configuration XML code of the flow implementation-get-history-main...
+                </a>
+              </div>
+              <div id="_implementation_get_history_mainxml_code" class="accordion-body collapse" style="height: 0px;">
+                <div class="accordion-inner">
+                    <pre><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+
+&lt;flow name="implementation-get-history-main" doc:id="e018119f-75a3-4ba2-b1e4-d2968827e476"&gt;  
+    &lt;flow-ref doc:name="implementation-get-history-select" doc:id="dbe1737f-9a89-4ce5-bc43-f70842603b4a" name="implementation-get-history-select"/&gt;  
+    &lt;error-handler&gt; 
+        &lt;on-error-propagate type="ANY"&gt; 
+            &lt;set-variable variableName="customErrorMessage" value="#[error.description]" doc:name="customErrorMessage"/&gt;  
+            &lt;logger level="ERROR" message="#['Erro encontrado: ' ++ vars.customErrorMessage]" doc:name="CustomErrorMessage"/&gt;  
+            &lt;ee:transform &gt;  
+                &lt;ee:message&gt; 
+                    &lt;ee:set-payload&gt;&lt;![CDATA[%dw 2.0
+
+output application/json
+
+---
+
+{
+
+    'Mensagem': vars.customErrorMessage default 'Erro desconhecido'
+
+}]]&gt;    &lt;/ee:set-payload&gt;
+                &lt;/ee:message&gt; 
+            &lt;/ee:transform&gt; 
+        &lt;/on-error-propagate&gt; 
+    &lt;/error-handler&gt; 
+&lt;/flow&gt;
+</code></pre>
+
+                </div>
+              </div>
+              <p></p>
+            </div>
+          </section>
+          <section id="_implementation_get_history_select">
+            <div class="page-header">
+                <h1>implementation-get-history-select <img src="./assets/icons/flow.png"></h1>
+            </div>
+            <div class="documentation-indented" style="height:100%;width:100%;overflow:auto;">
+                <img src="img/implementation_get_history_select.png" usemap="#flowMapimplementation_get_history_select" alt="implementation_get_history_select image">
+                <map name="flowMapimplementation_get_history_select">
+                </map>
+            </div>
+            <div class="documentation-indented">
+              <div class="accordion-heading">
+                <a class="accordion-toggle" data-toggle="collapse" href="#_implementation_get_history_selectxml_code">
+                  Show configuration XML code of the flow implementation-get-history-select...
+                </a>
+              </div>
+              <div id="_implementation_get_history_selectxml_code" class="accordion-body collapse" style="height: 0px;">
+                <div class="accordion-inner">
+                    <pre><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+
+&lt;flow name="implementation-get-history-select" doc:id="4930464d-7003-4d04-a036-d26292b60943"&gt;  
+    &lt;logger level="INFO" message="#[payload]" doc:name="Payload"/&gt;  
+    &lt;flow-ref doc:name="Validate Account Number" doc:id="c82f3915-e285-479a-8b1b-4a411c9c0132" name="validate-account-number"/&gt;  
+    &lt;db:select doc:name="Check if extract already generated" config-ref="Database_Config"&gt;  
+        &lt;db:sql&gt;&lt;![CDATA[SELECT last_query_date 
+
+FROM queries_extracts
+
+WHERE account_number = :account_number
+
+AND EXTRACT(MONTH FROM last_query_date) = EXTRACT(MONTH FROM CURRENT_DATE)
+
+AND EXTRACT(YEAR FROM last_query_date) = EXTRACT(YEAR FROM CURRENT_DATE);
+
+]]&gt; &lt;/db:sql&gt;
+        &lt;db:input-parameters&gt;&lt;![CDATA[#[{
+
+    account_number: vars.account_number,
+
+    currentMonth: vars.currentMonth,
+
+    currentYear: vars.currentYear
+
+}]]]&gt;   &lt;/db:input-parameters&gt;
+    &lt;/db:select&gt;  
+    &lt;ee:transform doc:name="Set Condition Variable"&gt;  
+        &lt;ee:variables&gt; 
+            &lt;ee:set-variable variableName="isPayloadNotEmpty"&gt;&lt;![CDATA[ payload != null and sizeOf(payload) &gt; 0
+
+        ]]&gt; &lt;/ee:set-variable&gt;
+            &lt;ee:set-variable variableName="isDateValid"&gt;&lt;![CDATA[if (vars.startDate as Date {format: "yyyy-MM-dd"}  &lt; (now() - |P31D|)) false else true]]&gt;  &lt;/ee:set-variable&gt; 
+        &lt;/ee:variables&gt; 
+    &lt;/ee:transform&gt;  
+    &lt;choice doc:name="Choice" doc:id="6c0e392e-1da1-4c9f-a76b-3437612ee6b8"&gt; 
+        &lt;when expression="#[vars.isDateValid == false]"&gt; 
+            &lt;ee:transform doc:name="Transform Message" doc:id="006a6884-0aba-47b3-b6c5-bfc5251f7dc3"&gt;  
+                &lt;ee:message&gt; 
+                    &lt;ee:set-payload&gt;&lt;![CDATA[%dw 2.0
+
+output application/json
+
+---
+
+{
+
+    "status": "erro",
+
+    "mensagem": "O intervalo de datas fornecido não é válido. Por favor, escolha um intervalo dentro do último 30 dias."
+
+}]]&gt;    &lt;/ee:set-payload&gt;
+                &lt;/ee:message&gt; 
+            &lt;/ee:transform&gt;  
+            &lt;logger level="INFO" doc:name="Payload" doc:id="42d88d41-f58f-49a4-83ee-b0a022291337" message="#[payload]"/&gt; 
+        &lt;/when&gt;  
+        &lt;when expression="#[vars.isPayloadNotEmpty]"&gt; 
+            &lt;flow-ref doc:name="implementation-get-balance-main" doc:id="582f8709-9ec3-4117-8082-73a762980b85" name="implementation-get-balance-main"/&gt;  
+            &lt;set-variable value="#[payload]" doc:name="getBalance" doc:id="248a0c25-dba0-4b8c-b2d8-17236b67d187" variableName="getBalance"/&gt;  
+            &lt;set-variable value="404" doc:name="Set HTTP Status" doc:id="031b0eea-a280-4930-bc96-58760428a4af" variableName="httpStatus"/&gt;  
+            &lt;db:select doc:name="Select account_number" doc:id="f0460df4-203b-462a-8119-354f8f66934d" config-ref="Database_Config"&gt;  
+                &lt;db:sql&gt;&lt;![CDATA[   SELECT 
+
+    *
+
+  FROM queries_extracts
+
+   WHERE account_number = :account_number]]&gt;    &lt;/db:sql&gt;
+                &lt;db:input-parameters&gt;&lt;![CDATA[#[account_number: vars.account_number]]]&gt; &lt;/db:input-parameters&gt; 
+            &lt;/db:select&gt;  
+            &lt;ee:transform doc:name="Transform Message" doc:id="cce77b79-4109-4be5-970f-54d34e26bf35"&gt;  
+                &lt;ee:message&gt; 
+                    &lt;ee:set-payload&gt;&lt;![CDATA[%dw 2.0
+
+output application/json
+
+---
+
+{   "Data": vars.getBalance.balances.item.Data,
+
+    "Saldo": vars.getBalance.balances.item.Saldo,
+
+    "Numero Conta": vars.getBalance.balances.item.NumeroConta,
+
+    "Extrato":{
+
+        "status": "erro",
+
+        "mensagem": "Ops! Não é permitido fazer mais de um extrato por mês.\nSó poderá fazer uma nova consulta a partir do dia: " ++ (payload.last_query_date[0] + |P30D|) as String {format: "dd-MM-yyyy"}
+
+    }
+
+}
+
+]]&gt; &lt;/ee:set-payload&gt;
+                &lt;/ee:message&gt; 
+            &lt;/ee:transform&gt;  
+            &lt;logger level="INFO" doc:name="Payload" doc:id="133d260a-8552-4332-a4b7-f1c238a3250c" message="#[payload]"/&gt; 
+        &lt;/when&gt;  
+        &lt;otherwise&gt; 
+            &lt;db:select doc:name="Get Accont-Id" doc:id="bf387acc-194e-4b67-ac01-4a53d161e3ec" config-ref="Database_Config"&gt;  
+                &lt;db:sql&gt;&lt;![CDATA[select account_id from mule_account where account_number = :account_number]]&gt;  &lt;/db:sql&gt;  
+                &lt;db:input-parameters&gt;&lt;![CDATA[#[{
+
+    account_number: vars.account_number
+
+}]]]&gt;   &lt;/db:input-parameters&gt;
+            &lt;/db:select&gt;  
+            &lt;set-variable value="#[payload.account_id]" doc:name="account_id" doc:id="62d6a33d-c079-452a-810d-cff9b33291ba" variableName="account_id"/&gt;  
+            &lt;db:select doc:name="Get History" doc:id="4027e348-43b3-4c53-b542-fb52362825fa" config-ref="Database_Config"&gt;  
+                &lt;db:sql&gt;&lt;![CDATA[SELECT
+
+    t.*,
+
+    a.name as to_account_name,
+
+    a.balance,
+
+    a.account_number,
+
+    CASE
+
+        WHEN t.types = 'DEPOSIT' THEN a.name
+
+        WHEN t.types = 'WITHDRAWAL' THEN a.name
+
+        ELSE f.name
+
+    END as from_account_name
+
+FROM mule_transaction t
+
+    JOIN mule_account a ON t.account_id = a.account_id
+
+    LEFT JOIN mule_account f ON t.from_account_id = f.account_id
+
+WHERE t.account_id = :account_id
+
+    AND DATE(t.date_transaction) BETWEEN :startDate AND :endDate
+
+ORDER BY t.date_transaction DESC;
+
+]]&gt; &lt;/db:sql&gt;
+                &lt;db:input-parameters&gt;&lt;![CDATA[#[{
+
+    account_id: payload[0].account_id,
+
+    startDate: vars.startDate,
+
+    endDate: vars.endDate
+
+}]]]&gt;   &lt;/db:input-parameters&gt;
+            &lt;/db:select&gt;  
+            &lt;set-variable value="#[payload]" doc:name="getHistory" doc:id="96ae3d85-11d4-4a3f-a0dc-26f474f63e7d" variableName="getHistory"/&gt;  
+            &lt;logger level="INFO" doc:name="Payload" doc:id="9aa82989-3ddb-40a4-9ea8-7f814ef89532" message="#[payload]"/&gt;  
+            &lt;choice doc:name="Check if Payload is Empty"&gt; 
+                &lt;when expression="#[payload == null or sizeOf(payload) == 0]"&gt; 
+                    &lt;ee:transform doc:name="Set Payload for Empty Result"&gt;  
+                        &lt;ee:message&gt; 
+                            &lt;ee:set-payload&gt;&lt;![CDATA[%dw 2.0
+
+output application/json
+
+---
+
+{
+
+    "status": "info",
+
+    "message": "Não há transações no período especificado."
+
+}
+
+]]&gt; &lt;/ee:set-payload&gt;
+                        &lt;/ee:message&gt; 
+                    &lt;/ee:transform&gt;  
+                    &lt;logger level="INFO" doc:name="Payload" doc:id="ac4c10eb-e1d1-4692-8958-f6cea6e3cb02" message="#[payload]"/&gt; 
+                &lt;/when&gt;  
+                &lt;otherwise&gt; 
+                    &lt;!-- Your existing logic for when payload is not empty --&gt;  
+                    &lt;db:insert doc:name="Insert or Update Last Query Date" config-ref="Database_Config"&gt;  
+                        &lt;db:sql&gt;&lt;![CDATA[INSERT INTO queries_extracts (account_number, last_query_date)
+
+VALUES (:account_number, CURRENT_DATE)
+
+ON CONFLICT (account_number) DO UPDATE SET last_query_date = CURRENT_DATE;
+
+]]&gt;     &lt;/db:sql&gt;
+                        &lt;db:input-parameters&gt;&lt;![CDATA[#[{
+
+   account_number: vars.account_number,
+
+}]]]&gt;   &lt;/db:input-parameters&gt;
+                    &lt;/db:insert&gt;  
+                    &lt;ee:transform doc:name="Transform Message" doc:id="301266c9-34b0-4a3d-a14a-499eb9fef2ef"&gt;  
+                        &lt;ee:message&gt; 
+                            &lt;ee:set-payload&gt;&lt;![CDATA[%dw 2.0
+
+output application/json
+
+---
+
+{
+
+    "Numero da conta": vars.getHistory[0].account_number,
+
+    "Nome": vars.getHistory[0].to_account_name,
+
+    "Saldo": vars.getHistory[0].balance,
+
+    "Data": now() as Date {format: "dd/MM/yyyy"} as String {format: "dd MMM, yyyy"},
+
+    "Transações": vars.getHistory map (item) -&gt; {
+
+        "Data": item.date_transaction as String {format: "dd-MM-yyyy"},
+
+        "Horas": item.date_transaction as String {format: "HH:mm:ss"},
+
+        "Tipo de transação": item.types,
+
+        "Valor": item.amount,
+
+        "De": item.from_account_name
+
+    }filterObject (value, key) -&gt; value != null
+
+}]]&gt;    &lt;/ee:set-payload&gt;
+                        &lt;/ee:message&gt; 
+                    &lt;/ee:transform&gt;  
+                    &lt;logger level="INFO" doc:name="Payload" doc:id="3597d00a-38fe-414d-acf6-24312079cdc6" message="#[payload]"/&gt; 
+                &lt;/otherwise&gt; 
+            &lt;/choice&gt; 
+        &lt;/otherwise&gt; 
+    &lt;/choice&gt; 
+&lt;/flow&gt;
+</code></pre>
+
+                </div>
+              </div>
+              <p></p>
+            </div>
+          </section>
+      </div>
+    </div>
+  </div>
+
+<!-- Footer
+    ================================================== -->
+    <footer class="footer">
+      <div class="container">
+        <p class="pull-right"><a href="#">Back to top</a></p>
+        <p>Designed and built with <a href="https://www.mulesoft.com/platform/studio" target="_blank">Anypoint Studio</a>.</p>
+        <p>Code licensed under the <a href="https://www.apache.org/licenses/LICENSE-2.0" target="_blank">Apache License v2.0</a>. Documentation licensed under <a href="https://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>.</p>
+        <p>Icons from <a href="https://glyphicons.com/">Glyphicons Free</a>, licensed under <a href="https://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>.</p>
+        <ul class="footer-links">
+          <li><a href="https://blogs.mulesoft.com/bloghome/">Read the blog</a></li>
+          <li><a href="https://www.mulesoft.org/jira/issues/">Submit issues</a></li>
+        </ul>
+      </div>
+    </footer>
+
+
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="assets/widgets.js"></script>
+    <script src="assets/jquery.js"></script>
+    <script src="assets/prettify.js"></script>
+    <script src="assets/bootstrap-transition.js"></script>
+    <script src="assets/bootstrap-alert.js"></script>
+    <script src="assets/bootstrap-modal.js"></script>
+    <script src="assets/bootstrap-dropdown.js"></script>
+    <script src="assets/bootstrap-scrollspy.js"></script>
+    <script src="assets/bootstrap-tab.js"></script>
+    <script src="assets/bootstrap-tooltip.js"></script>
+    <script src="assets/bootstrap-popover.js"></script>
+    <script src="assets/bootstrap-button.js"></script>
+    <script src="assets/bootstrap-collapse.js"></script>
+    <script src="assets/bootstrap-carousel.js"></script>
+    <script src="assets/bootstrap-typeahead.js"></script>
+    <script src="assets/bootstrap-affix.js"></script>
+    <script src="assets/scroller.js"></script>
+    <script src="assets/application.js"></script>
+
+</body>
+</html>

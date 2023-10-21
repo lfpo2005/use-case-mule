@@ -41,7 +41,7 @@ http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/cu
 		</jms:active-mq-connection>
 	</jms:config>
 	<apikit:config name="use-case-mule-config"
-		api="resource::e8af90f8-c409-49df-a9f9-428fe20ea1e2:use-case-mule:1.0.19:raml:zip:use-case-mule.raml"
+		api="resource::e8af90f8-c409-49df-a9f9-428fe20ea1e2:use-case-mule:2.0.2:raml:zip:use-case-mule.raml"
 		outboundHeadersMapName="outboundHeaders"
 		httpStatusVarName="httpStatus" />
 	<configuration-properties
@@ -53,14 +53,14 @@ http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/cu
 		<http:listener-connection host="0.0.0.0"
 			port="${http.port}" />
 	</http:listener-config>
-	<flow name="batchJobFlow-Publish">
+<!-- [STUDIO:"batchJobFlow-Publish"]	<flow name="batchJobFlow-Publish">
 		<scheduler doc:name="Scheduler">
 			<scheduling-strategy>
 				<fixed-frequency frequency="1" timeUnit="DAYS" />
 			</scheduling-strategy>
 		</scheduler>
 		<set-variable
-			value='#[(now() - |P1D|) as String {format: "yyyy-MM-dd"}]'
+			value='#[(now() - |P1D|) as String {format: "yyyy-MM-dd"}&#93;'
 			doc:name="date" doc:id="92b531ab-cd5e-489e-82e1-45ace9ccf4e7"
 			variableName="date" />
 		<db:select config-ref="Database_Config"
@@ -71,20 +71,20 @@ http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/cu
  FROM mule_transaction t 
     JOIN mule_account a
     ON t.account_id = a.account_id
-    WHERE DATE(date_transaction) = :yesterday]]></db:sql>
+    WHERE DATE(date_transaction) = :yesterday&#93;&#93;></db:sql>
 			<db:input-parameters><![CDATA[#[{
    'yesterday' : vars.date
-}]]]></db:input-parameters>
+}&#93;&#93;&#93;></db:input-parameters>
 
 		</db:select>
-		<set-payload value="#[payload as Array]"
+		<set-payload value="#[payload as Array&#93;"
 			doc:name="Transform to Array" />
 		<ee:transform doc:name="Transform Message"
 			doc:id="87d26463-51d7-4f7c-bc00-78986bcec009">
 			<ee:message>
 				<ee:set-payload><![CDATA[%dw 2.0
 output application/json
----
+&#45;&#45;-
 payload map (transaction) -> {
     transaction_id: transaction.transaction_id,
     account_id: transaction.account_id,
@@ -94,7 +94,7 @@ payload map (transaction) -> {
     date: transaction.date_transaction as String {format: "dd-MM-yyyy"},
 	hour: transaction.date_transaction as String {format: "HH:mm:ss"}   
 
-}]]></ee:set-payload>
+}&#93;&#93;></ee:set-payload>
 			</ee:message>
 		</ee:transform>
 		<jms:publish doc:name="Publish-stg-report"
@@ -106,10 +106,10 @@ payload map (transaction) -> {
 		<error-handler>
 			<on-error-continue type="ANY"
 				enableNotifications="true" logException="true">
-				<logger level="INFO" doc:name="Error" message='#[error]' />
+				<logger level="INFO" doc:name="Error" message='#[error&#93;' />
 			</on-error-continue>
 		</error-handler>
-	</flow>
+	</flow> [STUDIO] -->
 	<flow name="globalFlow" doc:id="ec5909ef-cd44-4351-9c26-666829fd183a" >
 		<scheduler doc:name="Scheduler" doc:id="1d663aa7-3d44-429a-bb50-5bb6eec31379" >
 			<scheduling-strategy >

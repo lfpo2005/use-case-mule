@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <title>project-mule · Anypoint Studio Documentation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Le styles -->
+    <link href="assets/bootstrap.css" rel="stylesheet">
+    <link href="assets/bootstrap-responsive.css" rel="stylesheet">
+    <link href="assets/docs.css" rel="stylesheet">
+    <link href="assets/prettify.css" rel="stylesheet">
+    <link href="assets/scroller.css" rel="stylesheet">
+
+  </head>
+
+  <body data-twttr-rendered="true" data-spy="scroll" data-target=".bs-docs-sidebar"><iframe style="display: none;" id="rufous-sandbox" name="uid13460061790411"></iframe>
+
+    <!-- Navbar
+    ================================================== -->
+
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container-fluid">
+          <p class="navbar-text pull-right">
+              <a href="https://www.mulesoft.com" class="navbar-link">
+                <img src="./assets/images/mulesoft-logo-final.png" alt="MuleSoft" id="mulesoftlogo">
+              </a>
+          </p>
+          <div class="scroller scroller-left"><img src="./assets/icons/glyphicons_chevron-left.png" alt="scrollLeft"></div>
+          <div class="scroller scroller-right"><img src="./assets/icons/glyphicons_chevron-right.png" alt="scrollRight"></div>
+          <div class="wrapper">
+            <ul class="nav nav-tabs list" id="myTab">
+                    <li><a href="./index.html">implementation-health-check</a></li>
+                      <li><a href="./implementation-post-withdraw.html">implementation-post-withdraw</a></li>
+                      <li class="active"><a href="./implementation-post-created-account.html">implementation-post-created-account</a></li>
+                      <li><a href="./interface.html">interface</a></li>
+                      <li><a href="./implementation-get-history.html">implementation-get-history</a></li>
+                      <li><a href="./implementation-post-transfer.html">implementation-post-transfer</a></li>
+                      <li><a href="./implementation-get-accounts.html">implementation-get-accounts</a></li>
+                      <li><a href="./implementation-get-balance.html">implementation-get-balance</a></li>
+                      <li><a href="./global.html">global</a></li>
+                      <li><a href="./implementation-post-deposit.html">implementation-post-deposit</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+
+  <header class="jumbotron subhead" id="overview">
+    <div class="container">
+      <h1>project-mule</h1>
+    </div>
+  </header>
+
+  <div class="container">
+
+    <!-- Docs nav
+    ================================================== -->
+    <div class="row">
+      <div class="span3 bs-docs-sidebar">
+        <ul class="nav nav-list bs-docs-sidenav affix">
+          <li class="nav-header">Flows</li>
+            <li data-toggle="collapse" data-target="#_implementation_post_created_account_mainNav"><a href="#_implementation_post_created_account_main"><i class="icon-chevron-right"></i> implementation-post-created-account-main</a>
+            </li>
+            <div id="_implementation_post_created_account_mainNav" class="accordion-body collapse" style="height: 0px;">
+              <div class="accordion-inner">
+                <ul>
+                </ul>
+              </div>
+            </div>
+            <li data-toggle="collapse" data-target="#_implementation_post_created_account_publishNav"><a href="#_implementation_post_created_account_publish"><i class="icon-chevron-right"></i> implementation-post-created-account-publish</a>
+            </li>
+            <div id="_implementation_post_created_account_publishNav" class="accordion-body collapse" style="height: 0px;">
+              <div class="accordion-inner">
+                <ul>
+                </ul>
+              </div>
+            </div>
+            <li data-toggle="collapse" data-target="#_implementation_post_created_account_consumerNav"><a href="#_implementation_post_created_account_consumer"><i class="icon-chevron-right"></i> implementation-post-created-account-consumer</a>
+            </li>
+            <div id="_implementation_post_created_account_consumerNav" class="accordion-body collapse" style="height: 0px;">
+              <div class="accordion-inner">
+                <ul>
+                </ul>
+              </div>
+            </div>
+        </ul>
+      </div>
+      <div class="span9">
+
+        <!-- Elements and their descriptions
+        ================================================== -->
+        <div style="max-height: 640px;width:100%;overflow:auto;">
+            <img src="img/implementation_post_created_account.png" usemap="#mFlowMap" alt="Mule Configuration Image">
+            <map name="mFlowMap">
+          </map>
+        </div>
+        <!--Mule configuration xml code-->
+        <div class="accordion-heading">
+          <a class="accordion-toggle" data-toggle="collapse" href="#collapseMuleConfiguration">
+            Show Mule Configuration XML code...
+          </a>
+        </div>
+        <div id="collapseMuleConfiguration" class="accordion-body collapse" style="height: 0px;">
+          <div class="accordion-inner">
+              <pre><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+
+&lt;mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:jms="http://www.mulesoft.org/schema/mule/jms" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd"&gt;
+    &lt;flow name="implementation-post-created-account-main" doc:id="bf382346-63e6-458b-a554-71b50b1b8a96"&gt; 
+        &lt;flow-ref doc:name="implementation-post-created-account-publish" doc:id="3f61490d-152c-48d1-b723-0b1934408d05" name="implementation-post-created-account-publish"/&gt;  
+        &lt;flow-ref doc:name="implementation-post-created-account-consumer" doc:id="8a60ace5-71fb-4453-8cb8-05c37fe3b799" name="implementation-post-created-account-consumer"/&gt;  
+        &lt;error-handler&gt; 
+            &lt;on-error-propagate type="ANY"&gt; 
+                &lt;set-variable variableName="customErrorMessage" value="#[error.description]" doc:name="customErrorMessage"/&gt;  
+                &lt;logger level="ERROR" message="#['Erro encontrado: ' ++ vars.customErrorMessage]" doc:name="CustomErrorMessage"/&gt;  
+                &lt;ee:transform&gt; 
+                    &lt;ee:message&gt; 
+                        &lt;ee:set-payload&gt;&lt;![CDATA[%dw 2.0
+output application/json
+---
+{
+    'Mensagem': vars.customErrorMessage default 'Erro desconhecido'
+}]]&gt;    &lt;/ee:set-payload&gt;
+                    &lt;/ee:message&gt; 
+                &lt;/ee:transform&gt; 
+            &lt;/on-error-propagate&gt; 
+        &lt;/error-handler&gt; 
+    &lt;/flow&gt;  
+    &lt;flow name="implementation-post-created-account-publish" doc:id="e1ebdecd-16fa-4d37-ada7-20f8f49d69dc"&gt; 
+        &lt;logger level="INFO" doc:name="payload" doc:id="e2bc7947-12b1-455c-b9eb-07aa4bad01d0" message="#[payload]"/&gt;  
+        &lt;set-variable doc:name="New Name" doc:id="c108908b-1a74-4be7-bfbd-7e9944e7a370" variableName="newName" value="#[payload.name]"/&gt;  
+        &lt;db:select doc:name="exists name" doc:id="e0d0bb86-1d03-4ecf-ac22-3cbbe4947531" config-ref="Database_Config"&gt; 
+            &lt;db:sql&gt;&lt;![CDATA[SELECT EXISTS (SELECT 1 FROM mule_account WHERE name = :name)]]&gt;   &lt;/db:sql&gt;  
+            &lt;db:input-parameters&gt;&lt;![CDATA[#[{   
+
+    name: vars.newName
+
+}]]]&gt;   &lt;/db:input-parameters&gt;
+        &lt;/db:select&gt;  
+        &lt;logger level="INFO" doc:name="payload" doc:id="60671d05-98ff-4eb1-82da-f908dd494412" message="#[payload]"/&gt;  
+        &lt;choice doc:name="Choice" doc:id="bb133dd2-2655-4e60-9166-2a3b8a702e5c"&gt; 
+            &lt;when expression="#[payload[0].EXISTS == false]"&gt; 
+                &lt;ee:transform doc:name="Transform Message" doc:id="8ae2d6f4-34e5-4af1-830c-f4e3462ee5e9"&gt; 
+                    &lt;ee:message&gt; 
+                        &lt;ee:set-payload&gt;&lt;![CDATA[%dw 2.0
+output application/json
+---
+vars.newName]]&gt; &lt;/ee:set-payload&gt;
+                    &lt;/ee:message&gt; 
+                &lt;/ee:transform&gt;  
+                &lt;jms:publish doc:name="Publish-stg-created-account" doc:id="9367a127-eb22-4c25-a277-006bb81d4e31" config-ref="JMS_Config" destination="stg-created-account"/&gt; 
+            &lt;/when&gt;  
+            &lt;otherwise&gt; 
+                &lt;raise-error type="CUSTOM:INVALID_NAME" description="Nome de conta já existe!" doc:name="INVALID_NAME"/&gt; 
+            &lt;/otherwise&gt; 
+        &lt;/choice&gt;  
+        &lt;error-handler&gt; 
+            &lt;on-error-propagate type="CUSTOM:INVALID_NAME" enableNotifications="true" logException="true"&gt; 
+                &lt;logger level="INFO" message="Falha na execução da query. Possível conta inexistente." doc:name="msg erro custom"/&gt;  
+                &lt;ee:transform&gt; 
+                    &lt;ee:message&gt; 
+                        &lt;ee:set-payload&gt;&lt;![CDATA[%dw 2.0
+output application/json
+---
+{
+    'Mensagem': 'Nome de conta já existe!'
+}]]&gt;    &lt;/ee:set-payload&gt;
+                    &lt;/ee:message&gt; 
+                &lt;/ee:transform&gt; 
+            &lt;/on-error-propagate&gt; 
+        &lt;/error-handler&gt; 
+    &lt;/flow&gt;  
+    &lt;flow name="implementation-post-created-account-consumer" doc:id="8e8069fb-e684-4537-9524-8d5cbe2e6069"&gt; 
+        &lt;set-payload value="#[null]" doc:name="null" doc:id="42da8259-dd86-414a-b4cf-300adf20df9f"/&gt;  
+        &lt;remove-variable doc:name="Initialize Variable as Null" doc:id="69297446-6222-4b29-991d-b089ab5d1bc5" variableName="newName"/&gt;  
+        &lt;logger level="INFO" doc:name="Payload" doc:id="db2e243c-8021-478e-a681-b1995fead87e" message="#[payload]"/&gt;  
+        &lt;jms:consume doc:name="Consume-stg-created-account" doc:id="03882a0c-559f-457a-8009-f5ddd924e030" config-ref="JMS_Config" destination="stg-created-account" maximumWait="30000"/&gt;  
+        &lt;logger level="INFO" doc:name="Payload" doc:id="df156f9a-a528-4166-a365-2bca32f34b86" message="#[payload]"/&gt;  
+        &lt;set-variable value="#[payload]" doc:name="Set newName" doc:id="fc394813-0495-44df-b2dd-993aac3e81e8" variableName="newName"/&gt;  
+        &lt;logger level="INFO" doc:name="Payload" doc:id="1f39f364-0b5b-494e-ba4d-c64c0b866f31" message="#[payload]"/&gt;  
+        &lt;db:insert doc:name="Insert" doc:id="c39b822a-4ee1-4033-b7fe-f11de3e6260f" config-ref="Database_Config"&gt; 
+            &lt;db:sql&gt;&lt;![CDATA[INSERT INTO mule_account (name, balance) VALUES (:name, :balance);]]&gt;  &lt;/db:sql&gt;  
+            &lt;db:input-parameters&gt;&lt;![CDATA[#[{
+    'name': vars.newName, 'balance': 0.00
+}]]]&gt;   &lt;/db:input-parameters&gt;
+        &lt;/db:insert&gt;  
+        &lt;db:select doc:name="Select new inserted " doc:id="37ee06b9-4322-4ee8-94d5-32abf42f6d2b" config-ref="Database_Config"&gt; 
+            &lt;db:sql&gt;&lt;![CDATA[SELECT * FROM mule_account WHERE name = :name]]&gt;   &lt;/db:sql&gt;  
+            &lt;db:input-parameters&gt;&lt;![CDATA[#[{
+    name: vars.newName
+}]]]&gt;   &lt;/db:input-parameters&gt;
+        &lt;/db:select&gt;  
+        &lt;ee:transform doc:name="Transform Message" doc:id="cc19ff8d-b298-46ee-84e0-a686c87d32e9"&gt; 
+            &lt;ee:message&gt; 
+                &lt;ee:set-payload&gt;&lt;![CDATA[%dw 2.0
+output application/json
+---
+payload map (item) -&gt; {
+    "Numero da conta": item.account_number,
+    "Nome": item.name       
+}   
+   ]]&gt;  &lt;/ee:set-payload&gt;
+            &lt;/ee:message&gt; 
+        &lt;/ee:transform&gt;  
+        &lt;logger level="INFO" doc:name="Payload" doc:id="05177112-83c8-41ab-a81c-ac420ae9e7c8" message="#[payload]"/&gt;  
+        &lt;error-handler&gt; 
+            &lt;on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="50b300f6-7e14-40d6-b565-7cd1142bf317" type="ANY"&gt; 
+                &lt;logger level="INFO" doc:name="Error" doc:id="7546967f-b02f-49bd-82d0-e91f567ed962" message="#[error]"/&gt; 
+            &lt;/on-error-continue&gt; 
+        &lt;/error-handler&gt; 
+    &lt;/flow&gt; 
+&lt;/mule&gt;
+</code></pre>
+
+          </div>
+        </div>
+
+          <section id="_implementation_post_created_account_main">
+            <div class="page-header">
+                <h1>implementation-post-created-account-main <img src="./assets/icons/flow.png"></h1>
+            </div>
+            <div class="documentation-indented" style="height:100%;width:100%;overflow:auto;">
+                <img src="img/implementation_post_created_account_main.png" usemap="#flowMapimplementation_post_created_account_main" alt="implementation_post_created_account_main image">
+                <map name="flowMapimplementation_post_created_account_main">
+                </map>
+            </div>
+            <div class="documentation-indented">
+              <div class="accordion-heading">
+                <a class="accordion-toggle" data-toggle="collapse" href="#_implementation_post_created_account_mainxml_code">
+                  Show configuration XML code of the flow implementation-post-created-account-main...
+                </a>
+              </div>
+              <div id="_implementation_post_created_account_mainxml_code" class="accordion-body collapse" style="height: 0px;">
+                <div class="accordion-inner">
+                    <pre><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+
+&lt;flow name="implementation-post-created-account-main" doc:id="bf382346-63e6-458b-a554-71b50b1b8a96"&gt;  
+    &lt;flow-ref doc:name="implementation-post-created-account-publish" doc:id="3f61490d-152c-48d1-b723-0b1934408d05" name="implementation-post-created-account-publish"/&gt;  
+    &lt;flow-ref doc:name="implementation-post-created-account-consumer" doc:id="8a60ace5-71fb-4453-8cb8-05c37fe3b799" name="implementation-post-created-account-consumer"/&gt;  
+    &lt;error-handler&gt; 
+        &lt;on-error-propagate type="ANY"&gt; 
+            &lt;set-variable variableName="customErrorMessage" value="#[error.description]" doc:name="customErrorMessage"/&gt;  
+            &lt;logger level="ERROR" message="#['Erro encontrado: ' ++ vars.customErrorMessage]" doc:name="CustomErrorMessage"/&gt;  
+            &lt;ee:transform &gt;  
+                &lt;ee:message&gt; 
+                    &lt;ee:set-payload&gt;&lt;![CDATA[%dw 2.0
+output application/json
+---
+{
+    'Mensagem': vars.customErrorMessage default 'Erro desconhecido'
+}]]&gt;    &lt;/ee:set-payload&gt;
+                &lt;/ee:message&gt; 
+            &lt;/ee:transform&gt; 
+        &lt;/on-error-propagate&gt; 
+    &lt;/error-handler&gt; 
+&lt;/flow&gt;
+</code></pre>
+
+                </div>
+              </div>
+              <p></p>
+            </div>
+          </section>
+          <section id="_implementation_post_created_account_publish">
+            <div class="page-header">
+                <h1>implementation-post-created-account-publish <img src="./assets/icons/flow.png"></h1>
+            </div>
+            <div class="documentation-indented" style="height:100%;width:100%;overflow:auto;">
+                <img src="img/implementation_post_created_account_publish.png" usemap="#flowMapimplementation_post_created_account_publish" alt="implementation_post_created_account_publish image">
+                <map name="flowMapimplementation_post_created_account_publish">
+                </map>
+            </div>
+            <div class="documentation-indented">
+              <div class="accordion-heading">
+                <a class="accordion-toggle" data-toggle="collapse" href="#_implementation_post_created_account_publishxml_code">
+                  Show configuration XML code of the flow implementation-post-created-account-publish...
+                </a>
+              </div>
+              <div id="_implementation_post_created_account_publishxml_code" class="accordion-body collapse" style="height: 0px;">
+                <div class="accordion-inner">
+                    <pre><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+
+&lt;flow name="implementation-post-created-account-publish" doc:id="e1ebdecd-16fa-4d37-ada7-20f8f49d69dc"&gt;  
+    &lt;logger level="INFO" doc:name="payload" doc:id="e2bc7947-12b1-455c-b9eb-07aa4bad01d0" message="#[payload]"/&gt;  
+    &lt;set-variable doc:name="New Name" doc:id="c108908b-1a74-4be7-bfbd-7e9944e7a370" variableName="newName" value="#[payload.name]"/&gt;  
+    &lt;db:select doc:name="exists name" doc:id="e0d0bb86-1d03-4ecf-ac22-3cbbe4947531" config-ref="Database_Config"&gt;  
+        &lt;db:sql&gt;&lt;![CDATA[SELECT EXISTS (SELECT 1 FROM mule_account WHERE name = :name)]]&gt;   &lt;/db:sql&gt;  
+        &lt;db:input-parameters&gt;&lt;![CDATA[#[{   
+
+    name: vars.newName
+
+}]]]&gt;   &lt;/db:input-parameters&gt;
+    &lt;/db:select&gt;  
+    &lt;logger level="INFO" doc:name="payload" doc:id="60671d05-98ff-4eb1-82da-f908dd494412" message="#[payload]"/&gt;  
+    &lt;choice doc:name="Choice" doc:id="bb133dd2-2655-4e60-9166-2a3b8a702e5c"&gt; 
+        &lt;when expression="#[payload[0].EXISTS == false]"&gt; 
+            &lt;ee:transform doc:name="Transform Message" doc:id="8ae2d6f4-34e5-4af1-830c-f4e3462ee5e9"&gt;  
+                &lt;ee:message&gt; 
+                    &lt;ee:set-payload&gt;&lt;![CDATA[%dw 2.0
+output application/json
+---
+vars.newName]]&gt; &lt;/ee:set-payload&gt;
+                &lt;/ee:message&gt; 
+            &lt;/ee:transform&gt;  
+            &lt;jms:publish doc:name="Publish-stg-created-account" doc:id="9367a127-eb22-4c25-a277-006bb81d4e31" config-ref="JMS_Config" destination="stg-created-account"&gt;    &lt;/jms:publish&gt; 
+        &lt;/when&gt;  
+        &lt;otherwise&gt; 
+            &lt;raise-error type="CUSTOM:INVALID_NAME" description="Nome de conta já existe!" doc:name="INVALID_NAME"/&gt; 
+        &lt;/otherwise&gt; 
+    &lt;/choice&gt;  
+    &lt;error-handler&gt; 
+        &lt;on-error-propagate type="CUSTOM:INVALID_NAME" enableNotifications="true" logException="true"&gt; 
+            &lt;logger level="INFO" message="Falha na execução da query. Possível conta inexistente." doc:name="msg erro custom"/&gt;  
+            &lt;ee:transform &gt;  
+                &lt;ee:message&gt; 
+                    &lt;ee:set-payload&gt;&lt;![CDATA[%dw 2.0
+output application/json
+---
+{
+    'Mensagem': 'Nome de conta já existe!'
+}]]&gt;    &lt;/ee:set-payload&gt;
+                &lt;/ee:message&gt; 
+            &lt;/ee:transform&gt; 
+        &lt;/on-error-propagate&gt; 
+    &lt;/error-handler&gt; 
+&lt;/flow&gt;
+</code></pre>
+
+                </div>
+              </div>
+              <p></p>
+            </div>
+          </section>
+          <section id="_implementation_post_created_account_consumer">
+            <div class="page-header">
+                <h1>implementation-post-created-account-consumer <img src="./assets/icons/flow.png"></h1>
+            </div>
+            <div class="documentation-indented" style="height:100%;width:100%;overflow:auto;">
+                <img src="img/implementation_post_created_account_consumer.png" usemap="#flowMapimplementation_post_created_account_consumer" alt="implementation_post_created_account_consumer image">
+                <map name="flowMapimplementation_post_created_account_consumer">
+                </map>
+            </div>
+            <div class="documentation-indented">
+              <div class="accordion-heading">
+                <a class="accordion-toggle" data-toggle="collapse" href="#_implementation_post_created_account_consumerxml_code">
+                  Show configuration XML code of the flow implementation-post-created-account-consumer...
+                </a>
+              </div>
+              <div id="_implementation_post_created_account_consumerxml_code" class="accordion-body collapse" style="height: 0px;">
+                <div class="accordion-inner">
+                    <pre><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+
+&lt;flow name="implementation-post-created-account-consumer" doc:id="8e8069fb-e684-4537-9524-8d5cbe2e6069"&gt;  
+    &lt;set-payload value="#[null]" doc:name="null" doc:id="42da8259-dd86-414a-b4cf-300adf20df9f"/&gt;  
+    &lt;remove-variable doc:name="Initialize Variable as Null" doc:id="69297446-6222-4b29-991d-b089ab5d1bc5" variableName="newName"/&gt;  
+    &lt;logger level="INFO" doc:name="Payload" doc:id="db2e243c-8021-478e-a681-b1995fead87e" message="#[payload]"/&gt;  
+    &lt;jms:consume doc:name="Consume-stg-created-account" doc:id="03882a0c-559f-457a-8009-f5ddd924e030" config-ref="JMS_Config" destination="stg-created-account" maximumWait="30000"&gt;    &lt;/jms:consume&gt;  
+    &lt;logger level="INFO" doc:name="Payload" doc:id="df156f9a-a528-4166-a365-2bca32f34b86" message="#[payload]"/&gt;  
+    &lt;set-variable value="#[payload]" doc:name="Set newName" doc:id="fc394813-0495-44df-b2dd-993aac3e81e8" variableName="newName"/&gt;  
+    &lt;logger level="INFO" doc:name="Payload" doc:id="1f39f364-0b5b-494e-ba4d-c64c0b866f31" message="#[payload]"/&gt;  
+    &lt;db:insert doc:name="Insert" doc:id="c39b822a-4ee1-4033-b7fe-f11de3e6260f" config-ref="Database_Config"&gt;  
+        &lt;db:sql&gt;&lt;![CDATA[INSERT INTO mule_account (name, balance) VALUES (:name, :balance);]]&gt;  &lt;/db:sql&gt;  
+        &lt;db:input-parameters&gt;&lt;![CDATA[#[{
+    'name': vars.newName, 'balance': 0.00
+}]]]&gt;   &lt;/db:input-parameters&gt;
+    &lt;/db:insert&gt;  
+    &lt;db:select doc:name="Select new inserted " doc:id="37ee06b9-4322-4ee8-94d5-32abf42f6d2b" config-ref="Database_Config"&gt;  
+        &lt;db:sql&gt;&lt;![CDATA[SELECT * FROM mule_account WHERE name = :name]]&gt;   &lt;/db:sql&gt;  
+        &lt;db:input-parameters&gt;&lt;![CDATA[#[{
+    name: vars.newName
+}]]]&gt;   &lt;/db:input-parameters&gt;
+    &lt;/db:select&gt;  
+    &lt;ee:transform doc:name="Transform Message" doc:id="cc19ff8d-b298-46ee-84e0-a686c87d32e9"&gt;  
+        &lt;ee:message&gt; 
+            &lt;ee:set-payload&gt;&lt;![CDATA[%dw 2.0
+output application/json
+---
+payload map (item) -&gt; {
+    "Numero da conta": item.account_number,
+    "Nome": item.name       
+}   
+   ]]&gt;  &lt;/ee:set-payload&gt;
+        &lt;/ee:message&gt; 
+    &lt;/ee:transform&gt;  
+    &lt;logger level="INFO" doc:name="Payload" doc:id="05177112-83c8-41ab-a81c-ac420ae9e7c8" message="#[payload]"/&gt;  
+    &lt;error-handler&gt; 
+        &lt;on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="50b300f6-7e14-40d6-b565-7cd1142bf317" type="ANY"&gt; 
+            &lt;logger level="INFO" doc:name="Error" doc:id="7546967f-b02f-49bd-82d0-e91f567ed962" message="#[error]"/&gt; 
+        &lt;/on-error-continue&gt; 
+    &lt;/error-handler&gt; 
+&lt;/flow&gt;
+</code></pre>
+
+                </div>
+              </div>
+              <p></p>
+            </div>
+          </section>
+      </div>
+    </div>
+  </div>
+
+<!-- Footer
+    ================================================== -->
+    <footer class="footer">
+      <div class="container">
+        <p class="pull-right"><a href="#">Back to top</a></p>
+        <p>Designed and built with <a href="https://www.mulesoft.com/platform/studio" target="_blank">Anypoint Studio</a>.</p>
+        <p>Code licensed under the <a href="https://www.apache.org/licenses/LICENSE-2.0" target="_blank">Apache License v2.0</a>. Documentation licensed under <a href="https://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>.</p>
+        <p>Icons from <a href="https://glyphicons.com/">Glyphicons Free</a>, licensed under <a href="https://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>.</p>
+        <ul class="footer-links">
+          <li><a href="https://blogs.mulesoft.com/bloghome/">Read the blog</a></li>
+          <li><a href="https://www.mulesoft.org/jira/issues/">Submit issues</a></li>
+        </ul>
+      </div>
+    </footer>
+
+
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="assets/widgets.js"></script>
+    <script src="assets/jquery.js"></script>
+    <script src="assets/prettify.js"></script>
+    <script src="assets/bootstrap-transition.js"></script>
+    <script src="assets/bootstrap-alert.js"></script>
+    <script src="assets/bootstrap-modal.js"></script>
+    <script src="assets/bootstrap-dropdown.js"></script>
+    <script src="assets/bootstrap-scrollspy.js"></script>
+    <script src="assets/bootstrap-tab.js"></script>
+    <script src="assets/bootstrap-tooltip.js"></script>
+    <script src="assets/bootstrap-popover.js"></script>
+    <script src="assets/bootstrap-button.js"></script>
+    <script src="assets/bootstrap-collapse.js"></script>
+    <script src="assets/bootstrap-carousel.js"></script>
+    <script src="assets/bootstrap-typeahead.js"></script>
+    <script src="assets/bootstrap-affix.js"></script>
+    <script src="assets/scroller.js"></script>
+    <script src="assets/application.js"></script>
+
+</body>
+</html>

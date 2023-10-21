@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <title>project-mule · Anypoint Studio Documentation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Le styles -->
+    <link href="assets/bootstrap.css" rel="stylesheet">
+    <link href="assets/bootstrap-responsive.css" rel="stylesheet">
+    <link href="assets/docs.css" rel="stylesheet">
+    <link href="assets/prettify.css" rel="stylesheet">
+    <link href="assets/scroller.css" rel="stylesheet">
+
+  </head>
+
+  <body data-twttr-rendered="true" data-spy="scroll" data-target=".bs-docs-sidebar"><iframe style="display: none;" id="rufous-sandbox" name="uid13460061790411"></iframe>
+
+    <!-- Navbar
+    ================================================== -->
+
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container-fluid">
+          <p class="navbar-text pull-right">
+              <a href="https://www.mulesoft.com" class="navbar-link">
+                <img src="./assets/images/mulesoft-logo-final.png" alt="MuleSoft" id="mulesoftlogo">
+              </a>
+          </p>
+          <div class="scroller scroller-left"><img src="./assets/icons/glyphicons_chevron-left.png" alt="scrollLeft"></div>
+          <div class="scroller scroller-right"><img src="./assets/icons/glyphicons_chevron-right.png" alt="scrollRight"></div>
+          <div class="wrapper">
+            <ul class="nav nav-tabs list" id="myTab">
+                    <li><a href="./index.html">implementation-health-check</a></li>
+                      <li><a href="./implementation-post-withdraw.html">implementation-post-withdraw</a></li>
+                      <li><a href="./implementation-post-created-account.html">implementation-post-created-account</a></li>
+                      <li><a href="./interface.html">interface</a></li>
+                      <li><a href="./implementation-get-history.html">implementation-get-history</a></li>
+                      <li class="active"><a href="./implementation-post-transfer.html">implementation-post-transfer</a></li>
+                      <li><a href="./implementation-get-accounts.html">implementation-get-accounts</a></li>
+                      <li><a href="./implementation-get-balance.html">implementation-get-balance</a></li>
+                      <li><a href="./global.html">global</a></li>
+                      <li><a href="./implementation-post-deposit.html">implementation-post-deposit</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+
+  <header class="jumbotron subhead" id="overview">
+    <div class="container">
+      <h1>project-mule</h1>
+    </div>
+  </header>
+
+  <div class="container">
+
+    <!-- Docs nav
+    ================================================== -->
+    <div class="row">
+      <div class="span3 bs-docs-sidebar">
+        <ul class="nav nav-list bs-docs-sidenav affix">
+          <li class="nav-header">Flows</li>
+            <li data-toggle="collapse" data-target="#_implementation_post_transfer_mainNav"><a href="#_implementation_post_transfer_main"><i class="icon-chevron-right"></i> implementation-post-transfer-main</a>
+            </li>
+            <div id="_implementation_post_transfer_mainNav" class="accordion-body collapse" style="height: 0px;">
+              <div class="accordion-inner">
+                <ul>
+                </ul>
+              </div>
+            </div>
+            <li data-toggle="collapse" data-target="#_implementation_post_transfer_fromNav"><a href="#_implementation_post_transfer_from"><i class="icon-chevron-right"></i> implementation-post-transfer-from</a>
+            </li>
+            <div id="_implementation_post_transfer_fromNav" class="accordion-body collapse" style="height: 0px;">
+              <div class="accordion-inner">
+                <ul>
+                </ul>
+              </div>
+            </div>
+            <li data-toggle="collapse" data-target="#_implementation_post_transfer_toNav"><a href="#_implementation_post_transfer_to"><i class="icon-chevron-right"></i> implementation-post-transfer-to</a>
+            </li>
+            <div id="_implementation_post_transfer_toNav" class="accordion-body collapse" style="height: 0px;">
+              <div class="accordion-inner">
+                <ul>
+                </ul>
+              </div>
+            </div>
+            <li data-toggle="collapse" data-target="#_implementation_post_transfer_publishNav"><a href="#_implementation_post_transfer_publish"><i class="icon-chevron-right"></i> implementation-post-transfer-publish</a>
+            </li>
+            <div id="_implementation_post_transfer_publishNav" class="accordion-body collapse" style="height: 0px;">
+              <div class="accordion-inner">
+                <ul>
+                </ul>
+              </div>
+            </div>
+            <li data-toggle="collapse" data-target="#_implementation_post_transfer_consumeNav"><a href="#_implementation_post_transfer_consume"><i class="icon-chevron-right"></i> implementation-post-transfer-consume</a>
+            </li>
+            <div id="_implementation_post_transfer_consumeNav" class="accordion-body collapse" style="height: 0px;">
+              <div class="accordion-inner">
+                <ul>
+                </ul>
+              </div>
+            </div>
+        </ul>
+      </div>
+      <div class="span9">
+
+        <!-- Elements and their descriptions
+        ================================================== -->
+        <div style="max-height: 640px;width:100%;overflow:auto;">
+            <img src="img/implementation_post_transfer.png" usemap="#mFlowMap" alt="Mule Configuration Image">
+            <map name="mFlowMap">
+          </map>
+        </div>
+        <!--Mule configuration xml code-->
+        <div class="accordion-heading">
+          <a class="accordion-toggle" data-toggle="collapse" href="#collapseMuleConfiguration">
+            Show Mule Configuration XML code...
+          </a>
+        </div>
+        <div id="collapseMuleConfiguration" class="accordion-body collapse" style="height: 0px;">
+          <div class="accordion-inner">
+              <pre><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+
+&lt;mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:jms="http://www.mulesoft.org/schema/mule/jms" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd"&gt;
+    &lt;flow name="implementation-post-transfer-main" doc:id="410eb2b9-8a33-44ad-a33b-c41e3f5d2965"&gt; 
+        &lt;flow-ref doc:name="Flow Reference-Fron" doc:id="ba2fc54b-f349-4b43-b90d-48a1571020ff" name="implementation-post-transfer-from"/&gt;  
+        &lt;flow-ref doc:name="Flow Reference-To" doc:id="50f38237-3a2a-421c-a2f6-8e2de2e2dd5b" name="implementation-post-transfer-to"/&gt;  
+        &lt;flow-ref doc:name="Flow Reference-Publish" doc:id="8489e4e4-00bb-4733-8e8c-38f23459681c" name="implementation-post-transfer-publish"/&gt;  
+        &lt;flow-ref doc:name="Flow Reference-Consume" doc:id="17f2d30e-0b3c-43e3-9f62-2069150b0c51" name="implementation-post-transfer-consume"/&gt;  
+        &lt;error-handler&gt; 
+            &lt;on-error-propagate type="ANY"&gt; 
+                &lt;set-variable variableName="customErrorMessage" value="#[error.description]" doc:name="customErrorMessage"/&gt;  
+                &lt;set-variable value="404" doc:name="Set HTTP Status" doc:id="6f1302f1-093d-4bb3-beb4-670c5116e5b4" variableName="httpStatus"/&gt;  
+                &lt;logger level="ERROR" message="#['Erro encontrado: ' ++ vars.customErrorMessage]" doc:name="customErrorMessage"/&gt;  
+                &lt;ee:transform&gt; 
+                    &lt;ee:message&gt; 
+                        &lt;ee:set-payload&gt;&lt;![CDATA[%dw 2.0
+
+output application/json
+
+---
+
+{
+
+    'Mensagem': vars.customErrorMessage default 'Erro desconhecido'
+
+}]]&gt;    &lt;/ee:set-payload&gt;
+                    &lt;/ee:message&gt; 
+                &lt;/ee:transform&gt; 
+            &lt;/on-error-propagate&gt; 
+        &lt;/error-handler&gt; 
+    &lt;/flow&gt;  
+    &lt;flow name="implementation-post-transfer-from"&gt; 
+        &lt;logger level="INFO" message="Transfer from account: #[vars.from_account_number] to account: #[vars.to_account_number] with amount: #[vars.amount]" doc:name="customMessage"/&gt;  
+        &lt;flow-ref doc:name="Flow Reference" doc:id="daf7efda-f73d-45ec-a899-f76755320490" name="validate-amount"/&gt;  
+        &lt;db:select config-ref="Database_Config" doc:name="Select from_account_number"&gt; 
+            &lt;db:sql&gt;&lt;![CDATA[SELECT * FROM mule_account WHERE account_number = :from_account_number]]&gt;  &lt;/db:sql&gt;  
+            &lt;db:input-parameters&gt;&lt;![CDATA[#[{
+
+    'from_account_number': vars.from_account_number
+
+}]]]&gt;   &lt;/db:input-parameters&gt;
+        &lt;/db:select&gt;  
+        &lt;choice&gt; 
+            &lt;when expression="#[(payload[0].account_number default 0) as Number != null and (vars.from_account_number default 0) as Number == (payload[0].account_number default 0) as Number]"&gt; 
+                &lt;set-variable value="#[payload[0]]" variableName="fromAccountInfo" doc:name="fromAccountInfo"/&gt; 
+            &lt;/when&gt;  
+            &lt;otherwise&gt; 
+                &lt;raise-error type="CUSTOM:INVALID_ACCOUNT" description="Número da conta de origem inválido." doc:name="CUSTOM:INVALID_ACCOUNT"/&gt; 
+            &lt;/otherwise&gt; 
+        &lt;/choice&gt;  
+        &lt;error-handler&gt; 
+            &lt;on-error-propagate type="CUSTOM:INVALID_ACCOUNT"&gt; 
+                &lt;logger level="ERROR" message="Falha na execução da query. Possível conta inexistente." doc:name="CUSTOM:INVALID_ACCOUNT"/&gt;  
+                &lt;ee:transform&gt; 
+                    &lt;ee:message&gt; 
+                        &lt;ee:set-payload&gt;&lt;![CDATA[%dw 2.0
+
+output application/json
+
+---
+
+{
+
+    'Mensagem': 'Falha na execução da query. Verifique as informações da conta.'
+
+}]]&gt;    &lt;/ee:set-payload&gt;
+                    &lt;/ee:message&gt; 
+                &lt;/ee:transform&gt; 
+            &lt;/on-error-propagate&gt; 
+        &lt;/error-handler&gt; 
+    &lt;/flow&gt;  
+    &lt;flow name="implementation-post-transfer-to" doc:id="2d167c67-b0c6-4d87-908d-42450f17713e"&gt; 
+        &lt;logger level="INFO" doc:name="Payload" doc:id="aa06db9c-e34a-4f16-95b0-1988c77cf122" message="#[payload]"/&gt;  
+        &lt;db:select config-ref="Database_Config" doc:name="Select to_account_number"&gt; 
+            &lt;db:sql&gt;&lt;![CDATA[SELECT * FROM mule_account WHERE account_number = :to_account_number]]&gt;    &lt;/db:sql&gt;  
+            &lt;db:input-parameters&gt;&lt;![CDATA[#[{
+
+    'to_account_number': vars.to_account_number
+
+}]]]&gt;   &lt;/db:input-parameters&gt;
+        &lt;/db:select&gt;  
+        &lt;choice doc:name="Choice" doc:id="1e4e492a-31f4-4034-afbb-13a43dd2bdf4"&gt; 
+            &lt;when expression="#[(payload[0].account_number default 0) as Number != null and (vars.to_account_number default 0) as Number == (payload[0].account_number default 0) as Number]"&gt; 
+                &lt;set-variable value="#[payload[0]]" variableName="toAccountInfo" doc:name="toAccountInfo"/&gt; 
+            &lt;/when&gt;  
+            &lt;otherwise&gt; 
+                &lt;raise-error doc:name="CUSTOM:INVALID_ACCOUNT" doc:id="8df9c2e8-46f1-4dba-ab3b-1a91b2bb785c" type="CUSTOM:INVALID_ACCOUNT" description="Número da conta de destino inválido."/&gt; 
+            &lt;/otherwise&gt; 
+        &lt;/choice&gt;  
+        &lt;error-handler&gt; 
+            &lt;on-error-propagate type="DB:QUERY_EXECUTION"&gt; 
+                &lt;logger level="ERROR" message="Falha na execução da query. Possível conta inexistente." doc:name="CUSTOM:INVALID_ACCOUNT"/&gt;  
+                &lt;ee:transform doc:name="Transform Message" doc:id="7105c733-4120-4977-8dec-4aa17961104e"&gt; 
+                    &lt;ee:message&gt; 
+                        &lt;ee:set-payload&gt;&lt;![CDATA[%dw 2.0
+
+output application/json
+
+---
+
+{
+
+'Mensagem': 'Falha na transferência: verifique o número da conta de destino'
+
+}]]&gt;    &lt;/ee:set-payload&gt;
+                    &lt;/ee:message&gt; 
+                &lt;/ee:transform&gt; 
+            &lt;/on-error-propagate&gt; 
+        &lt;/error-handler&gt; 
+    &lt;/flow&gt;  
+    &lt;flow name="implementation-post-transfer-publish" doc:id="4830ddee-dc88-4344-90dc-d8bbeef7d2cd"&gt; 
+        &lt;logger level="INFO" doc:name="Payload" doc:id="bf5b18bc-816e-4396-81fc-f7dfe719023c" message="payload"/&gt;  
+        &lt;ee:transform doc:name="Transform Message" doc:id="369f0c93-858f-47ad-9b9c-23740cf60d37"&gt; 
+            &lt;ee:message&gt; 
+                &lt;ee:set-payload&gt;&lt;![CDATA[%dw 2.0
+
+output application/json
+
+---
+
+{
+
+    account_number: payload.account_number,
+
+    account_id: payload.account_id,
+
+    balance: payload.balance,
+
+    name: payload.name,
+
+    to_account_number: vars.to_account_number,
+
+    from_account_number: vars.from_account_number,
+
+    amount: vars.amount,
+
+    fromAccountInfo: {
+
+        account_number: vars.fromAccountInfo.account_number,
+
+        account_id: vars.fromAccountInfo.account_id,
+
+        balance: vars.fromAccountInfo.balance,
+
+        name: vars.fromAccountInfo.name
+
+    },
+
+    toAccountInfo: {
+
+        account_number: vars.toAccountInfo.account_number,
+
+        account_id: vars.toAccountInfo.account_id,
+
+        balance: vars.toAccountInfo.balance,
+
+        name: vars.toAccountInfo.name
+
+    }
+
+}
+
+]]&gt; &lt;/ee:set-payload&gt;
+            &lt;/ee:message&gt; 
+        &lt;/ee:transform&gt;  
+        &lt;jms:publish doc:name="Publish-stg-transfer" doc:id="9f3999cc-2a42-45e2-9fb1-e65e750acbe5" config-ref="JMS_Config" destination="stg-transfer"/&gt; 
+    &lt;/flow&gt;  
+    &lt;flow name="implementation-post-transfer-consume" doc:id="310c7195-bfc5-4969-a2b7-6002c8ebd492"&gt; 
+        &lt;set-payload value="#[null]" doc:name="null" doc:id="12d7bf21-d3cd-4c20-80cf-ee059eec4072"/&gt;  
+        &lt;jms:consume doc:name="Consume-stg-transfer" doc:id="c8820b07-7c7e-4d6e-9e89-f7c2a3bdd6e8" config-ref="JMS_Config" destination="stg-transfer" maximumWait="30000"/&gt;  
+        &lt;set-variable value="#[payload]" doc:name="newData" doc:id="c6238447-047d-4a51-b69c-c2a8718d7054" variableName="newData"/&gt;  
+        &lt;logger level="INFO" doc:name="Payload" doc:id="00fb43f1-9a3d-4799-985c-ad8e249fb0d0" message="#[payload]"/&gt;  
+        &lt;choice&gt; 
+            &lt;when expression="#[(vars.amount != null) and (vars.fromAccountInfo.balance != null) and (vars.amount &amp;gt; 0) and (vars.amount &amp;lt;= vars.fromAccountInfo.balance)]"&gt; 
+                &lt;!-- Update From Account Balance --&gt;  
+                &lt;db:update config-ref="Database_Config" doc:name="Update-get-amount"&gt; 
+                    &lt;db:sql&gt;&lt;![CDATA[UPDATE mule_account SET balance = balance - :amount WHERE account_id = :account_id]]&gt;  &lt;/db:sql&gt;  
+                    &lt;db:input-parameters&gt;&lt;![CDATA[#[{
+
+    'amount': vars.newData.amount,
+
+    'account_id': vars.newData.fromAccountInfo.account_id
+
+}]]]&gt;   &lt;/db:input-parameters&gt;
+                &lt;/db:update&gt;  
+                &lt;db:update config-ref="Database_Config" doc:name="Update-post-amount"&gt; 
+                    &lt;db:sql&gt;&lt;![CDATA[UPDATE mule_account SET balance = balance + :amount WHERE account_id = :account_id]]&gt;  &lt;/db:sql&gt;  
+                    &lt;db:input-parameters&gt;&lt;![CDATA[#[{
+
+    'amount': vars.newData.amount,
+
+    'account_id': vars.newData.toAccountInfo.account_id
+
+}]]]&gt;   &lt;/db:input-parameters&gt;
+                &lt;/db:update&gt;  
+                &lt;db:insert config-ref="Database_Config" doc:name="Insert-from"&gt; 
+                    &lt;db:sql&gt;&lt;![CDATA[INSERT INTO mule_transaction(account_id, from_account_id, types, amount, date_transaction) VALUES (:account_id, :from_account_id, :types, :amount, now())]]&gt;   &lt;/db:sql&gt;  
+                    &lt;db:input-parameters&gt;&lt;![CDATA[#[{
+
+    'account_id': vars.newData.fromAccountInfo.account_id,
+
+    'to_account_id': vars.newData.toAccountInfo.account_id,
+
+    'from_account_id': vars.newData.fromAccountInfo.account_id,
+
+    'types': 'TRANSFER_OUT',
+
+    'amount': vars.newData.amount
+
+
+
+}]]]&gt;   &lt;/db:input-parameters&gt;
+                &lt;/db:insert&gt;  
+                &lt;db:insert config-ref="Database_Config" doc:name="Insert-to"&gt; 
+                    &lt;db:sql&gt;&lt;![CDATA[INSERT INTO mule_transaction(account_id, from_account_id, types, amount, date_transaction) VALUES (:account_id, :from_account_id, :types, :amount, now())]]&gt;   &lt;/db:sql&gt;  
+                    &lt;db:input-parameters&gt;&lt;![CDATA[#[{
+
+    'account_id': vars.newData.toAccountInfo.account_id,
+
+    'from_account_id': vars.newData.fromAccountInfo.account_id,
+
+    'types': 'TRANSFER_IN',
+
+    'amount': vars.newData.amount
+
+}]]]&gt;   &lt;/db:input-parameters&gt;
+                &lt;/db:insert&gt;  
+                &lt;ee:transform doc:name="Transform Message" doc:id="66096158-2264-4b2d-9b4b-f2c537fb9a56"&gt; 
+                    &lt;ee:message&gt; 
+                        &lt;ee:set-payload&gt;&lt;![CDATA[%dw 2.0
+
+output application/json
+
+---
+
+{
+
+    'Mensagem': "Transferência feita com sucesso"
+
+}]]&gt;    &lt;/ee:set-payload&gt;
+                    &lt;/ee:message&gt; 
+                &lt;/ee:transform&gt;  
+                &lt;logger level="INFO" doc:name="Payload" doc:id="a2aa6ce1-c91d-4112-b960-6654317b58eb" message="#[payload]"/&gt; 
+            &lt;/when&gt;  
+            &lt;otherwise&gt; 
+                &lt;ee:transform doc:name="Transform Message" doc:id="95dc9509-9062-4f55-84f2-9e9fc59f1e0e"&gt; 
+                    &lt;ee:message&gt; 
+                        &lt;ee:set-payload&gt;&lt;![CDATA[%dw 2.0
+
+output application/json
+
+---
+
+{
+
+    'Mensagem': 'Falha na transferência: saldo insuficiente ou valor inválido'
+
+}]]&gt;    &lt;/ee:set-payload&gt;
+                    &lt;/ee:message&gt; 
+                &lt;/ee:transform&gt;  
+                &lt;logger level="INFO" doc:name="Payload" doc:id="e61fcd47-e495-4e1c-99fd-4683778a8802" message="#[payload]"/&gt; 
+            &lt;/otherwise&gt; 
+        &lt;/choice&gt;  
+        &lt;error-handler&gt; 
+            &lt;on-error-continue type="DB:QUERY_EXECUTION"&gt; 
+                &lt;logger level="ERROR" message="Falha na execução da query. Possível conta inexistente." doc:name="Custom:ErroMsg"/&gt;  
+                &lt;ee:transform doc:name="Transform Message"&gt; 
+                    &lt;ee:message&gt; 
+                        &lt;ee:set-payload&gt;&lt;![CDATA[%dw 2.0
+
+output application/json
+
+---
+
+{
+
+     'Mensagem': 'Falha na execução da query. Verifique as informações da conta.'
+
+}]]&gt;    &lt;/ee:set-payload&gt;
+                    &lt;/ee:message&gt; 
+                &lt;/ee:transform&gt; 
+            &lt;/on-error-continue&gt; 
+        &lt;/error-handler&gt; 
+    &lt;/flow&gt; 
+&lt;/mule&gt;
+</code></pre>
+
+          </div>
+        </div>
+
+          <section id="_implementation_post_transfer_main">
+            <div class="page-header">
+                <h1>implementation-post-transfer-main <img src="./assets/icons/flow.png"></h1>
+            </div>
+            <div class="documentation-indented" style="height:100%;width:100%;overflow:auto;">
+                <img src="img/implementation_post_transfer_main.png" usemap="#flowMapimplementation_post_transfer_main" alt="implementation_post_transfer_main image">
+                <map name="flowMapimplementation_post_transfer_main">
+                </map>
+            </div>
+            <div class="documentation-indented">
+              <div class="accordion-heading">
+                <a class="accordion-toggle" data-toggle="collapse" href="#_implementation_post_transfer_mainxml_code">
+                  Show configuration XML code of the flow implementation-post-transfer-main...
+                </a>
+              </div>
+              <div id="_implementation_post_transfer_mainxml_code" class="accordion-body collapse" style="height: 0px;">
+                <div class="accordion-inner">
+                    <pre><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+
+&lt;flow name="implementation-post-transfer-main" doc:id="410eb2b9-8a33-44ad-a33b-c41e3f5d2965"&gt;  
+    &lt;flow-ref doc:name="Flow Reference-Fron" doc:id="ba2fc54b-f349-4b43-b90d-48a1571020ff" name="implementation-post-transfer-from"/&gt;  
+    &lt;flow-ref doc:name="Flow Reference-To" doc:id="50f38237-3a2a-421c-a2f6-8e2de2e2dd5b" name="implementation-post-transfer-to"/&gt;  
+    &lt;flow-ref doc:name="Flow Reference-Publish" doc:id="8489e4e4-00bb-4733-8e8c-38f23459681c" name="implementation-post-transfer-publish"/&gt;  
+    &lt;flow-ref doc:name="Flow Reference-Consume" doc:id="17f2d30e-0b3c-43e3-9f62-2069150b0c51" name="implementation-post-transfer-consume"/&gt;  
+    &lt;error-handler&gt; 
+        &lt;on-error-propagate type="ANY"&gt; 
+            &lt;set-variable variableName="customErrorMessage" value="#[error.description]" doc:name="customErrorMessage"/&gt;  
+            &lt;set-variable value="404" doc:name="Set HTTP Status" doc:id="6f1302f1-093d-4bb3-beb4-670c5116e5b4" variableName="httpStatus"/&gt;  
+            &lt;logger level="ERROR" message="#['Erro encontrado: ' ++ vars.customErrorMessage]" doc:name="customErrorMessage"/&gt;  
+            &lt;ee:transform &gt;  
+                &lt;ee:message&gt; 
+                    &lt;ee:set-payload&gt;&lt;![CDATA[%dw 2.0
+
+output application/json
+
+---
+
+{
+
+    'Mensagem': vars.customErrorMessage default 'Erro desconhecido'
+
+}]]&gt;    &lt;/ee:set-payload&gt;
+                &lt;/ee:message&gt; 
+            &lt;/ee:transform&gt; 
+        &lt;/on-error-propagate&gt; 
+    &lt;/error-handler&gt; 
+&lt;/flow&gt;
+</code></pre>
+
+                </div>
+              </div>
+              <p></p>
+            </div>
+          </section>
+          <section id="_implementation_post_transfer_from">
+            <div class="page-header">
+                <h1>implementation-post-transfer-from <img src="./assets/icons/flow.png"></h1>
+            </div>
+            <div class="documentation-indented" style="height:100%;width:100%;overflow:auto;">
+                <img src="img/implementation_post_transfer_from.png" usemap="#flowMapimplementation_post_transfer_from" alt="implementation_post_transfer_from image">
+                <map name="flowMapimplementation_post_transfer_from">
+                </map>
+            </div>
+            <div class="documentation-indented">
+              <div class="accordion-heading">
+                <a class="accordion-toggle" data-toggle="collapse" href="#_implementation_post_transfer_fromxml_code">
+                  Show configuration XML code of the flow implementation-post-transfer-from...
+                </a>
+              </div>
+              <div id="_implementation_post_transfer_fromxml_code" class="accordion-body collapse" style="height: 0px;">
+                <div class="accordion-inner">
+                    <pre><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+
+&lt;flow name="implementation-post-transfer-from"&gt;  
+    &lt;logger level="INFO" message="Transfer from account: #[vars.from_account_number] to account: #[vars.to_account_number] with amount: #[vars.amount]" doc:name="customMessage"&gt;   &lt;/logger&gt;  
+    &lt;flow-ref doc:name="Flow Reference" doc:id="daf7efda-f73d-45ec-a899-f76755320490" name="validate-amount"&gt;   &lt;/flow-ref&gt;  
+    &lt;db:select config-ref="Database_Config" doc:name="Select from_account_number"&gt;  
+        &lt;db:sql&gt;&lt;![CDATA[SELECT * FROM mule_account WHERE account_number = :from_account_number]]&gt;  &lt;/db:sql&gt;  
+        &lt;db:input-parameters&gt;&lt;![CDATA[#[{
+
+    'from_account_number': vars.from_account_number
+
+}]]]&gt;   &lt;/db:input-parameters&gt;
+    &lt;/db:select&gt;  
+    &lt;choice&gt; 
+        &lt;when expression="#[(payload[0].account_number default 0) as Number != null and (vars.from_account_number default 0) as Number == (payload[0].account_number default 0) as Number]"&gt; 
+            &lt;set-variable value="#[payload[0]]" variableName="fromAccountInfo" doc:name="fromAccountInfo"&gt;  &lt;/set-variable&gt; 
+        &lt;/when&gt;  
+        &lt;otherwise&gt; 
+            &lt;raise-error type="CUSTOM:INVALID_ACCOUNT" description="Número da conta de origem inválido." doc:name="CUSTOM:INVALID_ACCOUNT"&gt; &lt;/raise-error&gt; 
+        &lt;/otherwise&gt; 
+    &lt;/choice&gt;  
+    &lt;error-handler&gt; 
+        &lt;on-error-propagate type="CUSTOM:INVALID_ACCOUNT"&gt; 
+            &lt;logger level="ERROR" message="Falha na execução da query. Possível conta inexistente." doc:name="CUSTOM:INVALID_ACCOUNT"&gt;  &lt;/logger&gt;  
+            &lt;ee:transform &gt;  
+                &lt;ee:message&gt; 
+                    &lt;ee:set-payload&gt;&lt;![CDATA[%dw 2.0
+
+output application/json
+
+---
+
+{
+
+    'Mensagem': 'Falha na execução da query. Verifique as informações da conta.'
+
+}]]&gt;    &lt;/ee:set-payload&gt;
+                &lt;/ee:message&gt; 
+            &lt;/ee:transform&gt; 
+        &lt;/on-error-propagate&gt; 
+    &lt;/error-handler&gt; 
+&lt;/flow&gt;
+</code></pre>
+
+                </div>
+              </div>
+              <p></p>
+            </div>
+          </section>
+          <section id="_implementation_post_transfer_to">
+            <div class="page-header">
+                <h1>implementation-post-transfer-to <img src="./assets/icons/flow.png"></h1>
+            </div>
+            <div class="documentation-indented" style="height:100%;width:100%;overflow:auto;">
+                <img src="img/implementation_post_transfer_to.png" usemap="#flowMapimplementation_post_transfer_to" alt="implementation_post_transfer_to image">
+                <map name="flowMapimplementation_post_transfer_to">
+                </map>
+            </div>
+            <div class="documentation-indented">
+              <div class="accordion-heading">
+                <a class="accordion-toggle" data-toggle="collapse" href="#_implementation_post_transfer_toxml_code">
+                  Show configuration XML code of the flow implementation-post-transfer-to...
+                </a>
+              </div>
+              <div id="_implementation_post_transfer_toxml_code" class="accordion-body collapse" style="height: 0px;">
+                <div class="accordion-inner">
+                    <pre><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+
+&lt;flow name="implementation-post-transfer-to" doc:id="2d167c67-b0c6-4d87-908d-42450f17713e"&gt;  
+    &lt;logger level="INFO" doc:name="Payload" doc:id="aa06db9c-e34a-4f16-95b0-1988c77cf122" message="#[payload]"/&gt;  
+    &lt;db:select config-ref="Database_Config" doc:name="Select to_account_number"&gt;  
+        &lt;db:sql&gt;&lt;![CDATA[SELECT * FROM mule_account WHERE account_number = :to_account_number]]&gt;    &lt;/db:sql&gt;  
+        &lt;db:input-parameters&gt;&lt;![CDATA[#[{
+
+    'to_account_number': vars.to_account_number
+
+}]]]&gt;   &lt;/db:input-parameters&gt;
+    &lt;/db:select&gt;  
+    &lt;choice doc:name="Choice" doc:id="1e4e492a-31f4-4034-afbb-13a43dd2bdf4"&gt; 
+        &lt;when expression="#[(payload[0].account_number default 0) as Number != null and (vars.to_account_number default 0) as Number == (payload[0].account_number default 0) as Number]"&gt; 
+            &lt;set-variable value="#[payload[0]]" variableName="toAccountInfo" doc:name="toAccountInfo"/&gt; 
+        &lt;/when&gt;  
+        &lt;otherwise&gt; 
+            &lt;raise-error doc:name="CUSTOM:INVALID_ACCOUNT" doc:id="8df9c2e8-46f1-4dba-ab3b-1a91b2bb785c" type="CUSTOM:INVALID_ACCOUNT" description="Número da conta de destino inválido."/&gt; 
+        &lt;/otherwise&gt; 
+    &lt;/choice&gt;  
+    &lt;error-handler&gt; 
+        &lt;on-error-propagate type="DB:QUERY_EXECUTION"&gt; 
+            &lt;logger level="ERROR" message="Falha na execução da query. Possível conta inexistente." doc:name="CUSTOM:INVALID_ACCOUNT"/&gt;  
+            &lt;ee:transform doc:name="Transform Message" doc:id="7105c733-4120-4977-8dec-4aa17961104e"&gt;  
+                &lt;ee:message&gt; 
+                    &lt;ee:set-payload&gt;&lt;![CDATA[%dw 2.0
+
+output application/json
+
+---
+
+{
+
+'Mensagem': 'Falha na transferência: verifique o número da conta de destino'
+
+}]]&gt;    &lt;/ee:set-payload&gt;
+                &lt;/ee:message&gt; 
+            &lt;/ee:transform&gt; 
+        &lt;/on-error-propagate&gt; 
+    &lt;/error-handler&gt; 
+&lt;/flow&gt;
+</code></pre>
+
+                </div>
+              </div>
+              <p></p>
+            </div>
+          </section>
+          <section id="_implementation_post_transfer_publish">
+            <div class="page-header">
+                <h1>implementation-post-transfer-publish <img src="./assets/icons/flow.png"></h1>
+            </div>
+            <div class="documentation-indented" style="height:100%;width:100%;overflow:auto;">
+                <img src="img/implementation_post_transfer_publish.png" usemap="#flowMapimplementation_post_transfer_publish" alt="implementation_post_transfer_publish image">
+                <map name="flowMapimplementation_post_transfer_publish">
+                </map>
+            </div>
+            <div class="documentation-indented">
+              <div class="accordion-heading">
+                <a class="accordion-toggle" data-toggle="collapse" href="#_implementation_post_transfer_publishxml_code">
+                  Show configuration XML code of the flow implementation-post-transfer-publish...
+                </a>
+              </div>
+              <div id="_implementation_post_transfer_publishxml_code" class="accordion-body collapse" style="height: 0px;">
+                <div class="accordion-inner">
+                    <pre><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+
+&lt;flow name="implementation-post-transfer-publish" doc:id="4830ddee-dc88-4344-90dc-d8bbeef7d2cd"&gt;  
+    &lt;logger level="INFO" doc:name="Payload" doc:id="bf5b18bc-816e-4396-81fc-f7dfe719023c" message="payload"/&gt;  
+    &lt;ee:transform doc:name="Transform Message" doc:id="369f0c93-858f-47ad-9b9c-23740cf60d37"&gt;  
+        &lt;ee:message&gt; 
+            &lt;ee:set-payload&gt;&lt;![CDATA[%dw 2.0
+
+output application/json
+
+---
+
+{
+
+    account_number: payload.account_number,
+
+    account_id: payload.account_id,
+
+    balance: payload.balance,
+
+    name: payload.name,
+
+    to_account_number: vars.to_account_number,
+
+    from_account_number: vars.from_account_number,
+
+    amount: vars.amount,
+
+    fromAccountInfo: {
+
+        account_number: vars.fromAccountInfo.account_number,
+
+        account_id: vars.fromAccountInfo.account_id,
+
+        balance: vars.fromAccountInfo.balance,
+
+        name: vars.fromAccountInfo.name
+
+    },
+
+    toAccountInfo: {
+
+        account_number: vars.toAccountInfo.account_number,
+
+        account_id: vars.toAccountInfo.account_id,
+
+        balance: vars.toAccountInfo.balance,
+
+        name: vars.toAccountInfo.name
+
+    }
+
+}
+
+]]&gt; &lt;/ee:set-payload&gt;
+        &lt;/ee:message&gt; 
+    &lt;/ee:transform&gt;  
+    &lt;jms:publish doc:name="Publish-stg-transfer" doc:id="9f3999cc-2a42-45e2-9fb1-e65e750acbe5" config-ref="JMS_Config" destination="stg-transfer"&gt;  &lt;/jms:publish&gt; 
+&lt;/flow&gt;
+</code></pre>
+
+                </div>
+              </div>
+              <p></p>
+            </div>
+          </section>
+          <section id="_implementation_post_transfer_consume">
+            <div class="page-header">
+                <h1>implementation-post-transfer-consume <img src="./assets/icons/flow.png"></h1>
+            </div>
+            <div class="documentation-indented" style="height:100%;width:100%;overflow:auto;">
+                <img src="img/implementation_post_transfer_consume.png" usemap="#flowMapimplementation_post_transfer_consume" alt="implementation_post_transfer_consume image">
+                <map name="flowMapimplementation_post_transfer_consume">
+                </map>
+            </div>
+            <div class="documentation-indented">
+              <div class="accordion-heading">
+                <a class="accordion-toggle" data-toggle="collapse" href="#_implementation_post_transfer_consumexml_code">
+                  Show configuration XML code of the flow implementation-post-transfer-consume...
+                </a>
+              </div>
+              <div id="_implementation_post_transfer_consumexml_code" class="accordion-body collapse" style="height: 0px;">
+                <div class="accordion-inner">
+                    <pre><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+
+&lt;flow name="implementation-post-transfer-consume" doc:id="310c7195-bfc5-4969-a2b7-6002c8ebd492"&gt;  
+    &lt;set-payload value="#[null]" doc:name="null" doc:id="12d7bf21-d3cd-4c20-80cf-ee059eec4072"/&gt;  
+    &lt;jms:consume doc:name="Consume-stg-transfer" doc:id="c8820b07-7c7e-4d6e-9e89-f7c2a3bdd6e8" config-ref="JMS_Config" destination="stg-transfer" maximumWait="30000"&gt;  &lt;/jms:consume&gt;  
+    &lt;set-variable value="#[payload]" doc:name="newData" doc:id="c6238447-047d-4a51-b69c-c2a8718d7054" variableName="newData"/&gt;  
+    &lt;logger level="INFO" doc:name="Payload" doc:id="00fb43f1-9a3d-4799-985c-ad8e249fb0d0" message="#[payload]"/&gt;  
+    &lt;choice&gt; 
+        &lt;when expression="#[(vars.amount != null) and (vars.fromAccountInfo.balance != null) and (vars.amount &amp;gt; 0) and (vars.amount &amp;lt;= vars.fromAccountInfo.balance)]"&gt; 
+            &lt;!-- Update From Account Balance --&gt;  
+            &lt;db:update config-ref="Database_Config" doc:name="Update-get-amount"&gt;  
+                &lt;db:sql&gt;&lt;![CDATA[UPDATE mule_account SET balance = balance - :amount WHERE account_id = :account_id]]&gt;  &lt;/db:sql&gt;  
+                &lt;db:input-parameters&gt;&lt;![CDATA[#[{
+
+    'amount': vars.newData.amount,
+
+    'account_id': vars.newData.fromAccountInfo.account_id
+
+}]]]&gt;   &lt;/db:input-parameters&gt;
+            &lt;/db:update&gt;  
+            &lt;db:update config-ref="Database_Config" doc:name="Update-post-amount"&gt;  
+                &lt;db:sql&gt;&lt;![CDATA[UPDATE mule_account SET balance = balance + :amount WHERE account_id = :account_id]]&gt;  &lt;/db:sql&gt;  
+                &lt;db:input-parameters&gt;&lt;![CDATA[#[{
+
+    'amount': vars.newData.amount,
+
+    'account_id': vars.newData.toAccountInfo.account_id
+
+}]]]&gt;   &lt;/db:input-parameters&gt;
+            &lt;/db:update&gt;  
+            &lt;db:insert config-ref="Database_Config" doc:name="Insert-from"&gt;  
+                &lt;db:sql&gt;&lt;![CDATA[INSERT INTO mule_transaction(account_id, from_account_id, types, amount, date_transaction) VALUES (:account_id, :from_account_id, :types, :amount, now())]]&gt;   &lt;/db:sql&gt;  
+                &lt;db:input-parameters&gt;&lt;![CDATA[#[{
+
+    'account_id': vars.newData.fromAccountInfo.account_id,
+
+    'to_account_id': vars.newData.toAccountInfo.account_id,
+
+    'from_account_id': vars.newData.fromAccountInfo.account_id,
+
+    'types': 'TRANSFER_OUT',
+
+    'amount': vars.newData.amount
+
+
+
+}]]]&gt;   &lt;/db:input-parameters&gt;
+            &lt;/db:insert&gt;  
+            &lt;db:insert config-ref="Database_Config" doc:name="Insert-to"&gt;  
+                &lt;db:sql&gt;&lt;![CDATA[INSERT INTO mule_transaction(account_id, from_account_id, types, amount, date_transaction) VALUES (:account_id, :from_account_id, :types, :amount, now())]]&gt;   &lt;/db:sql&gt;  
+                &lt;db:input-parameters&gt;&lt;![CDATA[#[{
+
+    'account_id': vars.newData.toAccountInfo.account_id,
+
+    'from_account_id': vars.newData.fromAccountInfo.account_id,
+
+    'types': 'TRANSFER_IN',
+
+    'amount': vars.newData.amount
+
+}]]]&gt;   &lt;/db:input-parameters&gt;
+            &lt;/db:insert&gt;  
+            &lt;ee:transform doc:name="Transform Message" doc:id="66096158-2264-4b2d-9b4b-f2c537fb9a56"&gt;  
+                &lt;ee:message&gt; 
+                    &lt;ee:set-payload&gt;&lt;![CDATA[%dw 2.0
+
+output application/json
+
+---
+
+{
+
+    'Mensagem': "Transferência feita com sucesso"
+
+}]]&gt;    &lt;/ee:set-payload&gt;
+                &lt;/ee:message&gt; 
+            &lt;/ee:transform&gt;  
+            &lt;logger level="INFO" doc:name="Payload" doc:id="a2aa6ce1-c91d-4112-b960-6654317b58eb" message="#[payload]"/&gt; 
+        &lt;/when&gt;  
+        &lt;otherwise&gt; 
+            &lt;ee:transform doc:name="Transform Message" doc:id="95dc9509-9062-4f55-84f2-9e9fc59f1e0e"&gt;  
+                &lt;ee:message&gt; 
+                    &lt;ee:set-payload&gt;&lt;![CDATA[%dw 2.0
+
+output application/json
+
+---
+
+{
+
+    'Mensagem': 'Falha na transferência: saldo insuficiente ou valor inválido'
+
+}]]&gt;    &lt;/ee:set-payload&gt;
+                &lt;/ee:message&gt; 
+            &lt;/ee:transform&gt;  
+            &lt;logger level="INFO" doc:name="Payload" doc:id="e61fcd47-e495-4e1c-99fd-4683778a8802" message="#[payload]"/&gt; 
+        &lt;/otherwise&gt; 
+    &lt;/choice&gt;  
+    &lt;error-handler&gt; 
+        &lt;on-error-continue type="DB:QUERY_EXECUTION"&gt; 
+            &lt;logger level="ERROR" message="Falha na execução da query. Possível conta inexistente." doc:name="Custom:ErroMsg"/&gt;  
+            &lt;ee:transform doc:name="Transform Message"&gt;  
+                &lt;ee:message&gt; 
+                    &lt;ee:set-payload&gt;&lt;![CDATA[%dw 2.0
+
+output application/json
+
+---
+
+{
+
+     'Mensagem': 'Falha na execução da query. Verifique as informações da conta.'
+
+}]]&gt;    &lt;/ee:set-payload&gt;
+                &lt;/ee:message&gt; 
+            &lt;/ee:transform&gt; 
+        &lt;/on-error-continue&gt; 
+    &lt;/error-handler&gt; 
+&lt;/flow&gt;
+</code></pre>
+
+                </div>
+              </div>
+              <p></p>
+            </div>
+          </section>
+      </div>
+    </div>
+  </div>
+
+<!-- Footer
+    ================================================== -->
+    <footer class="footer">
+      <div class="container">
+        <p class="pull-right"><a href="#">Back to top</a></p>
+        <p>Designed and built with <a href="https://www.mulesoft.com/platform/studio" target="_blank">Anypoint Studio</a>.</p>
+        <p>Code licensed under the <a href="https://www.apache.org/licenses/LICENSE-2.0" target="_blank">Apache License v2.0</a>. Documentation licensed under <a href="https://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>.</p>
+        <p>Icons from <a href="https://glyphicons.com/">Glyphicons Free</a>, licensed under <a href="https://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>.</p>
+        <ul class="footer-links">
+          <li><a href="https://blogs.mulesoft.com/bloghome/">Read the blog</a></li>
+          <li><a href="https://www.mulesoft.org/jira/issues/">Submit issues</a></li>
+        </ul>
+      </div>
+    </footer>
+
+
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="assets/widgets.js"></script>
+    <script src="assets/jquery.js"></script>
+    <script src="assets/prettify.js"></script>
+    <script src="assets/bootstrap-transition.js"></script>
+    <script src="assets/bootstrap-alert.js"></script>
+    <script src="assets/bootstrap-modal.js"></script>
+    <script src="assets/bootstrap-dropdown.js"></script>
+    <script src="assets/bootstrap-scrollspy.js"></script>
+    <script src="assets/bootstrap-tab.js"></script>
+    <script src="assets/bootstrap-tooltip.js"></script>
+    <script src="assets/bootstrap-popover.js"></script>
+    <script src="assets/bootstrap-button.js"></script>
+    <script src="assets/bootstrap-collapse.js"></script>
+    <script src="assets/bootstrap-carousel.js"></script>
+    <script src="assets/bootstrap-typeahead.js"></script>
+    <script src="assets/bootstrap-affix.js"></script>
+    <script src="assets/scroller.js"></script>
+    <script src="assets/application.js"></script>
+
+</body>
+</html>

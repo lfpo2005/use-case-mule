@@ -109,7 +109,7 @@ output application/json
 	"Numero Conta": vars.getBalance.balances.item.NumeroConta,
 	"Extrato":{
 		"status": "erro",
-		"mensagem": "Ops! Não é permitido fazer mais de um extrato por mês.\nSó poderá fazer uma consulta a partir de: " ++ (payload.last_query_date[0] + |P30D|) as String {format: "dd-MM-yyyy"}
+		"mensagem": "Ops! Não é permitido fazer mais de um extrato por mês.\nSó poderá fazer uma nova consulta a partir do dia: " ++ (payload.last_query_date[0] + |P30D|) as String {format: "dd-MM-yyyy"}
 	} 
 }
 ]]></ee:set-payload>

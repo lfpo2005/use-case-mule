@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <title>project-mule · Anypoint Studio Documentation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- Le styles -->
+    <link href="assets/bootstrap.css" rel="stylesheet">
+    <link href="assets/bootstrap-responsive.css" rel="stylesheet">
+    <link href="assets/docs.css" rel="stylesheet">
+    <link href="assets/prettify.css" rel="stylesheet">
+    <link href="assets/scroller.css" rel="stylesheet">
+
+  </head>
+
+  <body data-twttr-rendered="true" data-spy="scroll" data-target=".bs-docs-sidebar"><iframe style="display: none;" id="rufous-sandbox" name="uid13460061790411"></iframe>
+
+    <!-- Navbar
+    ================================================== -->
+
+    <div class="navbar navbar-inverse navbar-fixed-top">
+      <div class="navbar-inner">
+        <div class="container-fluid">
+          <p class="navbar-text pull-right">
+              <a href="https://www.mulesoft.com" class="navbar-link">
+                <img src="./assets/images/mulesoft-logo-final.png" alt="MuleSoft" id="mulesoftlogo">
+              </a>
+          </p>
+          <div class="scroller scroller-left"><img src="./assets/icons/glyphicons_chevron-left.png" alt="scrollLeft"></div>
+          <div class="scroller scroller-right"><img src="./assets/icons/glyphicons_chevron-right.png" alt="scrollRight"></div>
+          <div class="wrapper">
+            <ul class="nav nav-tabs list" id="myTab">
+                    <li><a href="./index.html">implementation-health-check</a></li>
+                      <li><a href="./implementation-post-withdraw.html">implementation-post-withdraw</a></li>
+                      <li><a href="./implementation-post-created-account.html">implementation-post-created-account</a></li>
+                      <li><a href="./interface.html">interface</a></li>
+                      <li><a href="./implementation-get-history.html">implementation-get-history</a></li>
+                      <li><a href="./implementation-post-transfer.html">implementation-post-transfer</a></li>
+                      <li><a href="./implementation-get-accounts.html">implementation-get-accounts</a></li>
+                      <li><a href="./implementation-get-balance.html">implementation-get-balance</a></li>
+                      <li class="active"><a href="./global.html">global</a></li>
+                      <li><a href="./implementation-post-deposit.html">implementation-post-deposit</a></li>
+            </ul>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+
+  <header class="jumbotron subhead" id="overview">
+    <div class="container">
+      <h1>project-mule</h1>
+    </div>
+  </header>
+
+  <div class="container">
+
+    <!-- Docs nav
+    ================================================== -->
+    <div class="row">
+      <div class="span3 bs-docs-sidebar">
+        <ul class="nav nav-list bs-docs-sidenav affix">
+          <li class="nav-header">Flows</li>
+            <li data-toggle="collapse" data-target="#_batchJobFlow_PublishNav"><a href="#_batchJobFlow_Publish"><i class="icon-chevron-right"></i> batchJobFlow-Publish</a>
+            </li>
+            <div id="_batchJobFlow_PublishNav" class="accordion-body collapse" style="height: 0px;">
+              <div class="accordion-inner">
+                <ul>
+                </ul>
+              </div>
+            </div>
+            <li data-toggle="collapse" data-target="#_globalFlowNav"><a href="#_globalFlow"><i class="icon-chevron-right"></i> globalFlow</a>
+            </li>
+            <div id="_globalFlowNav" class="accordion-body collapse" style="height: 0px;">
+              <div class="accordion-inner">
+                <ul>
+                </ul>
+              </div>
+            </div>
+            <li data-toggle="collapse" data-target="#_batchJobFlow_CosumerNav"><a href="#_batchJobFlow_Cosumer"><i class="icon-chevron-right"></i> batchJobFlow-Cosumer</a>
+            </li>
+            <div id="_batchJobFlow_CosumerNav" class="accordion-body collapse" style="height: 0px;">
+              <div class="accordion-inner">
+                <ul>
+                </ul>
+              </div>
+            </div>
+            <li data-toggle="collapse" data-target="#_validate_account_numberNav"><a href="#_validate_account_number"><i class="icon-chevron-right"></i> validate-account-number</a>
+            </li>
+            <div id="_validate_account_numberNav" class="accordion-body collapse" style="height: 0px;">
+              <div class="accordion-inner">
+                <ul>
+                </ul>
+              </div>
+            </div>
+            <li data-toggle="collapse" data-target="#_validate_amountNav"><a href="#_validate_amount"><i class="icon-chevron-right"></i> validate-amount</a>
+            </li>
+            <div id="_validate_amountNav" class="accordion-body collapse" style="height: 0px;">
+              <div class="accordion-inner">
+                <ul>
+                </ul>
+              </div>
+            </div>
+        </ul>
+      </div>
+      <div class="span9">
+
+        <!-- Elements and their descriptions
+        ================================================== -->
+        <div style="max-height: 640px;width:100%;overflow:auto;">
+            <img src="img/global.png" usemap="#mFlowMap" alt="Mule Configuration Image">
+            <map name="mFlowMap">
+          </map>
+        </div>
+        <!--Mule configuration xml code-->
+        <div class="accordion-heading">
+          <a class="accordion-toggle" data-toggle="collapse" href="#collapseMuleConfiguration">
+            Show Mule Configuration XML code...
+          </a>
+        </div>
+        <div id="collapseMuleConfiguration" class="accordion-body collapse" style="height: 0px;">
+          <div class="accordion-inner">
+              <pre><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+
+&lt;mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:vm="http://www.mulesoft.org/schema/mule/vm" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:jms="http://www.mulesoft.org/schema/mule/jms" xmlns:file="http://www.mulesoft.org/schema/mule/file" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
+http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd"&gt;
+    &lt;db:config name="Database_Config" doc:name="Database Config" doc:id="e6bcf801-8fc0-47f0-89c9-922d35330eb5"&gt; 
+        &lt;db:generic-connection url="jdbc:postgresql://localhost:${db.port}/${db.database}" driverClassName="org.postgresql.Driver" user="${db.user}" password="${db.password}"/&gt; 
+    &lt;/db:config&gt;  
+    &lt;file:config name="File_Config" doc:name="File Config" doc:id="402adca0-c15f-4229-afbe-bf55903edc13"&gt; 
+        &lt;file:connection workingDir="${file.accountsDir}"/&gt; 
+    &lt;/file:config&gt;  
+    &lt;jms:config name="JMS_Config" doc:name="JMS Config" doc:id="6a5b2876-7a50-4455-ab04-7313e2ae5aca"&gt; 
+        &lt;jms:active-mq-connection username="${activemq.user}" password="${activemq.password}"&gt; 
+            &lt;jms:caching-strategy&gt; 
+                &lt;jms:no-caching/&gt; 
+            &lt;/jms:caching-strategy&gt;  
+            &lt;jms:factory-configuration brokerUrl="${activemq.broker}"/&gt; 
+        &lt;/jms:active-mq-connection&gt; 
+    &lt;/jms:config&gt;  
+    &lt;apikit:config name="use-case-mule-config" api="resource::e8af90f8-c409-49df-a9f9-428fe20ea1e2:use-case-mule:1.0.19:raml:zip:use-case-mule.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus"/&gt;  
+    &lt;configuration-properties doc:name="Configuration properties" doc:id="86903b81-8aff-4b68-9213-456c21a26d5d" file="config.yaml"/&gt;  
+    &lt;http:listener-config name="httpListenerConfig" doc:name="HTTP Listener config" doc:id="e3ee3e0e-d687-4306-8083-c309b7ab8602"&gt; 
+        &lt;http:listener-connection host="0.0.0.0" port="${http.port}"/&gt; 
+    &lt;/http:listener-config&gt;  
+    &lt;flow name="batchJobFlow-Publish"&gt; 
+        &lt;scheduler doc:name="Scheduler"&gt; 
+            &lt;scheduling-strategy&gt; 
+                &lt;fixed-frequency frequency="1" timeUnit="DAYS"/&gt; 
+            &lt;/scheduling-strategy&gt; 
+        &lt;/scheduler&gt;  
+        &lt;set-variable value="#[(now() - |P1D|) as String {format: &amp;quot;yyyy-MM-dd&amp;quot;}]" doc:name="date" doc:id="92b531ab-cd5e-489e-82e1-45ace9ccf4e7" variableName="date"/&gt;  
+        &lt;db:select config-ref="Database_Config" doc:name="Select from mule_transaction"&gt; 
+            &lt;db:sql&gt;&lt;![CDATA[SELECT 
+    t.*,
+    a.account_number
+ FROM mule_transaction t
+    JOIN mule_account a
+    ON t.account_id = a.account_id
+    WHERE DATE(date_transaction) = :yesterday]]&gt;    &lt;/db:sql&gt;
+            &lt;db:input-parameters&gt;&lt;![CDATA[#[{
+   'yesterday' : vars.date
+}]]]&gt;   &lt;/db:input-parameters&gt;
+        &lt;/db:select&gt;  
+        &lt;set-payload value="#[payload as Array]" doc:name="Transform to Array"/&gt;  
+        &lt;ee:transform doc:name="Transform Message" doc:id="87d26463-51d7-4f7c-bc00-78986bcec009"&gt; 
+            &lt;ee:message&gt; 
+                &lt;ee:set-payload&gt;&lt;![CDATA[%dw 2.0
+output application/json
+---
+payload map (transaction) -&gt; {
+    transaction_id: transaction.transaction_id,
+    account_id: transaction.account_id,
+    account_number: transaction.account_number,
+    types: transaction.types,
+    amount: transaction.amount,
+    date: transaction.date_transaction as String {format: "dd-MM-yyyy"},
+    hour: transaction.date_transaction as String {format: "HH:mm:ss"}
+
+}]]&gt;    &lt;/ee:set-payload&gt;
+            &lt;/ee:message&gt; 
+        &lt;/ee:transform&gt;  
+        &lt;jms:publish doc:name="Publish-stg-report" doc:id="68123739-1294-418a-9f1f-ed69f71b81d6" config-ref="JMS_Config" destination="stg-report"/&gt;  
+        &lt;flow-ref doc:name="batchJobFlow-Cosumer" doc:id="0d351db9-4b39-4f26-96e6-a0925e3b91ec" name="batchJobFlow-Cosumer"/&gt;  
+        &lt;error-handler&gt; 
+            &lt;on-error-continue type="ANY" enableNotifications="true" logException="true"&gt; 
+                &lt;logger level="INFO" doc:name="Error" message="#[error]"/&gt; 
+            &lt;/on-error-continue&gt; 
+        &lt;/error-handler&gt; 
+    &lt;/flow&gt;  
+    &lt;flow name="globalFlow" doc:id="ec5909ef-cd44-4351-9c26-666829fd183a"&gt; 
+        &lt;scheduler doc:name="Scheduler" doc:id="1d663aa7-3d44-429a-bb50-5bb6eec31379"&gt; 
+            &lt;scheduling-strategy&gt; 
+                &lt;cron expression="0 * * ? * *"/&gt; 
+            &lt;/scheduling-strategy&gt; 
+        &lt;/scheduler&gt;  
+        &lt;flow-ref doc:name="implementation-health-check-main" doc:id="8ae29d25-1da9-43d8-af41-d50debd0ac85" name="implementation-health-check-main"/&gt;  
+        &lt;logger level="INFO" doc:name="Health-check" doc:id="f2ea2328-eaa9-4ff2-a5ba-718e63a989e7" message="#[&amp;quot;health-check&amp;quot;: payload.banco_de_dados.status]"/&gt; 
+    &lt;/flow&gt;  
+    &lt;flow name="batchJobFlow-Cosumer" doc:id="bb3efb55-45de-4ab1-ab9c-8db4fce199d8"&gt; 
+        &lt;set-payload value="#[null]" doc:name="null" doc:id="d9ccb50e-2436-46ba-84af-a5501219d1f4"/&gt;  
+        &lt;logger level="INFO" doc:name="Payload" doc:id="3dbdc7b7-52ac-4281-a385-8bc32f9a8bca" message="#[payload]"/&gt;  
+        &lt;jms:consume doc:name="Consume-stg-report" doc:id="df9862ee-3f8e-4a84-9ed3-3ee02200967f" config-ref="JMS_Config" destination="stg-report" maximumWait="30000"/&gt;  
+        &lt;choice doc:name="Choice" doc:id="e4d64c46-c561-4f2c-9d14-5d373a74d8a8"&gt; 
+            &lt;when expression="sizeOf(payload) &amp;gt; 0"&gt; 
+                &lt;ee:transform doc:name="Transform to CSV" doc:id="927abd0f-4b14-427b-a5d1-cba3057d0b19"&gt; 
+                    &lt;ee:message&gt; 
+                        &lt;ee:set-payload&gt;&lt;![CDATA[%dw 2.0
+output application/csv
+
+---
+payload map (transaction) -&gt; {
+    "ID da transação": transaction.transaction_id,
+    "ID da Conta": transaction.account_id,
+    "Numero da conta" : transaction.account_number,
+    "Tipo de transação": transaction.types,
+    "Valor": ("R\$ " as String) ++ (transaction.amount as String),
+    "Data": transaction.date,
+    "Horas": transaction.hour
+}
+]]&gt;     &lt;/ee:set-payload&gt;
+                    &lt;/ee:message&gt; 
+                &lt;/ee:transform&gt;  
+                &lt;file:write doc:name="Write" doc:id="14466038-5dcc-4122-8c44-8ba9b94b0d34" config-ref="File_Config" path="#[&amp;quot;${file.accountsDir}/transaction_&amp;quot; ++ ((now() - |P1D|) as String {format: &amp;quot;dd-MM-yyyy&amp;quot;}) ++ &amp;quot;.csv&amp;quot;]"/&gt;  
+                &lt;logger level="INFO" doc:name="Custom:Relatorio criado sucesso" message="#[&amp;quot;\nRelatório &amp;quot; ++ &amp;quot;transaction_&amp;quot; ++ ((now() - |P1D|) as String {format: &amp;quot;dd-MM-yyyy&amp;quot;}) ++ &amp;quot;.csv&amp;quot; ++ &amp;quot;, criado com sucesso!&amp;quot;]"/&gt; 
+            &lt;/when&gt;  
+            &lt;otherwise&gt; 
+                &lt;logger level="INFO" doc:name="Não houve transação no dia anterior!" doc:id="2c108f1b-33f4-4c0f-9bdd-00597f25b01e" message="Não houve transação no dia anterior!"/&gt; 
+            &lt;/otherwise&gt; 
+        &lt;/choice&gt;  
+        &lt;error-handler&gt; 
+            &lt;on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="67c68676-5740-4996-995f-68666d4160a2" type="ANY"&gt; 
+                &lt;logger level="INFO" doc:name="Error" doc:id="f0188a83-3fd9-42b5-ad57-e23257d429fc" message="#[error]"/&gt; 
+            &lt;/on-error-continue&gt; 
+        &lt;/error-handler&gt; 
+    &lt;/flow&gt;  
+    &lt;flow name="validate-account-number" doc:id="9ea3fe8e-90f2-44c1-b325-a990020952fc"&gt; 
+        &lt;logger level="INFO" doc:name="Payload" doc:id="59617190-486e-490a-8c31-5aafdc26b39a" message="#[payload]"/&gt;  
+        &lt;db:select doc:name="Select account_number" doc:id="4e9de8b0-b8bc-4be8-9bf7-050307ce6bb0" config-ref="Database_Config"&gt; 
+            &lt;db:sql&gt;&lt;![CDATA[SELECT * FROM mule_account WHERE account_number = :account_number]]&gt;   &lt;/db:sql&gt;  
+            &lt;db:input-parameters&gt;&lt;![CDATA[#[{
+    'account_number': vars.account_number
+}]]]&gt;   &lt;/db:input-parameters&gt;
+        &lt;/db:select&gt;  
+        &lt;set-payload value="#[payload as Array]" doc:name="payload as Array" doc:id="32bb200e-9a2f-44b2-8747-a932990aa9c3"/&gt;  
+        &lt;logger level="INFO" doc:name="Payload" doc:id="d51394ba-f30c-427e-9694-7ed241a742f6" message="#[payload]"/&gt;  
+        &lt;choice doc:name="Choice" doc:id="3423f598-446b-4b00-bfc0-2843b14ce4af"&gt; 
+            &lt;when expression="#[sizeOf(payload) &amp;gt; 0]"&gt; 
+                &lt;db:select doc:name="Select Account Number" doc:id="d5475785-ab77-4fb8-9db0-d9ea02ee36b8" config-ref="Database_Config"&gt; 
+                    &lt;db:sql&gt;&lt;![CDATA[SELECT * FROM mule_account where account_number = :account_number]]&gt;   &lt;/db:sql&gt;  
+                    &lt;db:input-parameters&gt;&lt;![CDATA[#[{
+    account_number: vars.account_number
+}]]]&gt;   &lt;/db:input-parameters&gt;
+                &lt;/db:select&gt;  
+                &lt;set-variable value="payload" doc:name="getBalance" doc:id="f9601806-bb23-40af-9a19-52cf6afbde2b" variableName="getBalance"/&gt;  
+                &lt;ee:transform doc:name="Transform Message" doc:id="b12cabe8-f55b-4722-86a5-b84e50e2aa20"&gt; 
+                    &lt;ee:message&gt; 
+                        &lt;ee:set-payload&gt;&lt;![CDATA[%dw 2.0
+output application/json
+---
+payload map (item) -&gt; {
+    "Data": now() as String {format: "dd-MM-yyyy"},
+    "Horas": now() as String {format: "HH:mm:ss"},
+    "Numero da conta": item.account_number,
+    "Nome": item.name,
+    "Saldo": item.balance       
+}
+]]&gt; &lt;/ee:set-payload&gt;
+                    &lt;/ee:message&gt; 
+                &lt;/ee:transform&gt; 
+            &lt;/when&gt;  
+            &lt;otherwise&gt; 
+                &lt;raise-error doc:name="CUSTOM:INVALID_ACCOUNT" doc:id="8cacde78-fcad-4ba9-9137-bb975542cc8a" type="CUSTOM:INVALID_ACCOUNT" description="Número da conta inválido!"/&gt; 
+            &lt;/otherwise&gt; 
+        &lt;/choice&gt;  
+        &lt;error-handler&gt; 
+            &lt;on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="2bac6290-5832-42d9-9de1-70486413321f" type="CUSTOM:INVALID_ACCOUNT"&gt; 
+                &lt;logger level="ERROR" doc:name="Error" doc:id="7dfda9b9-4302-4e7e-be41-52c280d3249e" message="#[error]"/&gt;  
+                &lt;set-variable value="404" doc:name="httpStatus" variableName="httpStatus"/&gt;  
+                &lt;ee:transform doc:name="Transform Message" doc:id="80338d2d-0014-485a-affd-d1626ae0088a"&gt; 
+                    &lt;ee:message&gt; 
+                        &lt;ee:set-payload&gt;&lt;![CDATA[%dw 2.0
+output application/json
+---
+{
+    'Mensagem': 'Verifique o numero da conta.'
+}]]&gt;    &lt;/ee:set-payload&gt;
+                    &lt;/ee:message&gt; 
+                &lt;/ee:transform&gt; 
+            &lt;/on-error-propagate&gt; 
+        &lt;/error-handler&gt; 
+    &lt;/flow&gt;  
+    &lt;flow name="validate-amount" doc:id="1951b627-d277-4db3-a3b3-d9e6d6ba8d51"&gt; 
+        &lt;logger level="INFO" doc:name="Logger" doc:id="941dffba-13a8-46c5-b633-50edcf42e68e" message="#[payload]"/&gt;  
+        &lt;choice doc:name="Validate Amount"&gt; 
+            &lt;when expression="#[vars.amount is Number and vars.amount &amp;gt; 0]"&gt; 
+                &lt;logger level="INFO" doc:name="Amount is valid" message="Amount is valid: #[vars.amount]"/&gt; 
+            &lt;/when&gt;  
+            &lt;otherwise&gt; 
+                &lt;raise-error doc:name="CUSTOM:INVALID_AMOUNT" doc:id="48ad49f3-32a7-42f3-946d-345e6595bbd9" type="CUSTOM:INVALID_AMOUNT" description="Valor inválido, deve ser um número maior que 0."/&gt; 
+            &lt;/otherwise&gt; 
+        &lt;/choice&gt;  
+        &lt;error-handler&gt; 
+            &lt;on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="1b795c54-129b-423b-a576-cad6d5776891" type="CUSTOM:INVALID_AMOUNT"&gt; 
+                &lt;logger level="ERROR" doc:name="Error" doc:id="6273b499-cb4a-4bfb-b14e-e7d0b5b50b7b" message="#[error]"/&gt;  
+                &lt;set-variable value="404" doc:name="httpStatus" variableName="httpStatus"/&gt;  
+                &lt;ee:transform doc:name="Transform Message" doc:id="3746b5b9-0512-4a6f-a0a8-067bed65994d"&gt; 
+                    &lt;ee:message&gt; 
+                        &lt;ee:set-payload&gt;&lt;![CDATA[%dw 2.0
+output application/json
+---
+{
+    'Mensagem': 'Valor inválido, deve ser um número maior que 0.'
+}]]&gt;    &lt;/ee:set-payload&gt;
+                    &lt;/ee:message&gt; 
+                &lt;/ee:transform&gt; 
+            &lt;/on-error-propagate&gt; 
+        &lt;/error-handler&gt; 
+    &lt;/flow&gt; 
+&lt;/mule&gt;
+</code></pre>
+
+          </div>
+        </div>
+
+          <section id="_batchJobFlow_Publish">
+            <div class="page-header">
+                <h1>batchJobFlow-Publish <img src="./assets/icons/flow.png"></h1>
+            </div>
+            <div class="documentation-indented" style="height:100%;width:100%;overflow:auto;">
+                <img src="img/batchJobFlow_Publish.png" usemap="#flowMapbatchJobFlow_Publish" alt="batchJobFlow_Publish image">
+                <map name="flowMapbatchJobFlow_Publish">
+                </map>
+            </div>
+            <div class="documentation-indented">
+              <div class="accordion-heading">
+                <a class="accordion-toggle" data-toggle="collapse" href="#_batchJobFlow_Publishxml_code">
+                  Show configuration XML code of the flow batchJobFlow-Publish...
+                </a>
+              </div>
+              <div id="_batchJobFlow_Publishxml_code" class="accordion-body collapse" style="height: 0px;">
+                <div class="accordion-inner">
+                    <pre><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+
+&lt;flow name="batchJobFlow-Publish"&gt;  
+    &lt;scheduler doc:name="Scheduler"&gt;  
+        &lt;scheduling-strategy&gt; 
+            &lt;fixed-frequency frequency="1" timeUnit="DAYS"/&gt; 
+        &lt;/scheduling-strategy&gt; 
+    &lt;/scheduler&gt;  
+    &lt;set-variable value="#[(now() - |P1D|) as String {format: &amp;quot;yyyy-MM-dd&amp;quot;}]" doc:name="date" doc:id="92b531ab-cd5e-489e-82e1-45ace9ccf4e7" variableName="date"&gt;  &lt;/set-variable&gt;  
+    &lt;db:select config-ref="Database_Config" doc:name="Select from mule_transaction"&gt;  
+        &lt;db:sql&gt;&lt;![CDATA[SELECT 
+    t.*,
+    a.account_number
+ FROM mule_transaction t
+    JOIN mule_account a
+    ON t.account_id = a.account_id
+    WHERE DATE(date_transaction) = :yesterday]]&gt;    &lt;/db:sql&gt;
+        &lt;db:input-parameters&gt;&lt;![CDATA[#[{
+   'yesterday' : vars.date
+}]]]&gt;   &lt;/db:input-parameters&gt;
+    &lt;/db:select&gt;  
+    &lt;set-payload value="#[payload as Array]" doc:name="Transform to Array"&gt; &lt;/set-payload&gt;  
+    &lt;ee:transform doc:name="Transform Message" doc:id="87d26463-51d7-4f7c-bc00-78986bcec009"&gt;  
+        &lt;ee:message&gt; 
+            &lt;ee:set-payload&gt;&lt;![CDATA[%dw 2.0
+output application/json
+---
+payload map (transaction) -&gt; {
+    transaction_id: transaction.transaction_id,
+    account_id: transaction.account_id,
+    account_number: transaction.account_number,
+    types: transaction.types,
+    amount: transaction.amount,
+    date: transaction.date_transaction as String {format: "dd-MM-yyyy"},
+    hour: transaction.date_transaction as String {format: "HH:mm:ss"}
+
+}]]&gt;    &lt;/ee:set-payload&gt;
+        &lt;/ee:message&gt; 
+    &lt;/ee:transform&gt;  
+    &lt;jms:publish doc:name="Publish-stg-report" doc:id="68123739-1294-418a-9f1f-ed69f71b81d6" config-ref="JMS_Config" destination="stg-report"&gt;  &lt;/jms:publish&gt;  
+    &lt;flow-ref doc:name="batchJobFlow-Cosumer" doc:id="0d351db9-4b39-4f26-96e6-a0925e3b91ec" name="batchJobFlow-Cosumer"&gt;    &lt;/flow-ref&gt;  
+    &lt;error-handler&gt; 
+        &lt;on-error-continue type="ANY" enableNotifications="true" logException="true"&gt; 
+            &lt;logger level="INFO" doc:name="Error" message="#[error]"&gt;   &lt;/logger&gt; 
+        &lt;/on-error-continue&gt; 
+    &lt;/error-handler&gt; 
+&lt;/flow&gt;
+</code></pre>
+
+                </div>
+              </div>
+              <p></p>
+            </div>
+          </section>
+          <section id="_globalFlow">
+            <div class="page-header">
+                <h1>globalFlow <img src="./assets/icons/flow.png"></h1>
+            </div>
+            <div class="documentation-indented" style="height:100%;width:100%;overflow:auto;">
+                <img src="img/globalFlow.png" usemap="#flowMapglobalFlow" alt="globalFlow image">
+                <map name="flowMapglobalFlow">
+                </map>
+            </div>
+            <div class="documentation-indented">
+              <div class="accordion-heading">
+                <a class="accordion-toggle" data-toggle="collapse" href="#_globalFlowxml_code">
+                  Show configuration XML code of the flow globalFlow...
+                </a>
+              </div>
+              <div id="_globalFlowxml_code" class="accordion-body collapse" style="height: 0px;">
+                <div class="accordion-inner">
+                    <pre><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+
+&lt;flow name="globalFlow" doc:id="ec5909ef-cd44-4351-9c26-666829fd183a"&gt;  
+    &lt;scheduler doc:name="Scheduler" doc:id="1d663aa7-3d44-429a-bb50-5bb6eec31379"&gt; 
+        &lt;scheduling-strategy&gt; 
+            &lt;cron expression="0 * * ? * *"/&gt; 
+        &lt;/scheduling-strategy&gt; 
+    &lt;/scheduler&gt;  
+    &lt;flow-ref doc:name="implementation-health-check-main" doc:id="8ae29d25-1da9-43d8-af41-d50debd0ac85" name="implementation-health-check-main"/&gt;  
+    &lt;logger level="INFO" doc:name="Health-check" doc:id="f2ea2328-eaa9-4ff2-a5ba-718e63a989e7" message="#[&amp;quot;health-check&amp;quot;: payload.banco_de_dados.status]"/&gt; 
+&lt;/flow&gt;
+</code></pre>
+
+                </div>
+              </div>
+              <p></p>
+            </div>
+          </section>
+          <section id="_batchJobFlow_Cosumer">
+            <div class="page-header">
+                <h1>batchJobFlow-Cosumer <img src="./assets/icons/flow.png"></h1>
+            </div>
+            <div class="documentation-indented" style="height:100%;width:100%;overflow:auto;">
+                <img src="img/batchJobFlow_Cosumer.png" usemap="#flowMapbatchJobFlow_Cosumer" alt="batchJobFlow_Cosumer image">
+                <map name="flowMapbatchJobFlow_Cosumer">
+                </map>
+            </div>
+            <div class="documentation-indented">
+              <div class="accordion-heading">
+                <a class="accordion-toggle" data-toggle="collapse" href="#_batchJobFlow_Cosumerxml_code">
+                  Show configuration XML code of the flow batchJobFlow-Cosumer...
+                </a>
+              </div>
+              <div id="_batchJobFlow_Cosumerxml_code" class="accordion-body collapse" style="height: 0px;">
+                <div class="accordion-inner">
+                    <pre><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+
+&lt;flow name="batchJobFlow-Cosumer" doc:id="bb3efb55-45de-4ab1-ab9c-8db4fce199d8"&gt;  
+    &lt;set-payload value="#[null]" doc:name="null" doc:id="d9ccb50e-2436-46ba-84af-a5501219d1f4"/&gt;  
+    &lt;logger level="INFO" doc:name="Payload" doc:id="3dbdc7b7-52ac-4281-a385-8bc32f9a8bca" message="#[payload]"/&gt;  
+    &lt;jms:consume doc:name="Consume-stg-report" doc:id="df9862ee-3f8e-4a84-9ed3-3ee02200967f" config-ref="JMS_Config" destination="stg-report" maximumWait="30000"&gt;  &lt;/jms:consume&gt;  
+    &lt;choice doc:name="Choice" doc:id="e4d64c46-c561-4f2c-9d14-5d373a74d8a8"&gt; 
+        &lt;when expression="sizeOf(payload) &amp;gt; 0"&gt; 
+            &lt;ee:transform doc:name="Transform to CSV" doc:id="927abd0f-4b14-427b-a5d1-cba3057d0b19"&gt;  
+                &lt;ee:message&gt; 
+                    &lt;ee:set-payload&gt;&lt;![CDATA[%dw 2.0
+output application/csv
+
+---
+payload map (transaction) -&gt; {
+    "ID da transação": transaction.transaction_id,
+    "ID da Conta": transaction.account_id,
+    "Numero da conta" : transaction.account_number,
+    "Tipo de transação": transaction.types,
+    "Valor": ("R\$ " as String) ++ (transaction.amount as String),
+    "Data": transaction.date,
+    "Horas": transaction.hour
+}
+]]&gt;     &lt;/ee:set-payload&gt;
+                &lt;/ee:message&gt; 
+            &lt;/ee:transform&gt;  
+            &lt;file:write doc:name="Write" doc:id="14466038-5dcc-4122-8c44-8ba9b94b0d34" config-ref="File_Config" path="#[&amp;quot;${file.accountsDir}/transaction_&amp;quot; ++ ((now() - |P1D|) as String {format: &amp;quot;dd-MM-yyyy&amp;quot;}) ++ &amp;quot;.csv&amp;quot;]"&gt; &lt;/file:write&gt;  
+            &lt;logger level="INFO" doc:name="Custom:Relatorio criado sucesso" message="#[&amp;quot;\nRelatório &amp;quot; ++ &amp;quot;transaction_&amp;quot; ++ ((now() - |P1D|) as String {format: &amp;quot;dd-MM-yyyy&amp;quot;}) ++ &amp;quot;.csv&amp;quot; ++ &amp;quot;, criado com sucesso!&amp;quot;]"/&gt; 
+        &lt;/when&gt;  
+        &lt;otherwise&gt; 
+            &lt;logger level="INFO" doc:name="Não houve transação no dia anterior!" doc:id="2c108f1b-33f4-4c0f-9bdd-00597f25b01e" message="Não houve transação no dia anterior!"/&gt; 
+        &lt;/otherwise&gt; 
+    &lt;/choice&gt;  
+    &lt;error-handler&gt; 
+        &lt;on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="67c68676-5740-4996-995f-68666d4160a2" type="ANY"&gt; 
+            &lt;logger level="INFO" doc:name="Error" doc:id="f0188a83-3fd9-42b5-ad57-e23257d429fc" message="#[error]"/&gt; 
+        &lt;/on-error-continue&gt; 
+    &lt;/error-handler&gt; 
+&lt;/flow&gt;
+</code></pre>
+
+                </div>
+              </div>
+              <p></p>
+            </div>
+          </section>
+          <section id="_validate_account_number">
+            <div class="page-header">
+                <h1>validate-account-number <img src="./assets/icons/flow.png"></h1>
+            </div>
+            <div class="documentation-indented" style="height:100%;width:100%;overflow:auto;">
+                <img src="img/validate_account_number.png" usemap="#flowMapvalidate_account_number" alt="validate_account_number image">
+                <map name="flowMapvalidate_account_number">
+                </map>
+            </div>
+            <div class="documentation-indented">
+              <div class="accordion-heading">
+                <a class="accordion-toggle" data-toggle="collapse" href="#_validate_account_numberxml_code">
+                  Show configuration XML code of the flow validate-account-number...
+                </a>
+              </div>
+              <div id="_validate_account_numberxml_code" class="accordion-body collapse" style="height: 0px;">
+                <div class="accordion-inner">
+                    <pre><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+
+&lt;flow name="validate-account-number" doc:id="9ea3fe8e-90f2-44c1-b325-a990020952fc"&gt;  
+    &lt;logger level="INFO" doc:name="Payload" doc:id="59617190-486e-490a-8c31-5aafdc26b39a" message="#[payload]"/&gt;  
+    &lt;db:select doc:name="Select account_number" doc:id="4e9de8b0-b8bc-4be8-9bf7-050307ce6bb0" config-ref="Database_Config"&gt;  
+        &lt;db:sql&gt;&lt;![CDATA[SELECT * FROM mule_account WHERE account_number = :account_number]]&gt;   &lt;/db:sql&gt;  
+        &lt;db:input-parameters&gt;&lt;![CDATA[#[{
+    'account_number': vars.account_number
+}]]]&gt;   &lt;/db:input-parameters&gt;
+    &lt;/db:select&gt;  
+    &lt;set-payload value="#[payload as Array]" doc:name="payload as Array" doc:id="32bb200e-9a2f-44b2-8747-a932990aa9c3"/&gt;  
+    &lt;logger level="INFO" doc:name="Payload" doc:id="d51394ba-f30c-427e-9694-7ed241a742f6" message="#[payload]"/&gt;  
+    &lt;choice doc:name="Choice" doc:id="3423f598-446b-4b00-bfc0-2843b14ce4af"&gt; 
+        &lt;when expression="#[sizeOf(payload) &amp;gt; 0]"&gt; 
+            &lt;db:select doc:name="Select Account Number" doc:id="d5475785-ab77-4fb8-9db0-d9ea02ee36b8" config-ref="Database_Config"&gt;  
+                &lt;db:sql&gt;&lt;![CDATA[SELECT * FROM mule_account where account_number = :account_number]]&gt;   &lt;/db:sql&gt;  
+                &lt;db:input-parameters&gt;&lt;![CDATA[#[{
+    account_number: vars.account_number
+}]]]&gt;   &lt;/db:input-parameters&gt;
+            &lt;/db:select&gt;  
+            &lt;set-variable value="payload" doc:name="getBalance" doc:id="f9601806-bb23-40af-9a19-52cf6afbde2b" variableName="getBalance"/&gt;  
+            &lt;ee:transform doc:name="Transform Message" doc:id="b12cabe8-f55b-4722-86a5-b84e50e2aa20"&gt;  
+                &lt;ee:message&gt; 
+                    &lt;ee:set-payload&gt;&lt;![CDATA[%dw 2.0
+output application/json
+---
+payload map (item) -&gt; {
+    "Data": now() as String {format: "dd-MM-yyyy"},
+    "Horas": now() as String {format: "HH:mm:ss"},
+    "Numero da conta": item.account_number,
+    "Nome": item.name,
+    "Saldo": item.balance       
+}
+]]&gt; &lt;/ee:set-payload&gt;
+                &lt;/ee:message&gt; 
+            &lt;/ee:transform&gt; 
+        &lt;/when&gt;  
+        &lt;otherwise&gt; 
+            &lt;raise-error doc:name="CUSTOM:INVALID_ACCOUNT" doc:id="8cacde78-fcad-4ba9-9137-bb975542cc8a" type="CUSTOM:INVALID_ACCOUNT" description="Número da conta inválido!"/&gt; 
+        &lt;/otherwise&gt; 
+    &lt;/choice&gt;  
+    &lt;error-handler&gt; 
+        &lt;on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="2bac6290-5832-42d9-9de1-70486413321f" type="CUSTOM:INVALID_ACCOUNT"&gt; 
+            &lt;logger level="ERROR" doc:name="Error" doc:id="7dfda9b9-4302-4e7e-be41-52c280d3249e" message="#[error]"/&gt;  
+            &lt;set-variable value="404" doc:name="httpStatus" variableName="httpStatus"/&gt;  
+            &lt;ee:transform doc:name="Transform Message" doc:id="80338d2d-0014-485a-affd-d1626ae0088a"&gt;  
+                &lt;ee:message&gt; 
+                    &lt;ee:set-payload&gt;&lt;![CDATA[%dw 2.0
+output application/json
+---
+{
+    'Mensagem': 'Verifique o numero da conta.'
+}]]&gt;    &lt;/ee:set-payload&gt;
+                &lt;/ee:message&gt; 
+            &lt;/ee:transform&gt; 
+        &lt;/on-error-propagate&gt; 
+    &lt;/error-handler&gt; 
+&lt;/flow&gt;
+</code></pre>
+
+                </div>
+              </div>
+              <p></p>
+            </div>
+          </section>
+          <section id="_validate_amount">
+            <div class="page-header">
+                <h1>validate-amount <img src="./assets/icons/flow.png"></h1>
+            </div>
+            <div class="documentation-indented" style="height:100%;width:100%;overflow:auto;">
+                <img src="img/validate_amount.png" usemap="#flowMapvalidate_amount" alt="validate_amount image">
+                <map name="flowMapvalidate_amount">
+                </map>
+            </div>
+            <div class="documentation-indented">
+              <div class="accordion-heading">
+                <a class="accordion-toggle" data-toggle="collapse" href="#_validate_amountxml_code">
+                  Show configuration XML code of the flow validate-amount...
+                </a>
+              </div>
+              <div id="_validate_amountxml_code" class="accordion-body collapse" style="height: 0px;">
+                <div class="accordion-inner">
+                    <pre><code>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+
+&lt;flow name="validate-amount" doc:id="1951b627-d277-4db3-a3b3-d9e6d6ba8d51"&gt;  
+    &lt;logger level="INFO" doc:name="Logger" doc:id="941dffba-13a8-46c5-b633-50edcf42e68e" message="#[payload]"/&gt;  
+    &lt;choice doc:name="Validate Amount"&gt; 
+        &lt;when expression="#[vars.amount is Number and vars.amount &amp;gt; 0]"&gt; 
+            &lt;logger level="INFO" doc:name="Amount is valid" message="Amount is valid: #[vars.amount]"/&gt; 
+        &lt;/when&gt;  
+        &lt;otherwise&gt; 
+            &lt;raise-error doc:name="CUSTOM:INVALID_AMOUNT" doc:id="48ad49f3-32a7-42f3-946d-345e6595bbd9" type="CUSTOM:INVALID_AMOUNT" description="Valor inválido, deve ser um número maior que 0."/&gt; 
+        &lt;/otherwise&gt; 
+    &lt;/choice&gt;  
+    &lt;error-handler&gt; 
+        &lt;on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="1b795c54-129b-423b-a576-cad6d5776891" type="CUSTOM:INVALID_AMOUNT"&gt; 
+            &lt;logger level="ERROR" doc:name="Error" doc:id="6273b499-cb4a-4bfb-b14e-e7d0b5b50b7b" message="#[error]"/&gt;  
+            &lt;set-variable value="404" doc:name="httpStatus" variableName="httpStatus"/&gt;  
+            &lt;ee:transform doc:name="Transform Message" doc:id="3746b5b9-0512-4a6f-a0a8-067bed65994d"&gt;  
+                &lt;ee:message&gt; 
+                    &lt;ee:set-payload&gt;&lt;![CDATA[%dw 2.0
+output application/json
+---
+{
+    'Mensagem': 'Valor inválido, deve ser um número maior que 0.'
+}]]&gt;    &lt;/ee:set-payload&gt;
+                &lt;/ee:message&gt; 
+            &lt;/ee:transform&gt; 
+        &lt;/on-error-propagate&gt; 
+    &lt;/error-handler&gt; 
+&lt;/flow&gt;
+</code></pre>
+
+                </div>
+              </div>
+              <p></p>
+            </div>
+          </section>
+      </div>
+    </div>
+  </div>
+
+<!-- Footer
+    ================================================== -->
+    <footer class="footer">
+      <div class="container">
+        <p class="pull-right"><a href="#">Back to top</a></p>
+        <p>Designed and built with <a href="https://www.mulesoft.com/platform/studio" target="_blank">Anypoint Studio</a>.</p>
+        <p>Code licensed under the <a href="https://www.apache.org/licenses/LICENSE-2.0" target="_blank">Apache License v2.0</a>. Documentation licensed under <a href="https://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>.</p>
+        <p>Icons from <a href="https://glyphicons.com/">Glyphicons Free</a>, licensed under <a href="https://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>.</p>
+        <ul class="footer-links">
+          <li><a href="https://blogs.mulesoft.com/bloghome/">Read the blog</a></li>
+          <li><a href="https://www.mulesoft.org/jira/issues/">Submit issues</a></li>
+        </ul>
+      </div>
+    </footer>
+
+
+
+    <!-- Le javascript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="assets/widgets.js"></script>
+    <script src="assets/jquery.js"></script>
+    <script src="assets/prettify.js"></script>
+    <script src="assets/bootstrap-transition.js"></script>
+    <script src="assets/bootstrap-alert.js"></script>
+    <script src="assets/bootstrap-modal.js"></script>
+    <script src="assets/bootstrap-dropdown.js"></script>
+    <script src="assets/bootstrap-scrollspy.js"></script>
+    <script src="assets/bootstrap-tab.js"></script>
+    <script src="assets/bootstrap-tooltip.js"></script>
+    <script src="assets/bootstrap-popover.js"></script>
+    <script src="assets/bootstrap-button.js"></script>
+    <script src="assets/bootstrap-collapse.js"></script>
+    <script src="assets/bootstrap-carousel.js"></script>
+    <script src="assets/bootstrap-typeahead.js"></script>
+    <script src="assets/bootstrap-affix.js"></script>
+    <script src="assets/scroller.js"></script>
+    <script src="assets/application.js"></script>
+
+</body>
+</html>
