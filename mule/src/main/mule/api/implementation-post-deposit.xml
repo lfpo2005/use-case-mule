@@ -39,7 +39,7 @@ output application/json
 	</flow>
 	<flow name="implementation-post-deposit-publish"
 		doc:id="f501f5bc-8144-40a2-80ee-12812df292f5">
-		<logger level="INFO" doc:name="Payload1" doc:id="b9c4327c-4195-4f65-81da-e50c44b3d35d" message="#[payload]" />
+		<logger level="INFO" doc:name="Payload" doc:id="b9c4327c-4195-4f65-81da-e50c44b3d35d" message="#[payload]" />
 		<flow-ref doc:name="Validate Account Number" doc:id="e29a84ac-9334-4bee-9cf1-fa54cadffcd4" name="validate-account-number"/>
 		<flow-ref doc:name="Validate Amount" doc:id="e302d096-3251-4f0f-8ef2-83e7e02c1444" name="validate-amount"/>
 		<db:select doc:name="Select account_number" config-ref="Database_Config">

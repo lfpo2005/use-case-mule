@@ -212,6 +212,8 @@ output application/json
 				]]></ee:set-variable>
 				<ee:set-variable variableName="amount"><![CDATA[payload.amount
 				]]></ee:set-variable>
+				<ee:set-variable variableName="account_type" ><![CDATA[attributes.queryParams.account_type]]></ee:set-variable>
+				<ee:set-variable variableName="digit" ><![CDATA[attributes.uriParams.digit]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
 		<flow-ref doc:name="implementation-post-withdraw-main"

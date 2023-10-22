@@ -201,7 +201,7 @@ payload map (transaction) -> {
 	account_number: vars.account_number
 }]]]></db:input-parameters>
 				</db:select>
-				<set-variable value="payload" doc:name="getBalance"
+				<set-variable value="#[payload]" doc:name="getBalance"
 					doc:id="f9601806-bb23-40af-9a19-52cf6afbde2b"
 					variableName="getBalance" />
 				<ee:transform doc:name="Transform Message"
