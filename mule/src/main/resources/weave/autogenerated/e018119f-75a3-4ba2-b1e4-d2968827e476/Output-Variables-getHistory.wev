@@ -1,0 +1,9 @@
+%dw 2.0
+
+type auto_e018119f_75a3_4ba2_b1e4_d2968827e476_Output_Variables_getHistory = Array<{ _?: java_lang_Object }>
+type java_lang_Object = {|  |} {"typeAlias": "Object",
+"class": "java.lang.Object",
+"typeId": "java.lang.Object"}
+
+
+

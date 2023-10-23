@@ -41,7 +41,7 @@ http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/cu
 		</jms:active-mq-connection>
 	</jms:config>
 	<apikit:config name="use-case-mule-config"
-		api="resource::e8af90f8-c409-49df-a9f9-428fe20ea1e2:use-case-mule:2.0.3:raml:zip:use-case-mule.raml"
+		api="resource::e8af90f8-c409-49df-a9f9-428fe20ea1e2:use-case-mule:2.0.8:raml:zip:use-case-mule.raml"
 		outboundHeadersMapName="outboundHeaders"
 		httpStatusVarName="httpStatus" />
 	<configuration-properties

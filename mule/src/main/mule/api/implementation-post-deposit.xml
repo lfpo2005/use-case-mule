@@ -39,9 +39,10 @@ output application/json
 	</flow>
 	<flow name="implementation-post-deposit-publish"
 		doc:id="f501f5bc-8144-40a2-80ee-12812df292f5">
-		<logger level="INFO" doc:name="Payload" doc:id="b9c4327c-4195-4f65-81da-e50c44b3d35d" message="#[payload]" />
+		<logger level="INFO" doc:name="init deposit" doc:id="b9c4327c-4195-4f65-81da-e50c44b3d35d" message="init deposit" />
 		<flow-ref doc:name="Validate Account Number" doc:id="e29a84ac-9334-4bee-9cf1-fa54cadffcd4" name="validate-account-number"/>
 		<flow-ref doc:name="Validate Amount" doc:id="e302d096-3251-4f0f-8ef2-83e7e02c1444" name="validate-amount"/>
+		<logger level="INFO" doc:name="payload" doc:id="50d53bbd-29cc-4780-85fa-d226a59e2dc4" message="#[payload]"/>
 		<db:select doc:name="Select account_number" config-ref="Database_Config">
 			<db:sql><![CDATA[SELECT account_id FROM mule_account WHERE account_number = :account_number]]></db:sql>
 			<db:input-parameters><![CDATA[#[{'account_number': vars.account_number}]]]></db:input-parameters>
@@ -59,7 +60,9 @@ output application/json
 	'account_id': vars.accountId,
 	'types': 'DEPOSIT',
 	'amount': vars.amount,
-	account_type: vars.account_type
+	'account_number': vars.account_number,
+	'digit': vars.digit,
+	'account_type': vars.account_type
 }]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
@@ -70,9 +73,9 @@ output application/json
 	<flow name="implementation-post-deposit-consumer" doc:id="e321df5a-3ca4-44a4-b611-b3ded2b2cf37" >
 		<set-payload value="#[null]" doc:name="null" doc:id="a5bb7f8c-9da7-44bf-b0de-f45116760c96" />
 		<jms:consume doc:name="Consume-stg-deposit" doc:id="4935d707-12a8-4fcc-a105-f22df7c15ba9" config-ref="JMS_Config" destination="stg-deposit" maximumWait="30000"/>
-		<set-variable value="#[payload]" doc:name="Deposit" doc:id="a05a0af6-2e4d-4ad0-a2f1-15e07fdaf8a5" variableName="deposit"/>
+		<set-variable value="#[payload]" doc:name="deposit" doc:id="a05a0af6-2e4d-4ad0-a2f1-15e07fdaf8a5" variableName="deposit"/>
 		<logger level="INFO" doc:name="Logger" doc:id="4e37442b-06b9-41dd-94e2-30de0cf9ff9b" message="#[payload]"/>
-		<db:insert doc:name="Insert transaction" config-ref="Database_Config">
+		<db:insert doc:name="Insert transactions" config-ref="Database_Config">
 			<db:sql><![CDATA[INSERT INTO mule_transactions
 (account_id, types, amount, date_transaction)
 VALUES 
@@ -86,15 +89,14 @@ VALUES
 		<db:update doc:name="Update balance" config-ref="Database_Config">
 			<db:sql><![CDATA[UPDATE mule_account
 SET 
-    balance = balance + :amount,
-    account_type = :account_type
+    balance = balance + :amount
 WHERE 
-    account_id = :account_id;
+    account_number = :account_number;
 ]]></db:sql>
 			<db:input-parameters><![CDATA[#[{
     'amount': vars.deposit.amount,
-    'account_id': vars.deposit.account_id,
-    'account_type': vars.deposit.account_type
+    'account_number': vars.deposit.account_number,
+    
 }]]]></db:input-parameters>
 		</db:update>
 		<set-variable variableName="transactionSuccess" value="#[true]" doc:name="Set transactionSuccess" />

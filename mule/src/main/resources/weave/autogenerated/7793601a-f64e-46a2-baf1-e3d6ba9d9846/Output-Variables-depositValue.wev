@@ -1,4 +1,0 @@
-%dw 2.0
-
-type auto_7793601a_f64e_46a2_baf1_e3d6ba9d9846_Output_Variables_depositValue = Number
-

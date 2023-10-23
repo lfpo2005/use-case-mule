@@ -1,0 +1,4 @@
+%dw 2.0
+
+type auto_e018119f_75a3_4ba2_b1e4_d2968827e476_Output_Variables_getBalance = {| Mensagem: String |} | Array<{|  account_id: Number,   user_id: Number,   account_type: String,   account_number: Number,   digit: Number,   balance?: Number|}>
+

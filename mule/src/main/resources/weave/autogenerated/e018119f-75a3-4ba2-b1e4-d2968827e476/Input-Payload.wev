@@ -1,0 +1,10 @@
+%dw 2.0
+
+type auto_e018119f_75a3_4ba2_b1e4_d2968827e476_Input_Payload = {|
+  account_number: Number, 
+  digit: Number, 
+  name: String, 
+  balance: Number, 
+  Transactions: Array<{|    Date: String,     Hours: String,     "Type transaction": String,     amount: Number,     to: String  |}>
+|}
+

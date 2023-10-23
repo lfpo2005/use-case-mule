@@ -43,11 +43,13 @@ output application/json
 	</flow>
 	<flow name="implementation-post-transfer-from">
 		<logger level="INFO"
-			message="Transfer from account: #[vars.from_account_number] to account: #[vars.to_account_number] with amount: #[vars.amount]" doc:name="customMessage"/>
+			message="init transfer" doc:name="init transfer"/>
 
-		<flow-ref doc:name="Flow Reference" doc:id="daf7efda-f73d-45ec-a899-f76755320490" name="validate-amount"/>
+		<flow-ref doc:name="validate-amount" doc:id="daf7efda-f73d-45ec-a899-f76755320490" name="validate-amount"/>
 		<db:select config-ref="Database_Config" doc:name="Select from_account_number">
-			<db:sql><![CDATA[SELECT * FROM mule_account WHERE account_number = :from_account_number]]></db:sql>
+			<db:sql><![CDATA[SELECT * FROM mule_account
+WHERE
+account_number = :from_account_number]]></db:sql>
 			<db:input-parameters><![CDATA[#[{
 	'from_account_number': vars.from_account_number
 }]]]></db:input-parameters>
@@ -87,7 +89,9 @@ output application/json
 		<logger level="INFO" doc:name="Payload"
 			doc:id="aa06db9c-e34a-4f16-95b0-1988c77cf122" message="#[payload]" />
 		<db:select config-ref="Database_Config" doc:name="Select to_account_number">
-			<db:sql><![CDATA[SELECT * FROM mule_account WHERE account_number = :to_account_number]]></db:sql>
+			<db:sql><![CDATA[SELECT * FROM mule_account
+WHERE
+account_number = :to_account_number]]></db:sql>
 			<db:input-parameters><![CDATA[#[{
 	'to_account_number': vars.to_account_number
 }]]]></db:input-parameters>
@@ -126,35 +130,38 @@ output application/json
 	</flow>
 	<flow name="implementation-post-transfer-publish" doc:id="4830ddee-dc88-4344-90dc-d8bbeef7d2cd" >
 		<logger level="INFO" doc:name="Payload" doc:id="bf5b18bc-816e-4396-81fc-f7dfe719023c" message="payload"/>
-		<ee:transform doc:name="Transform Message" doc:id="369f0c93-858f-47ad-9b9c-23740cf60d37" >
+		<ee:transform doc:name="Account Info" doc:id="369f0c93-858f-47ad-9b9c-23740cf60d37" >
 			<ee:message >
 				<ee:set-payload ><![CDATA[%dw 2.0
 output application/json
 ---
 {
-	account_number: payload.account_number,
-	account_id: payload.account_id,
-	balance: payload.balance,
-	name: payload.name,
+	account_number: payload.account_number[0],
+	account_id: payload.account_id[0],
+	balance: payload.balance[0],
+	name: 'name',
 	to_account_number: vars.to_account_number,
 	from_account_number: vars.from_account_number,
 	amount: vars.amount,
 	fromAccountInfo: {
 		account_number: vars.fromAccountInfo.account_number,
+		digit: vars.fromAccountInfo.digit,
 		account_id: vars.fromAccountInfo.account_id,
 		balance: vars.fromAccountInfo.balance,
-		name: vars.fromAccountInfo.name
+		account_type: vars.fromAccountInfo.account_type
 	},
 	toAccountInfo: {
 		account_number: vars.toAccountInfo.account_number,
+		digit: vars.toAccountInfo.digit,
 		account_id: vars.toAccountInfo.account_id,
 		balance: vars.toAccountInfo.balance,
-		name: vars.toAccountInfo.name
+		account_type: vars.toAccountInfo.account_type
 	}
 }
 ]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
+		<logger level="INFO" doc:name="payload" doc:id="f63ba84b-0708-4229-893a-91604f64f703" message="payload"/>
 		<jms:publish doc:name="Publish-stg-transfer" doc:id="9f3999cc-2a42-45e2-9fb1-e65e750acbe5" config-ref="JMS_Config" destination="stg-transfer"/>
 	</flow>
 	<flow name="implementation-post-transfer-consume"
@@ -169,7 +176,11 @@ output application/json
 				<!-- Update From Account Balance -->
 				<db:update config-ref="Database_Config"
 					doc:name="Update-get-amount">
-					<db:sql><![CDATA[UPDATE mule_account SET balance = balance - :amount WHERE account_id = :account_id]]></db:sql>
+					<db:sql><![CDATA[UPDATE mule_account
+SET
+balance = balance - :amount
+WHERE
+account_id = :account_id]]></db:sql>
 					<db:input-parameters><![CDATA[#[{
 	'amount': vars.newData.amount,
 	'account_id': vars.newData.fromAccountInfo.account_id
@@ -177,7 +188,11 @@ output application/json
 				</db:update>
 				<db:update config-ref="Database_Config"
 					doc:name="Update-post-amount">
-					<db:sql><![CDATA[UPDATE mule_account SET balance = balance + :amount WHERE account_id = :account_id]]></db:sql>
+					<db:sql><![CDATA[UPDATE mule_account
+SET
+balance = balance + :amount
+WHERE
+account_id = :account_id]]></db:sql>
 					<db:input-parameters><![CDATA[#[{
 	'amount': vars.newData.amount,
 	'account_id': vars.newData.toAccountInfo.account_id
@@ -185,7 +200,10 @@ output application/json
 				</db:update>
 				<db:insert config-ref="Database_Config"
 					doc:name="Insert-from">
-					<db:sql><![CDATA[INSERT INTO mule_transaction(account_id, from_account_id, types, amount, date_transaction) VALUES (:account_id, :from_account_id, :types, :amount, now())]]></db:sql>
+					<db:sql><![CDATA[INSERT INTO mule_transactions
+(account_id, from_account_id, types, amount, date_transaction)
+VALUES
+(:account_id, :from_account_id, :types, :amount, now())]]></db:sql>
 					<db:input-parameters><![CDATA[#[{
 	'account_id': vars.newData.fromAccountInfo.account_id,
 	'to_account_id': vars.newData.toAccountInfo.account_id, 
@@ -197,7 +215,10 @@ output application/json
 				</db:insert>
 				<db:insert config-ref="Database_Config"
 					doc:name="Insert-to">
-					<db:sql><![CDATA[INSERT INTO mule_transaction(account_id, from_account_id, types, amount, date_transaction) VALUES (:account_id, :from_account_id, :types, :amount, now())]]></db:sql>
+					<db:sql><![CDATA[INSERT INTO mule_transactions
+(account_id, from_account_id, types, amount, date_transaction)
+VALUES
+(:account_id, :from_account_id, :types, :amount, now())]]></db:sql>
 					<db:input-parameters><![CDATA[#[{
 	'account_id': vars.newData.toAccountInfo.account_id,
 	'from_account_id': vars.newData.fromAccountInfo.account_id,

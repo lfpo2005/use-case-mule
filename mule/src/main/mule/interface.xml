@@ -1,247 +1,243 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<mule
-	xmlns:scripting="http://www.mulesoft.org/schema/mule/scripting"
-	xmlns:db="http://www.mulesoft.org/schema/mule/db"
-	xmlns="http://www.mulesoft.org/schema/mule/core"
-	xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit"
-	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
-	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
-	xmlns:http="http://www.mulesoft.org/schema/mule/http"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="
-http://www.mulesoft.org/schema/mule/scripting http://www.mulesoft.org/schema/mule/scripting/current/mule-scripting.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd 
-http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
-
-	<flow name="use-case-mule-main">
-		<http:listener
-			path="/mule/v2/*" config-ref="httpListenerConfig">
-			<http:response
-				statusCode="#[vars.httpStatus default 200]">
-				<http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
-			</http:response>
-			<http:error-response
-				statusCode="#[vars.httpStatus default 500]">
-				<http:body><![CDATA[#[payload]]]></http:body>
-				<http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
-			</http:error-response>
-		</http:listener>
-		<apikit:router config-ref="use-case-mule-config"/>
-		<error-handler>
-			<on-error-propagate type="APIKIT:BAD_REQUEST">
-				<ee:transform doc:name="Transform Message">
-					<ee:message>
-						<ee:set-payload><![CDATA[%dw 2.0
+<mule xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd ">
+    <flow name="use-case-mule-main">
+        <http:listener config-ref="httpListenerConfig" path="/mule/v2/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body><![CDATA[#[payload]]]></http:body>
+                <http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:router config-ref="use-case-mule-config"/>
+        <error-handler>
+            <on-error-propagate type="APIKIT:BAD_REQUEST">
+                <ee:transform doc:name="Transform Message">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {message: "Bad request"}]]></ee:set-payload>
-					</ee:message>
-					<ee:variables>
-						<ee:set-variable variableName="httpStatus">400
-						</ee:set-variable>
-					</ee:variables>
-				</ee:transform>
-			</on-error-propagate>
-			<on-error-propagate type="APIKIT:NOT_FOUND">
-				<ee:transform doc:name="Transform Message">
-					<ee:message>
-						<ee:set-payload><![CDATA[%dw 2.0
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">400</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <ee:transform doc:name="Transform Message">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {message: "Resource not found"}]]></ee:set-payload>
-					</ee:message>
-					<ee:variables>
-						<ee:set-variable variableName="httpStatus">404
-						</ee:set-variable>
-					</ee:variables>
-				</ee:transform>
-			</on-error-propagate>
-			<on-error-propagate
-				type="APIKIT:METHOD_NOT_ALLOWED">
-				<ee:transform doc:name="Transform Message">
-					<ee:message>
-						<ee:set-payload><![CDATA[%dw 2.0
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">404</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:METHOD_NOT_ALLOWED">
+                <ee:transform doc:name="Transform Message">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {message: "Method not allowed"}]]></ee:set-payload>
-					</ee:message>
-					<ee:variables>
-						<ee:set-variable variableName="httpStatus">405
-						</ee:set-variable>
-					</ee:variables>
-				</ee:transform>
-			</on-error-propagate>
-			<on-error-propagate type="APIKIT:NOT_ACCEPTABLE">
-				<ee:transform doc:name="Transform Message">
-					<ee:message>
-						<ee:set-payload><![CDATA[%dw 2.0
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">405</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_ACCEPTABLE">
+                <ee:transform doc:name="Transform Message">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {message: "Not acceptable"}]]></ee:set-payload>
-					</ee:message>
-					<ee:variables>
-						<ee:set-variable variableName="httpStatus">406
-						</ee:set-variable>
-					</ee:variables>
-				</ee:transform>
-			</on-error-propagate>
-			<on-error-propagate
-				type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
-				<ee:transform doc:name="Transform Message">
-					<ee:message>
-						<ee:set-payload><![CDATA[%dw 2.0
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">406</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:UNSUPPORTED_MEDIA_TYPE">
+                <ee:transform doc:name="Transform Message">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {message: "Unsupported media type"}]]></ee:set-payload>
-					</ee:message>
-					<ee:variables>
-						<ee:set-variable variableName="httpStatus">415
-						</ee:set-variable>
-					</ee:variables>
-				</ee:transform>
-			</on-error-propagate>
-			<on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
-				<ee:transform doc:name="Transform Message">
-					<ee:message>
-						<ee:set-payload><![CDATA[%dw 2.0
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">415</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+            <on-error-propagate type="APIKIT:NOT_IMPLEMENTED">
+                <ee:transform doc:name="Transform Message">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {message: "Not Implemented"}]]></ee:set-payload>
-					</ee:message>
-					<ee:variables>
-						<ee:set-variable variableName="httpStatus">501
-						</ee:set-variable>
-					</ee:variables>
-				</ee:transform>
-			</on-error-propagate>
-		</error-handler>
-	</flow>
-	<flow name="use-case-mule-console">
-		<http:listener
-			path="/console/*" config-ref="httpListenerConfig">
-			<http:response
-				statusCode="#[vars.httpStatus default 200]">
-				<http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
-			</http:response>
-			<http:error-response
-				statusCode="#[vars.httpStatus default 500]">
-				<http:body><![CDATA[#[payload]]]></http:body>
-				<http:headers><![CDATA[#[vars.outboundHeaders default {}]]]></http:headers>
-			</http:error-response>
-		</http:listener>
-		<apikit:console config-ref="use-case-mule-config" />
-		<error-handler>
-			<on-error-propagate type="APIKIT:NOT_FOUND">
-				<ee:transform doc:name="Transform Message">
-					<ee:message>
-						<ee:set-payload><![CDATA[%dw 2.0
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">501</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="use-case-mule-console">
+        <http:listener config-ref="httpListenerConfig" path="/console/*">
+            <http:response statusCode="#[vars.httpStatus default 200]">
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:response>
+            <http:error-response statusCode="#[vars.httpStatus default 500]">
+                <http:body>#[payload]</http:body>
+                <http:headers>#[vars.outboundHeaders default {}]</http:headers>
+            </http:error-response>
+        </http:listener>
+        <apikit:console config-ref="use-case-mule-config"/>
+        <error-handler>
+            <on-error-propagate type="APIKIT:NOT_FOUND">
+                <ee:transform doc:name="Transform Message">
+                    <ee:message>
+                        <ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
 {message: "Resource not found"}]]></ee:set-payload>
-					</ee:message>
-					<ee:variables>
-						<ee:set-variable variableName="httpStatus">404
-						</ee:set-variable>
-					</ee:variables>
-				</ee:transform>
-			</on-error-propagate>
-		</error-handler>
-	</flow>
-	<flow name="get:\accounts">
-		<ee:transform doc:name="Transform Message" doc:id="58ea21a0-2d13-4a57-aa14-8e1e3fcc4f1b" >
-			<ee:message >
-			</ee:message>
-			<ee:variables >
+                    </ee:message>
+                    <ee:variables>
+                        <ee:set-variable variableName="httpStatus">404</ee:set-variable>
+                    </ee:variables>
+                </ee:transform>
+            </on-error-propagate>
+        </error-handler>
+    </flow>
+    <flow name="get:\accounts">
+        <ee:transform doc:name="Transform Message" doc:id="47b487ab-c9c1-468d-afcb-0ca689187296">
+            <ee:message>
+            </ee:message>
+            <ee:variables >
 				<ee:set-variable variableName="page" ><![CDATA[attributes.queryParams.page]]></ee:set-variable>
 				<ee:set-variable variableName="size" ><![CDATA[attributes.queryParams.size]]></ee:set-variable>
-			</ee:variables>
-		</ee:transform>
-		<flow-ref doc:name="implementation-get-accounts-main"
-			doc:id="c5288949-f8ea-4532-a376-55a9e5639162"
-			name="implementation-get-accounts-main" />
-	</flow>
-	<flow name="post:\accounts">
-		<flow-ref doc:name="implementation-post-created-account-main"
-			doc:id="ad6efac5-cc5e-4eb6-85b4-5075e3e14332"
-			name="implementation-post-created-account-main" />
-	</flow>
-	<flow name="post:\accounts\(account_number)\deposit">
-		<ee:transform
-			doc:name="Extract accountId and deposit value">
-			<ee:variables>
-				<ee:set-variable variableName="account_number"><![CDATA[attributes.uriParams.'account_number']]></ee:set-variable>
-				<ee:set-variable variableName="amount" ><![CDATA[payload.amount]]></ee:set-variable>
-				<ee:set-variable variableName="amount" ><![CDATA[payload.amount]]></ee:set-variable>
 				<ee:set-variable variableName="account_type" ><![CDATA[attributes.queryParams.account_type]]></ee:set-variable>
 			</ee:variables>
-		</ee:transform>
-		<flow-ref doc:name="implementation-post-deposit-main"
-			doc:id="6eb3072e-c7b0-4ce2-a57d-2cb86a3c2b7f"
-			name="implementation-post-deposit-main" />
-	</flow>
-	<flow name="get:\accounts\(account_number)\balance">
-		<ee:transform doc:name="Extract accountId">
-			<ee:variables>
-				<ee:set-variable variableName="account_number"><![CDATA[attributes.uriParams.'account_number'
-				]]></ee:set-variable>
-			</ee:variables>
-		</ee:transform>
-		<flow-ref doc:name="implementation-get-balance-main"
-			doc:id="9516880c-bca1-43c9-b96f-e31ab25c107e"
-			name="implementation-get-balance-main" />
-	</flow>
-	<flow name="get:\accounts\(account_number)\history">
-		<ee:transform doc:name="Transform Message">
-			<ee:variables>
-				<ee:set-variable variableName="account_number"><![CDATA[attributes.uriParams.'account_number'
-				]]></ee:set-variable>
-				<ee:set-variable variableName="startDate" ><![CDATA[(attributes.queryParams.startDate default now() - |P30D|) as String {format: 'yyyy-MM-dd'}]]></ee:set-variable>
-				<ee:set-variable variableName="endDate" ><![CDATA[(attributes.queryParams.endDate default now()) as String {format: 'yyyy-MM-dd'}]]></ee:set-variable>
-				<ee:set-variable variableName="startDateComponents" ><![CDATA[vars.startDate splitBy '-']]></ee:set-variable>
-				<ee:set-variable variableName="currentMonth" ><![CDATA[vars.startDateComponents[1]]]></ee:set-variable>
-				<ee:set-variable variableName="currentYear" ><![CDATA[vars.startDateComponents[0]]]></ee:set-variable>
-			</ee:variables>
-		</ee:transform>
-		<flow-ref doc:name="implementation-get-history-main"
-			doc:id="827e7bd8-9e49-4f64-9a88-08e86d88fc2d"
-			name="implementation-get-history-main" />
-	</flow>
-	<flow name="post:\accounts\(account_number)\withdraw">
-		<ee:transform doc:name="Retrieve Parameters">
-			<ee:variables>
-				<ee:set-variable variableName="account_number"><![CDATA[attributes.uriParams.'account_number'
-				]]></ee:set-variable>
-				<ee:set-variable variableName="amount"><![CDATA[payload.amount
-				]]></ee:set-variable>
+        </ee:transform>
+		<flow-ref doc:name="implementation-get-accounts-main" doc:id="1baadaff-a36e-4331-afe8-a7a8c3bdbce1" name="implementation-get-accounts-main"/>
+    </flow>
+    <flow name="post:\accounts">
+        <ee:transform doc:name="Transform Message">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+		<flow-ref doc:name="implementation-post-account-main" doc:id="7ac7b886-1088-4164-b363-468baf1d68de" name="implementation-post-account-main" />
+    </flow>
+	<flow name="post:\accounts\deposit">
+        <ee:transform doc:name="Transform Message">
+            <ee:message>
+            </ee:message>
+			<ee:variables >
 				<ee:set-variable variableName="account_type" ><![CDATA[attributes.queryParams.account_type]]></ee:set-variable>
-				<ee:set-variable variableName="digit" ><![CDATA[attributes.uriParams.digit]]></ee:set-variable>
+				<ee:set-variable variableName="account_number" ><![CDATA[%dw 2.0
+output application/json
+---
+payload.account_number]]></ee:set-variable>
+				<ee:set-variable variableName="amount" ><![CDATA[%dw 2.0
+output application/java
+---
+payload.amount]]></ee:set-variable>
+				<ee:set-variable variableName="digit" ><![CDATA[payload.digit]]></ee:set-variable>
 			</ee:variables>
-		</ee:transform>
-		<flow-ref doc:name="implementation-post-withdraw-main"
-			doc:id="672d7bad-565b-416d-8cfc-830d7d1cafe1"
-			name="implementation-post-withdraw-main" />
-	</flow>
-	<flow
-		name="post:\accounts\transfer\from\(from_account_number)\to\(to_account_number)"
-		initialState="started">
-		<ee:transform doc:name="Transform Message"
-			doc:id="565b0356-8679-469f-b680-a9578f28898d">
-			<ee:message>
-			</ee:message>
-			<ee:variables>
-				<ee:set-variable variableName="to_account_number"><![CDATA[attributes.uriParams.'to_account_number'	]]></ee:set-variable>
-				<ee:set-variable variableName="from_account_number"><![CDATA[attributes.uriParams.'from_account_number'
-				]]></ee:set-variable>
-				<ee:set-variable variableName="amount"><![CDATA[payload.amount
-				]]></ee:set-variable>
+        </ee:transform>
+		<flow-ref doc:name="implementation-post-deposit-main" doc:id="25dc9f2a-8f9e-4594-b99c-df161be77316" name="implementation-post-deposit-main" />
+    </flow>
+	<flow name="post:\accounts\withdraw">
+        <ee:transform doc:name="Transform Message">
+            <ee:message>
+            </ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="amount" ><![CDATA[payload.amount]]></ee:set-variable>
+				<ee:set-variable variableName="account_number" ><![CDATA[payload.account_number]]></ee:set-variable>
+				<ee:set-variable variableName="digit" ><![CDATA[payload.digit]]></ee:set-variable>
 			</ee:variables>
-		</ee:transform>
-		<flow-ref doc:name="implementation-post-transfer-main"
-			doc:id="10137d52-1f2c-4c12-a162-5a36973a4440"
-			name="implementation-post-transfer-main" />
-	</flow>
-	<flow name="get:\health-check">
-		<flow-ref doc:name="Get Health Check"
-			doc:id="1832e530-08d2-4b90-8823-502c8807c451"
-			name="implementation-health-check-main" />
-	</flow>
+        </ee:transform>
+		<flow-ref doc:name="implementation-post-withdraw-main" doc:id="d0a28024-9977-4de8-8f9e-0081f5ccbd50" name="implementation-post-withdraw-main" />
+    </flow>
+	<flow name="post:\accounts\transfer">
+        <ee:transform doc:name="Transform Message">
+            <ee:message>
+            </ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="amount" ><![CDATA[payload.amount]]></ee:set-variable>
+				<ee:set-variable variableName="from_account_number" ><![CDATA[payload.from_account_number]]></ee:set-variable>
+				<ee:set-variable variableName="from_digit" ><![CDATA[payload.from_digit]]></ee:set-variable>
+				<ee:set-variable variableName="to_account_number" ><![CDATA[payload.to_account_number]]></ee:set-variable>
+				<ee:set-variable variableName="to_digit" ><![CDATA[payload.to_digit]]></ee:set-variable>
+				<ee:set-variable variableName="account_type" ><![CDATA[attributes.queryParams.account_type]]></ee:set-variable>
+				<ee:set-variable variableName="from_account_type" ><![CDATA[payload.from_account_type]]></ee:set-variable>
+				<ee:set-variable variableName="to_account_type" ><![CDATA[payload.to_account_type]]></ee:set-variable>
+			</ee:variables>
+        </ee:transform>
+				<flow-ref doc:name="implementation-post-transfer-main" doc:id="199e9b5c-d675-45e2-93a7-fb0666c76d3a" name="implementation-post-transfer-main" />
+    </flow>
+	<flow name="get:\accounts\balance">
+        <logger level="INFO" message="get:\accounts\balance:use-case-mule-config" />
+		<flow-ref doc:name="implementation-get-balance-main" doc:id="6e426b1f-9b78-4218-b0a1-212f8517c5e5" name="implementation-get-balance-main"/>
+    </flow>
+    <flow name="get:\health-check">
+        <ee:transform doc:name="Transform Message">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  api_rest: {
+    name: "Use case Mulesoft",
+    version: "vx",
+    status: "OK"
+  },
+  "data-base": {
+    name: "Postgresql",
+    status: "OK"
+  }
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+		<flow-ref doc:name="implementation-health-check-main" doc:id="701ca94a-3f3e-4862-b69a-00910acf0238" name="implementation-health-check-main"/>
+    </flow>
+    <flow name="get:\accounts\history">
+        <ee:transform doc:name="Transform Message">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  account_number: 740672,
+  digit: 12,
+  name: "mule12",
+  balance: 11291.93,
+  Transactions: [
+    {
+      Date: "22-09-2023",
+      Hours: "13:05:31",
+      "Type transaction": "TRANSFER_IN",
+      amount: 222.00,
+      to: "Lorenna"
+    }
+  ]
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+		<flow-ref doc:name="implementation-get-history-main" doc:id="0dd5c077-9034-453d-983c-f50b61d4488f" name="implementation-get-history-main"/>
+    </flow>
 </mule>
