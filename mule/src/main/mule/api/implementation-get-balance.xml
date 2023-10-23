@@ -44,7 +44,9 @@ output application/xml
 		<db:select doc:name="Select Balance"
 			doc:id="273837f9-9ebc-470e-8d74-0097db8cc615"
 			config-ref="Database_Config">
-			<db:sql><![CDATA[SELECT * FROM mule_account where account_number = :account_number]]></db:sql>
+			<db:sql><![CDATA[SELECT user_id,balance FROM mule_account
+WHERE
+account_number = :account_number]]></db:sql>
 			<db:input-parameters><![CDATA[#[{
 	account_number: vars.account_number
 }]]]></db:input-parameters>
@@ -58,12 +60,14 @@ output application/xml
 				<ee:set-payload><![CDATA[%dw 2.0
 output application/json
 ---
-payload map (item) -> {
+
+{
 	date: now() as String {format: "dd-MM-yyyy"},
-	hour: now() as String {format: "HH:mm:ss"},    
-	account_number: item.account_number,
-    name: item.name,
-    balance: item.balance		
+	hour: now() as String {format: "HH:mm:ss"},  
+	account_number: vars.account_number,
+	digit: vars.digit,	
+	account_type: vars.account_type,
+    balance: payload.balance		
 }
 ]]></ee:set-payload>
 			</ee:message>
@@ -87,22 +91,20 @@ payload map (item) -> {
 		<jms:consume doc:name="Consume-stg-balance"
 			doc:id="26912571-9064-42b0-8be7-835ba30f6c0e" config-ref="JMS_Config"
 			destination="stg-balance" maximumWait="30000" />
+		<logger level="INFO" doc:name="payload" doc:id="e8ebfc9b-f731-43d6-8a48-8e7166dcb859" message="#[payload]"/>
 		<ee:transform doc:name="Transform Message"
 			doc:id="9f364738-4d31-41e7-a381-02488f515c42">
 			<ee:message>
 				<ee:set-payload><![CDATA[%dw 2.0
-output application/xml
+output application/json
 ---
 {
-	balances: {
-		item: {
-			Data: payload.date,
-			Hora: payload.hour,
-			NumeroConta: payload.account_number,
-			Nome: payload.name,
-			Saldo: payload.balance
-		}
-	}
+    Data: payload.date,
+    Hora: payload.hour,
+    "Numero Conta": payload.account_number as Number,
+    Digito: payload.digit as Number,
+    "Tipo de Conta": payload.account_type,
+    Saldo: payload.balance[0]
 }
 ]]></ee:set-payload>
 			</ee:message>

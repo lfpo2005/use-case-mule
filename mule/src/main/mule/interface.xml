@@ -119,7 +119,28 @@ output application/json
             </on-error-propagate>
         </error-handler>
     </flow>
-    <flow name="get:\accounts">
+    <flow name="get:\health-check">
+        <ee:transform doc:name="Transform Message">
+            <ee:message>
+                <ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+  api_rest: {
+    name: "Use case Mulesoft",
+    version: "vx",
+    status: "OK"
+  },
+  "data-base": {
+    name: "Postgresql",
+    status: "OK"
+  }
+}]]></ee:set-payload>
+            </ee:message>
+        </ee:transform>
+		<flow-ref doc:name="implementation-health-check-main" doc:id="701ca94a-3f3e-4862-b69a-00910acf0238" name="implementation-health-check-main" />
+    </flow>
+	<flow name="get:\accounts">
         <ee:transform doc:name="Transform Message" doc:id="47b487ab-c9c1-468d-afcb-0ca689187296">
             <ee:message>
             </ee:message>
@@ -191,29 +212,16 @@ payload.amount]]></ee:set-variable>
 				<flow-ref doc:name="implementation-post-transfer-main" doc:id="199e9b5c-d675-45e2-93a7-fb0666c76d3a" name="implementation-post-transfer-main" />
     </flow>
 	<flow name="get:\accounts\balance">
-        <logger level="INFO" message="get:\accounts\balance:use-case-mule-config" />
+		<ee:transform doc:name="Transform Message" doc:id="e6563d52-c8a4-4753-82ac-88a2ac326b69" >
+			<ee:message >
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="account_type" ><![CDATA[attributes.queryParams.account_type]]></ee:set-variable>
+				<ee:set-variable variableName="account_number" ><![CDATA[attributes.queryParams.account_number]]></ee:set-variable>
+				<ee:set-variable variableName="digit" ><![CDATA[attributes.queryParams.digit]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
 		<flow-ref doc:name="implementation-get-balance-main" doc:id="6e426b1f-9b78-4218-b0a1-212f8517c5e5" name="implementation-get-balance-main"/>
-    </flow>
-    <flow name="get:\health-check">
-        <ee:transform doc:name="Transform Message">
-            <ee:message>
-                <ee:set-payload><![CDATA[%dw 2.0
-output application/json
----
-{
-  api_rest: {
-    name: "Use case Mulesoft",
-    version: "vx",
-    status: "OK"
-  },
-  "data-base": {
-    name: "Postgresql",
-    status: "OK"
-  }
-}]]></ee:set-payload>
-            </ee:message>
-        </ee:transform>
-		<flow-ref doc:name="implementation-health-check-main" doc:id="701ca94a-3f3e-4862-b69a-00910acf0238" name="implementation-health-check-main"/>
     </flow>
     <flow name="get:\accounts\history">
         <ee:transform doc:name="Transform Message">
