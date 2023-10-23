@@ -89,7 +89,7 @@ output application/json
         "Digito": item.digit,
         "Tipo de conta": item.account_type,
         "Nome": item.name,
-        "Link": "http://localhost:8081/mule/v2/accounts/" ++ item.account_number ++ "/balance"		
+//        "Link": "http://localhost:8081/mule/v2/accounts/" ++ item.account_number ++ "/balance"		
     }
 }]]></ee:set-payload>
 			</ee:message>

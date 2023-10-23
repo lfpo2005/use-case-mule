@@ -267,6 +267,9 @@ payload.amount]]></ee:set-variable>
 				<ee:set-variable variableName="endDate"><![CDATA[(attributes.queryParams.endDate default now()) as String {format: 'yyyy-MM-dd'}]]></ee:set-variable>
 				<ee:set-variable variableName="account_number"><![CDATA[attributes.queryParams.account_number]]></ee:set-variable>
 				<ee:set-variable variableName="digit"><![CDATA[attributes.queryParams.digit]]></ee:set-variable>
+				<!-- <ee:set-variable variableName="startDateComponents" ><![CDATA[vars.startDate splitBy '-']]></ee:set-variable>
+				<ee:set-variable variableName="currentMonth" ><![CDATA[vars.startDateComponents[1]]]></ee:set-variable>
+				<ee:set-variable variableName="currentYear" ><![CDATA[vars.startDateComponents[0]]]></ee:set-variable> -->
 				</ee:variables>
 		</ee:transform>
 		<flow-ref doc:name="implementation-get-history-main" doc:id="0dd5c077-9034-453d-983c-f50b61d4488f" name="implementation-get-history-main" />

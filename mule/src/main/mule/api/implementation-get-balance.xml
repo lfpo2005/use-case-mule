@@ -101,7 +101,7 @@ output application/json
 {
     Data: payload.date,
     Hora: payload.hour,
-    "Numero Conta": payload.account_number as Number,
+    "Numero_Conta": payload.account_number as Number,
     Digito: payload.digit as Number,
     "Tipo de Conta": payload.account_type,
     Saldo: payload.balance[0]

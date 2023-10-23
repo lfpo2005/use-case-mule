@@ -201,15 +201,15 @@ payload map (transaction) -> {
 	account_number: vars.account_number
 }]]]></db:input-parameters>
 				</db:select>
-				<set-variable value="#[payload]" doc:name="getBalance"
+<!-- [STUDIO:"getBalance"]				<set-variable value="#[payload&#93;" doc:name="getBalance"
 					doc:id="f9601806-bb23-40af-9a19-52cf6afbde2b"
-					variableName="getBalance" />
-				<ee:transform doc:name="Transform Message"
+					variableName="getBalance" /> [STUDIO] -->
+<!-- [STUDIO:"Transform Message"]				<ee:transform doc:name="Transform Message"
 					doc:id="b12cabe8-f55b-4722-86a5-b84e50e2aa20">
 					<ee:message>
 						<ee:set-payload><![CDATA[%dw 2.0
 output application/json
----
+&#45;&#45;-
 payload map (item) -> {
 	"Data": now() as String {format: "dd-MM-yyyy"},
 	"Horas": now() as String {format: "HH:mm:ss"},    
@@ -217,10 +217,12 @@ payload map (item) -> {
     "Nome": item.name,
     "Saldo": item.balance		
 }
-]]></ee:set-payload>
+&#93;&#93;></ee:set-payload>
 					</ee:message>
-				</ee:transform>
-			</when>
+				</ee:transform> [STUDIO] -->
+				<logger level="INFO" doc:name="Logger" doc:id="726fa9f8-0733-4646-902b-76387829991e" message='#["\nNumber is valid"]'/>
+			
+</when>
 			<otherwise>
 				<raise-error doc:name="CUSTOM:INVALID_ACCOUNT"
 					doc:id="8cacde78-fcad-4ba9-9137-bb975542cc8a"
