@@ -53,38 +53,38 @@ http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/cu
 		<http:listener-connection host="0.0.0.0"
 			port="${http.port}" />
 	</http:listener-config>
-<!-- [STUDIO:"batchJobFlow-Publish"]	<flow name="batchJobFlow-Publish">
+	<flow name="batchJobFlow-Publish">
 		<scheduler doc:name="Scheduler">
 			<scheduling-strategy>
 				<fixed-frequency frequency="1" timeUnit="DAYS" />
 			</scheduling-strategy>
 		</scheduler>
 		<set-variable
-			value='#[(now() - |P1D|) as String {format: "yyyy-MM-dd"}&#93;'
+			value='#[(now() - |P1D|) as String {format: "yyyy-MM-dd"}]'
 			doc:name="date" doc:id="92b531ab-cd5e-489e-82e1-45ace9ccf4e7"
 			variableName="date" />
 		<db:select config-ref="Database_Config"
-			doc:name="Select from mule_transaction">
+			doc:name="Select from mule_transactions">
 			<db:sql><![CDATA[SELECT 
     t.*,
     a.account_number
- FROM mule_transaction t 
+ FROM mule_transactions t 
     JOIN mule_account a
     ON t.account_id = a.account_id
-    WHERE DATE(date_transaction) = :yesterday&#93;&#93;></db:sql>
+    WHERE DATE(date_transaction) = :yesterday]]></db:sql>
 			<db:input-parameters><![CDATA[#[{
    'yesterday' : vars.date
-}&#93;&#93;&#93;></db:input-parameters>
+}]]]></db:input-parameters>
 
 		</db:select>
-		<set-payload value="#[payload as Array&#93;"
+		<set-payload value="#[payload as Array]"
 			doc:name="Transform to Array" />
 		<ee:transform doc:name="Transform Message"
 			doc:id="87d26463-51d7-4f7c-bc00-78986bcec009">
 			<ee:message>
 				<ee:set-payload><![CDATA[%dw 2.0
 output application/json
-&#45;&#45;-
+---
 payload map (transaction) -> {
     transaction_id: transaction.transaction_id,
     account_id: transaction.account_id,
@@ -94,7 +94,7 @@ payload map (transaction) -> {
     date: transaction.date_transaction as String {format: "dd-MM-yyyy"},
 	hour: transaction.date_transaction as String {format: "HH:mm:ss"}   
 
-}&#93;&#93;></ee:set-payload>
+}]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
 		<jms:publish doc:name="Publish-stg-report"
@@ -106,33 +106,17 @@ payload map (transaction) -> {
 		<error-handler>
 			<on-error-continue type="ANY"
 				enableNotifications="true" logException="true">
-				<logger level="INFO" doc:name="Error" message='#[error&#93;' />
+				<logger level="INFO" doc:name="Error" message='#[error]' />
 			</on-error-continue>
 		</error-handler>
-	</flow> [STUDIO] -->
-	<flow name="globalFlow" doc:id="ec5909ef-cd44-4351-9c26-666829fd183a" >
-		<scheduler doc:name="Scheduler" doc:id="1d663aa7-3d44-429a-bb50-5bb6eec31379" >
-			<scheduling-strategy >
-				<cron expression="0 * * ? * *"/>
-			</scheduling-strategy>
-		</scheduler>
-		<flow-ref doc:name="implementation-health-check-main" doc:id="8ae29d25-1da9-43d8-af41-d50debd0ac85" name="implementation-health-check-main"/>
-		<logger level="INFO" doc:name="Health-check" doc:id="f2ea2328-eaa9-4ff2-a5ba-718e63a989e7" message='#["health-check": payload.banco_de_dados.status]'/>
 	</flow>
-	<flow name="batchJobFlow-Cosumer"
-		doc:id="bb3efb55-45de-4ab1-ab9c-8db4fce199d8">
-		<set-payload value="#[null]" doc:name="null"
-			doc:id="d9ccb50e-2436-46ba-84af-a5501219d1f4" />
-		<logger level="INFO" doc:name="Payload"
-			doc:id="3dbdc7b7-52ac-4281-a385-8bc32f9a8bca" message="#[payload]" />
-		<jms:consume doc:name="Consume-stg-report"
-			doc:id="df9862ee-3f8e-4a84-9ed3-3ee02200967f" config-ref="JMS_Config"
-			destination="stg-report" maximumWait="30000" />
-		<choice doc:name="Choice"
-			doc:id="e4d64c46-c561-4f2c-9d14-5d373a74d8a8">
+	<flow name="batchJobFlow-Cosumer" doc:id="bb3efb55-45de-4ab1-ab9c-8db4fce199d8">
+		<set-payload value="#[null]" doc:name="null" doc:id="d9ccb50e-2436-46ba-84af-a5501219d1f4" />
+		<logger level="INFO" doc:name="Payload" doc:id="3dbdc7b7-52ac-4281-a385-8bc32f9a8bca" message="#[payload]" />
+		<jms:consume doc:name="Consume-stg-report" doc:id="df9862ee-3f8e-4a84-9ed3-3ee02200967f" config-ref="JMS_Config" destination="stg-report" maximumWait="30000" />
+		<choice doc:name="Choice" doc:id="e4d64c46-c561-4f2c-9d14-5d373a74d8a8">
 			<when expression="sizeOf(payload) &gt; 0">
-				<ee:transform doc:name="Transform to CSV"
-					doc:id="927abd0f-4b14-427b-a5d1-cba3057d0b19">
+				<ee:transform doc:name="Transform to CSV" doc:id="927abd0f-4b14-427b-a5d1-cba3057d0b19">
 					<ee:message>
 						<ee:set-payload><![CDATA[%dw 2.0
 output application/csv
@@ -151,27 +135,27 @@ payload map (transaction) -> {
 						</ee:set-payload>
 					</ee:message>
 				</ee:transform>
-				<file:write doc:name="Write"
-					doc:id="14466038-5dcc-4122-8c44-8ba9b94b0d34"
-					config-ref="File_Config"
-					path='#["${file.accountsDir}/transaction_" ++ ((now() - |P1D|) as String {format: "dd-MM-yyyy"}) ++ ".csv"]' />
-				<logger level="INFO" doc:name="Custom:Relatorio criado sucesso" message='#["\nRelatório " ++ "transaction_" ++ ((now() - |P1D|) as String {format: "dd-MM-yyyy"}) ++ ".csv" ++ ", criado com sucesso!"]'/>
+				<file:write doc:name="Write" doc:id="14466038-5dcc-4122-8c44-8ba9b94b0d34" config-ref="File_Config" path='#["${file.accountsDir}/transaction_" ++ ((now() - |P1D|) as String {format: "dd-MM-yyyy"}) ++ ".csv"]' />
+				<logger level="INFO" doc:name="Custom:Relatorio criado sucesso" message='#["\nRelatório " ++ "transaction_" ++ ((now() - |P1D|) as String {format: "dd-MM-yyyy"}) ++ ".csv" ++ ", criado com sucesso!"]' />
 			</when>
 			<otherwise>
-				<logger level="INFO"
-					doc:name="Não houve transação no dia anterior!"
-					doc:id="2c108f1b-33f4-4c0f-9bdd-00597f25b01e"
-					message="Não houve transação no dia anterior!" />
+				<logger level="INFO" doc:name="Não houve transação no dia anterior!" doc:id="2c108f1b-33f4-4c0f-9bdd-00597f25b01e" message='#["\nNão houve transação no dia " ++ ((now() - |P1D|) as String {format: "dd-MM-yyyy"})]' />
 			</otherwise>
 		</choice>
 		<error-handler>
-			<on-error-continue enableNotifications="true"
-				logException="true" doc:name="On Error Continue"
-				doc:id="67c68676-5740-4996-995f-68666d4160a2" type="ANY">
-				<logger level="INFO" doc:name="Error"
-					doc:id="f0188a83-3fd9-42b5-ad57-e23257d429fc" message='#[error]' />
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="67c68676-5740-4996-995f-68666d4160a2" type="ANY">
+				<logger level="INFO" doc:name="Error" doc:id="f0188a83-3fd9-42b5-ad57-e23257d429fc" message="#[error]" />
 			</on-error-continue>
 		</error-handler>
+	</flow>
+	<flow name="globalFlow" doc:id="ec5909ef-cd44-4351-9c26-666829fd183a" >
+		<scheduler doc:name="Scheduler" doc:id="1d663aa7-3d44-429a-bb50-5bb6eec31379" >
+			<scheduling-strategy >
+				<cron expression="0 * * ? * *"/>
+			</scheduling-strategy>
+		</scheduler>
+		<flow-ref doc:name="implementation-health-check-main" doc:id="8ae29d25-1da9-43d8-af41-d50debd0ac85" name="implementation-health-check-main"/>
+		<logger level="INFO" doc:name="Health-check" doc:id="f2ea2328-eaa9-4ff2-a5ba-718e63a989e7" message='#["health-check": payload.banco_de_dados.status]'/>
 	</flow>
 	<flow name="validate-account-number"
 		doc:id="9ea3fe8e-90f2-44c1-b325-a990020952fc">
