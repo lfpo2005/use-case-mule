@@ -8,6 +8,9 @@
     },
     "9f364738-4d31-41e7-a381-02488f515c42": {
       "payload": "sample_data/java_1.dwl"
+    },
+    "63c049a6-3538-4afc-86b9-e9c2494c8cf3": {
+      "payload": "sample_data/list_record.dwl"
     }
   }
 }

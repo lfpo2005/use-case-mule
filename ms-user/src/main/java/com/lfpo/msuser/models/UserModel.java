@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.lfpo.msuser.enums.UserStatus;
 import com.lfpo.msuser.enums.UserType;
 import lombok.Data;
+import org.hibernate.validator.constraints.br.CPF;
 import org.springframework.hateoas.RepresentationModel;
 
 import javax.persistence.*;
@@ -30,7 +31,7 @@ public class UserModel extends RepresentationModel<UserModel> implements Seriali
     @Column(nullable = false, length = 255)
     @JsonIgnore
     private String password;
-    @Column(nullable = false, length = 150)
+    @Column(nullable = false, unique = true, length = 150)
     private String fullName;
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -40,6 +41,8 @@ public class UserModel extends RepresentationModel<UserModel> implements Seriali
     private UserType userType;
     @Column(length = 20)
     private String phoneNumber;
+
+    @CPF(message = "CPF invalid")
     @Column(length = 20)
     private String cpf;
     @Column

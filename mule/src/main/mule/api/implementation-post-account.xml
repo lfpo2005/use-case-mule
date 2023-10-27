@@ -195,24 +195,4 @@ payload map (item) -> {
 			</on-error-propagate>
 		</error-handler>
 	</flow>
-	<flow name="clean-cpf"
-		doc:id="406dae01-0c77-4fc3-ab42-179c2d84d24a">
-		<ee:transform doc:name="Transform Message"
-			doc:id="4bc7717a-e7ce-4312-bd5d-6da07945d18a">
-			<ee:message>
-				<ee:set-payload><![CDATA[output application/json
-import * from dw::core::Strings
-fun removePunctuation(text) =
-  text replace /[-.]/ with ""
----
-{
-	account_type: payload.account_type,
-	account_name: payload.account_name,
-    cpf: removePunctuation(payload.cpf)
-}]]></ee:set-payload>
-			</ee:message>
-		</ee:transform>
-		<logger level="INFO" doc:name="Logger"
-			doc:id="a5220db3-ba97-4da0-8394-639ab993e68b" />
-	</flow>
 </mule>

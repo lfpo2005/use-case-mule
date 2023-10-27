@@ -33,6 +33,7 @@ output application/json
 ]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
+<!-- [STUDIO:"Logger"]		<logger level="INFO" doc:name="Logger" doc:id="09c62ecb-1d26-4492-84b9-6fbe90ff7b6c" message='#["\nkong GTW"&#93;'/> [STUDIO] -->
 	</sub-flow>
 	<sub-flow name="implementation-health-check-db" doc:id="f8da1414-e519-4629-a4a2-9bc02e493893">
 		<try doc:name="Try" doc:id="6d507c85-2513-4939-b93d-fa720a286ddf">

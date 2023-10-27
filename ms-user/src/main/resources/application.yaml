@@ -1,0 +1,40 @@
+server:
+  port: 8082
+
+spring:
+  datasource:
+    url:  jdbc:postgresql://localhost:5432/ms_users
+    username: postgres
+    password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: update
+      dialect: org.hibernate.dialect.PostgreSQLDialect
+      jdbc:
+        lob.non-contextual-creation: true
+    properties:
+      hibernate:
+        show_sql: true
+  output:
+    ansi:
+      enabled: Always
+
+  kafka:
+    bootstrap-servers: localhost:8082
+    consumer:
+      group-id: group-bank
+      auto-offset-reset: earliest
+    producer:
+      acks: all
+
+kafka:
+  topic:
+    name: new_user
+
+
+logging:
+  level:
+    com.ead: TRACE
+    root: INFO
+    org.springframework.web: DEBUG
+    org.hibernate: INFO

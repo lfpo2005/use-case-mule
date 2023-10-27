@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:vm="http://www.mulesoft.org/schema/mule/vm"
+<mule xmlns:kafka="http://www.mulesoft.org/schema/mule/kafka"
+	xmlns:vm="http://www.mulesoft.org/schema/mule/vm"
 	xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit"
 	xmlns:http="http://www.mulesoft.org/schema/mule/http"
 	xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
@@ -17,7 +18,8 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
 http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
 http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd
-http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd">
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd
+http://www.mulesoft.org/schema/mule/kafka http://www.mulesoft.org/schema/mule/kafka/current/mule-kafka.xsd">
 	<db:config name="Database_Config" doc:name="Database Config"
 		doc:id="e6bcf801-8fc0-47f0-89c9-922d35330eb5">
 		<db:generic-connection
@@ -53,6 +55,22 @@ http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/cu
 		<http:listener-connection host="0.0.0.0"
 			port="${http.port}" />
 	</http:listener-config>
+	<kafka:consumer-config
+		name="Apache_Kafka_Consumer_config"
+		doc:name="Apache Kafka Consumer configuration"
+		doc:id="318cb803-6006-41b6-ac71-7fc917452ac3">
+		<kafka:consumer-plaintext-connection
+			groupId="group-bank">
+			<kafka:bootstrap-servers>
+				<kafka:bootstrap-server
+					value="localhost:9092" />			
+</kafka:bootstrap-servers>
+			<kafka:topic-patterns>
+				<kafka:topic-pattern value="new_user" />
+			</kafka:topic-patterns>
+		</kafka:consumer-plaintext-connection>
+	</kafka:consumer-config>
+
 	<flow name="batchJobFlow-Publish">
 		<scheduler doc:name="Scheduler">
 			<scheduling-strategy>
@@ -110,13 +128,20 @@ payload map (transaction) -> {
 			</on-error-continue>
 		</error-handler>
 	</flow>
-	<flow name="batchJobFlow-Cosumer" doc:id="bb3efb55-45de-4ab1-ab9c-8db4fce199d8">
-		<set-payload value="#[null]" doc:name="null" doc:id="d9ccb50e-2436-46ba-84af-a5501219d1f4" />
-		<logger level="INFO" doc:name="Payload" doc:id="3dbdc7b7-52ac-4281-a385-8bc32f9a8bca" message="#[payload]" />
-		<jms:consume doc:name="Consume-stg-report" doc:id="df9862ee-3f8e-4a84-9ed3-3ee02200967f" config-ref="JMS_Config" destination="stg-report" maximumWait="30000" />
-		<choice doc:name="Choice" doc:id="e4d64c46-c561-4f2c-9d14-5d373a74d8a8">
+	<flow name="batchJobFlow-Cosumer"
+		doc:id="bb3efb55-45de-4ab1-ab9c-8db4fce199d8">
+		<set-payload value="#[null]" doc:name="null"
+			doc:id="d9ccb50e-2436-46ba-84af-a5501219d1f4" />
+		<logger level="INFO" doc:name="Payload"
+			doc:id="3dbdc7b7-52ac-4281-a385-8bc32f9a8bca" message="#[payload]" />
+		<jms:consume doc:name="Consume-stg-report"
+			doc:id="df9862ee-3f8e-4a84-9ed3-3ee02200967f" config-ref="JMS_Config"
+			destination="stg-report" maximumWait="30000" />
+		<choice doc:name="Choice"
+			doc:id="e4d64c46-c561-4f2c-9d14-5d373a74d8a8">
 			<when expression="sizeOf(payload) &gt; 0">
-				<ee:transform doc:name="Transform to CSV" doc:id="927abd0f-4b14-427b-a5d1-cba3057d0b19">
+				<ee:transform doc:name="Transform to CSV"
+					doc:id="927abd0f-4b14-427b-a5d1-cba3057d0b19">
 					<ee:message>
 						<ee:set-payload><![CDATA[%dw 2.0
 output application/csv
@@ -135,27 +160,44 @@ payload map (transaction) -> {
 						</ee:set-payload>
 					</ee:message>
 				</ee:transform>
-				<file:write doc:name="Write" doc:id="14466038-5dcc-4122-8c44-8ba9b94b0d34" config-ref="File_Config" path='#["${file.accountsDir}/transaction_" ++ ((now() - |P1D|) as String {format: "dd-MM-yyyy"}) ++ ".csv"]' />
-				<logger level="INFO" doc:name="Custom:Relatorio criado sucesso" message='#["\nRelatório " ++ "transaction_" ++ ((now() - |P1D|) as String {format: "dd-MM-yyyy"}) ++ ".csv" ++ ", criado com sucesso!"]' />
+				<file:write doc:name="Write"
+					doc:id="14466038-5dcc-4122-8c44-8ba9b94b0d34"
+					config-ref="File_Config"
+					path='#["${file.accountsDir}/transaction_" ++ ((now() - |P1D|) as String {format: "dd-MM-yyyy"}) ++ ".csv"]' />
+				<logger level="INFO"
+					doc:name="Custom:Relatorio criado sucesso"
+					message='#["\nRelatório " ++ "transaction_" ++ ((now() - |P1D|) as String {format: "dd-MM-yyyy"}) ++ ".csv" ++ ", criado com sucesso!"]' />
 			</when>
 			<otherwise>
-				<logger level="INFO" doc:name="Não houve transação no dia anterior!" doc:id="2c108f1b-33f4-4c0f-9bdd-00597f25b01e" message='#["\nNão houve transação no dia " ++ ((now() - |P1D|) as String {format: "dd-MM-yyyy"})]' />
+				<logger level="INFO"
+					doc:name="Não houve transação no dia anterior!"
+					doc:id="2c108f1b-33f4-4c0f-9bdd-00597f25b01e"
+					message='#["\nNão houve transação no dia " ++ ((now() - |P1D|) as String {format: "dd-MM-yyyy"})]' />
 			</otherwise>
 		</choice>
 		<error-handler>
-			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="67c68676-5740-4996-995f-68666d4160a2" type="ANY">
-				<logger level="INFO" doc:name="Error" doc:id="f0188a83-3fd9-42b5-ad57-e23257d429fc" message="#[error]" />
+			<on-error-continue enableNotifications="true"
+				logException="true" doc:name="On Error Continue"
+				doc:id="67c68676-5740-4996-995f-68666d4160a2" type="ANY">
+				<logger level="INFO" doc:name="Error"
+					doc:id="f0188a83-3fd9-42b5-ad57-e23257d429fc" message="#[error]" />
 			</on-error-continue>
 		</error-handler>
 	</flow>
-	<flow name="globalFlow" doc:id="ec5909ef-cd44-4351-9c26-666829fd183a" >
-		<scheduler doc:name="Scheduler" doc:id="1d663aa7-3d44-429a-bb50-5bb6eec31379" >
-			<scheduling-strategy >
-				<cron expression="0 * * ? * *"/>
+	<flow name="globalFlow"
+		doc:id="ec5909ef-cd44-4351-9c26-666829fd183a">
+		<scheduler doc:name="Scheduler"
+			doc:id="1d663aa7-3d44-429a-bb50-5bb6eec31379">
+			<scheduling-strategy>
+				<cron expression="0 * * ? * *" />
 			</scheduling-strategy>
 		</scheduler>
-		<flow-ref doc:name="implementation-health-check-main" doc:id="8ae29d25-1da9-43d8-af41-d50debd0ac85" name="implementation-health-check-main"/>
-		<logger level="INFO" doc:name="Health-check" doc:id="f2ea2328-eaa9-4ff2-a5ba-718e63a989e7" message='#["health-check": payload.banco_de_dados.status]'/>
+		<flow-ref doc:name="implementation-health-check-main"
+			doc:id="8ae29d25-1da9-43d8-af41-d50debd0ac85"
+			name="implementation-health-check-main" />
+		<logger level="INFO" doc:name="Health-check"
+			doc:id="f2ea2328-eaa9-4ff2-a5ba-718e63a989e7"
+			message='#["health-check": payload.banco_de_dados.status]' />
 	</flow>
 	<flow name="validate-account-number"
 		doc:id="9ea3fe8e-90f2-44c1-b325-a990020952fc">
@@ -185,28 +227,19 @@ payload map (transaction) -> {
 	account_number: vars.account_number
 }]]]></db:input-parameters>
 				</db:select>
-<!-- [STUDIO:"getBalance"]				<set-variable value="#[payload&#93;" doc:name="getBalance"
-					doc:id="f9601806-bb23-40af-9a19-52cf6afbde2b"
-					variableName="getBalance" /> [STUDIO] -->
-<!-- [STUDIO:"Transform Message"]				<ee:transform doc:name="Transform Message"
-					doc:id="b12cabe8-f55b-4722-86a5-b84e50e2aa20">
-					<ee:message>
-						<ee:set-payload><![CDATA[%dw 2.0
-output application/json
-&#45;&#45;-
-payload map (item) -> {
-	"Data": now() as String {format: "dd-MM-yyyy"},
-	"Horas": now() as String {format: "HH:mm:ss"},    
-	"Numero da conta": item.account_number,
-    "Nome": item.name,
-    "Saldo": item.balance		
-}
-&#93;&#93;></ee:set-payload>
-					</ee:message>
-				</ee:transform> [STUDIO] -->
-				<logger level="INFO" doc:name="Logger" doc:id="726fa9f8-0733-4646-902b-76387829991e" message='#["\nNumber is valid"]'/>
-			
-</when>
+				<!-- [STUDIO:"getBalance"] <set-variable value="#[payload&#93;" doc:name="getBalance" 
+					doc:id="f9601806-bb23-40af-9a19-52cf6afbde2b" variableName="getBalance" /> 
+					[STUDIO] -->
+				<!-- [STUDIO:"Transform Message"] <ee:transform doc:name="Transform Message" 
+					doc:id="b12cabe8-f55b-4722-86a5-b84e50e2aa20"> <ee:message> <ee:set-payload><![CDATA[%dw 
+					2.0 output application/json &#45;&#45;- payload map (item) -> { "Data": now() 
+					as String {format: "dd-MM-yyyy"}, "Horas": now() as String {format: "HH:mm:ss"}, 
+					"Numero da conta": item.account_number, "Nome": item.name, "Saldo": item.balance 
+					} &#93;&#93;></ee:set-payload> </ee:message> </ee:transform> [STUDIO] -->
+				<logger level="INFO" doc:name="Logger"
+					doc:id="726fa9f8-0733-4646-902b-76387829991e"
+					message='#["\nNumber is valid"]' />
+			</when>
 			<otherwise>
 				<raise-error doc:name="CUSTOM:INVALID_ACCOUNT"
 					doc:id="8cacde78-fcad-4ba9-9137-bb975542cc8a"
@@ -239,14 +272,19 @@ output application/json
 	</flow>
 	<flow name="validate-amount"
 		doc:id="1951b627-d277-4db3-a3b3-d9e6d6ba8d51">
-		<logger level="INFO" doc:name="Logger" doc:id="941dffba-13a8-46c5-b633-50edcf42e68e" message="#[payload]"/>
+		<logger level="INFO" doc:name="Logger"
+			doc:id="941dffba-13a8-46c5-b633-50edcf42e68e" message="#[payload]" />
 		<choice doc:name="Validate Amount">
-			<when expression="#[vars.amount is Number and vars.amount &gt; 0]">
+			<when
+				expression="#[vars.amount is Number and vars.amount &gt; 0]">
 				<logger level="INFO" doc:name="Amount is valid"
 					message="Amount is valid: #[vars.amount]" />
 			</when>
 			<otherwise>
-				<raise-error doc:name="CUSTOM:INVALID_AMOUNT" doc:id="48ad49f3-32a7-42f3-946d-345e6595bbd9" type="CUSTOM:INVALID_AMOUNT" description="Valor inválido, deve ser um número maior que 0." />
+				<raise-error doc:name="CUSTOM:INVALID_AMOUNT"
+					doc:id="48ad49f3-32a7-42f3-946d-345e6595bbd9"
+					type="CUSTOM:INVALID_AMOUNT"
+					description="Valor inválido, deve ser um número maior que 0." />
 			</otherwise>
 		</choice>
 		<error-handler>
@@ -271,5 +309,69 @@ output application/json
 				</ee:transform>
 			</on-error-propagate>
 		</error-handler>
+	</flow>
+	<flow name="bath-insert-new-user-kafka"
+		doc:id="846c8495-37d1-42ab-b658-9cc6077a3cc5">
+		<kafka:message-listener doc:name="Message listener" doc:id="871b589d-6345-4c9a-8d0b-a9e34a7a1f91" config-ref="Apache_Kafka_Consumer_config"/>
+		<ee:transform doc:name="Transform Message"
+			doc:id="6279ef7b-c465-422a-b91d-eacfc1c11dcc">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+read(payload, "application/json")]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="e19b5244-34f5-44a0-bdb6-293de9c9673f" />
+		<ee:transform doc:name="Clean-cpf" doc:id="5bee471e-bd4a-44a3-aed2-70a9f624ab7d" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[output application/json
+import * from dw::core::Strings
+fun removePunctuation(text) =
+  text replace /[-.]/ with ""
+---
+{
+	userId: payload.userId,
+	userType: payload.userType,
+	fullName: payload.fullName,
+    cpf: removePunctuation(payload.cpf)
+}
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<db:insert doc:name="Insert"
+			doc:id="cf54955f-9078-4d24-bb5d-2e50dbb4d877"
+			config-ref="Database_Config">
+			<db:sql><![CDATA[insert into 
+  users (user_id, name, cpf, user_type)
+values
+  (:user_id, :name, :cpf, :user_type);]]></db:sql>
+			<db:input-parameters><![CDATA[#[{
+    user_id: payload.userId,
+    name: payload.fullName,
+    cpf: payload.cpf,
+    user_type: payload.userType
+}]]]></db:input-parameters>
+		</db:insert>
+		<logger level="INFO" doc:name="CUSTOM:Message"
+			doc:id="f047fb4e-8a66-4f13-993d-84805909d9af"
+			message='#["\nNewUser adicionado com sucesso!"]' />
+	</flow>
+	<flow name="clean-cpf" doc:id="8869590f-0019-4a74-910e-eae818e5156c" >
+		<ee:transform doc:name="Transform Message" doc:id="9d8b49b6-7587-4c94-8a3d-7f494ce3f2bb" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[output application/json
+import * from dw::core::Strings
+fun removePunctuation(text) =
+  text replace /[-.]/ with ""
+---
+{
+	account_type: payload.account_type,
+	account_name: payload.account_name,
+    cpf: removePunctuation(payload.cpf)
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="7fcff659-869e-41e2-aa19-f295a841ca51" />
 	</flow>
 </mule>
