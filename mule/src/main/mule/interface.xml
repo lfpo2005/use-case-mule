@@ -220,6 +220,7 @@ payload.amount]]></ee:set-variable>
 				<ee:set-variable variableName="amount"><![CDATA[payload.amount]]></ee:set-variable>
 				<ee:set-variable variableName="account_number"><![CDATA[payload.account_number]]></ee:set-variable>
 				<ee:set-variable variableName="digit"><![CDATA[payload.digit]]></ee:set-variable>
+				<ee:set-variable variableName="account_type" ><![CDATA[attributes.queryParams.account_type]]></ee:set-variable>
 			</ee:variables>
 		</ee:transform>
 		<flow-ref doc:name="implementation-post-withdraw-main"
@@ -270,6 +271,7 @@ payload.amount]]></ee:set-variable>
 				<!-- <ee:set-variable variableName="startDateComponents" ><![CDATA[vars.startDate splitBy '-']]></ee:set-variable>
 				<ee:set-variable variableName="currentMonth" ><![CDATA[vars.startDateComponents[1]]]></ee:set-variable>
 				<ee:set-variable variableName="currentYear" ><![CDATA[vars.startDateComponents[0]]]></ee:set-variable> -->
+				<ee:set-variable variableName="account_type" ><![CDATA[attributes.queryParams.account_type]]></ee:set-variable>
 				</ee:variables>
 		</ee:transform>
 		<flow-ref doc:name="implementation-get-history-main" doc:id="0dd5c077-9034-453d-983c-f50b61d4488f" name="implementation-get-history-main" />

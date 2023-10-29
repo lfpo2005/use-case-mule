@@ -206,9 +206,17 @@ payload map (transaction) -> {
 		<db:select doc:name="Select account_number"
 			doc:id="4e9de8b0-b8bc-4be8-9bf7-050307ce6bb0"
 			config-ref="Database_Config">
-			<db:sql><![CDATA[SELECT * FROM mule_account WHERE account_number = :account_number]]></db:sql>
+			<db:sql><![CDATA[  SELECT * FROM mule_account
+  WHERE
+  account_number = :account_number
+  AND
+  digit = :digit
+  AND
+  account_type = :account_type]]></db:sql>
 			<db:input-parameters><![CDATA[#[{
-	'account_number': vars.account_number
+	'account_number': vars.account_number,
+	'digit': vars.digit,
+	'account_type': vars.account_type
 }]]]></db:input-parameters>
 		</db:select>
 		<set-payload value="#[payload as Array]"
@@ -244,7 +252,7 @@ payload map (transaction) -> {
 				<raise-error doc:name="CUSTOM:INVALID_ACCOUNT"
 					doc:id="8cacde78-fcad-4ba9-9137-bb975542cc8a"
 					type="CUSTOM:INVALID_ACCOUNT"
-					description="Número da conta inválido!" />
+					description="Dados da conta invalidos!" />
 			</otherwise>
 		</choice>
 		<error-handler>
@@ -312,7 +320,7 @@ output application/json
 	</flow>
 	<flow name="bath-insert-new-user-kafka"
 		doc:id="846c8495-37d1-42ab-b658-9cc6077a3cc5">
-		<kafka:message-listener doc:name="Message listener" doc:id="871b589d-6345-4c9a-8d0b-a9e34a7a1f91" config-ref="Apache_Kafka_Consumer_config"/>
+		<kafka:message-listener doc:name="Message listener" doc:id="871b589d-6345-4c9a-8d0b-a9e34a7a1f91" config-ref="Apache_Kafka_Consumer_config" parallelConsumersAmount="10"/>
 		<ee:transform doc:name="Transform Message"
 			doc:id="6279ef7b-c465-422a-b91d-eacfc1c11dcc">
 			<ee:message>
@@ -339,9 +347,7 @@ fun removePunctuation(text) =
 ]]></ee:set-payload>
 			</ee:message>
 		</ee:transform>
-		<db:insert doc:name="Insert"
-			doc:id="cf54955f-9078-4d24-bb5d-2e50dbb4d877"
-			config-ref="Database_Config">
+		<db:insert doc:name="Insert" doc:id="cf54955f-9078-4d24-bb5d-2e50dbb4d877" config-ref="Database_Config">
 			<db:sql><![CDATA[insert into 
   users (user_id, name, cpf, user_type)
 values
@@ -353,9 +359,12 @@ values
     user_type: payload.userType
 }]]]></db:input-parameters>
 		</db:insert>
-		<logger level="INFO" doc:name="CUSTOM:Message"
-			doc:id="f047fb4e-8a66-4f13-993d-84805909d9af"
-			message='#["\nNewUser adicionado com sucesso!"]' />
+		<logger level="INFO" doc:name="CUSTOM:Message" doc:id="f047fb4e-8a66-4f13-993d-84805909d9af" message='#["\nNewUser adicionado com sucesso! \n Insert-new-user-kafka"]' />
+		<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="62eef944-5ba9-4f9f-a7c0-0742c0d5e130" type="ANY">
+				<logger level="INFO" doc:name="Logger" doc:id="535a0589-6fbc-4161-82a5-31b5ca6c158f" message='#["\nErro ao inserir usuario"]'/>
+			</on-error-continue>
+		</error-handler>
 	</flow>
 	<flow name="clean-cpf" doc:id="8869590f-0019-4a74-910e-eae818e5156c" >
 		<ee:transform doc:name="Transform Message" doc:id="9d8b49b6-7587-4c94-8a3d-7f494ce3f2bb" >

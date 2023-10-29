@@ -26,14 +26,14 @@ http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/
 			doc:id="754748c7-a493-451d-b978-19e9d3f8e788"
 			config-ref="Database_Config">
 			<db:sql><![CDATA[SELECT
-            u.cpf,
-            u.name,
-            a.account_number,
-            a.digit,
-            a.account_type
-        FROM users u
-        JOIN mule_account a ON u.user_id = a.user_id   
-         LIMIT :size OFFSET :page]]></db:sql>
+ u.cpf,
+ u.name,
+ a.account_number,
+ a.digit,
+ a.account_type
+FROM users u
+JOIN mule_account a ON u.user_id = a.user_id   
+LIMIT :size OFFSET :page]]></db:sql>
 			<db:input-parameters><![CDATA[#[{
 	'size': vars.size,
 	'page': vars.page

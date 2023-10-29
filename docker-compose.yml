@@ -1,51 +1,43 @@
-version: "3"
+version: "3.7"
 
 # networks:
 #   mule-rede:
 #   #  driver: bridge   
-#     external: true
-    
-
-volumes:
-  postgres_data:
-    driver: local
-  konga_data:
-    driver: local
-  kong_data:
-    driver: local
-  kafka_data:
-    driver: local    
-
+#     external: true  
 
 services:
 
-  db:
+###### banco mule ######
+  db_mule:
     image: postgres:15
     #restart: always
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: postgres
+      POSTGRES_DB: db_mule
     volumes:
-      - ./extras/data:/var/lib/postgresql/data
+      - ./extras/db-mule:/var/lib/postgresql/data
     ports:
       - 5432:5432
     # networks:
     #   - mule-rede
 
-  pgadmin:
-    image: dpage/pgadmin4:latest
+###### banco ms-user ######
+  db_ms_user:
+    image: postgres:15
+    #restart: always
     environment:
-      PGADMIN_DEFAULT_EMAIL: "pgadmin4@pgadmin.org"
-      PGADMIN_DEFAULT_PASSWORD: "admin"
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: db_ms_user
+    volumes:
+      - ./extras/db_ms-user:/var/lib/postgresql/data
     ports:
-      - "5050:80"
-    depends_on:
-      - db
-    links:
-      - db
+      - 5433:5432
     # networks:
-    #   - mule-rede  
+    #   - mule-rede
+
+###### activemq ######
 
   activemq:
     image: rmohr/activemq:5.15.9
@@ -61,6 +53,9 @@ services:
     # networks:
     #   - mule-rede  
 
+
+###### KAFKA ######
+
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
     environment:
@@ -68,8 +63,8 @@ services:
 
   kafka:
     image: confluentinc/cp-kafka:latest
-    volumes:
-     - kafka_data:/var/lib/kafka/data
+    # volumes:
+    #  - ./extras/kafka:/var/lib/kafka/data
     depends_on:
       - zookeeper
     environment:
@@ -77,120 +72,88 @@ services:
       - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092
       - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
     ports:
-      - "9092:9092"  
+      - "9092:9092" 
 
-  # kong-database:
-  #     image: postgres:9.5
-  #     deploy:
-  #       restart_policy:
-  #         condition: any
-  #     # networks:
-  #     #   - mule-rede
-  #     environment:
-  #       - POSTGRES_USER=kong
-  #       - POSTGRES_DB=kong
-  #       - POSTGRES_PASSWORD=kong
-  #     healthcheck:
-  #       test: ["CMD", "pg_isready", "-U", "kong"]
-  #       interval: 10s
-  #       timeout: 5s
-  #       retries: 5
+  kong-database:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: kong
+      POSTGRES_DB: kong
+      POSTGRES_PASSWORD: kong
+    volumes:
+      - ./extras/kong-database:/var/lib/postgresql/data
+    ports:
+      - "5434:5432"
 
-  # kong-migration-bootstrap:
-  #   image: claudioed/kong-fc
-  #   deploy:
-  #     restart_policy:
-  #       condition: on-failure
-  #   # networks:
-  #     # - mule-rede
-  #   depends_on:
-  #     - kong-database
-  #   environment:
-  #     - KONG_DATABASE=postgres
-  #     - KONG_PG_HOST=kong-database
-  #     - KONG_PG_USER=kong
-  #     - KONG_PG_PASSWORD=kong
-  #   command: kong migrations bootstrap
+  kong-migration-bootstrap:
+    image: kong:latest
+    depends_on:
+      - kong-database
+    environment:
+      KONG_DATABASE: postgres
+      KONG_PG_HOST: kong-database
+      KONG_PG_USER: kong
+      KONG_PG_PASSWORD: kong
+    command: kong migrations bootstrap
 
+  kong:
+    image: kong:latest
+    depends_on:
+      - kong-database
+    environment:
+      KONG_DATABASE: postgres
+      KONG_PG_HOST: kong-database
+      KONG_PG_USER: kong
+      KONG_PG_PASSWORD: kong
+      KONG_PROXY_ACCESS_LOG: /dev/stdout
+      KONG_ADMIN_ACCESS_LOG: /dev/stdout
+      KONG_PROXY_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_LISTEN: 0.0.0.0:8001, 0.0.0.0:8444 ssl
+    ports:
+      - "80:8000"
+      - "8443:8443"
+      - "8001:8001"
+      - "8444:8444"
+    volumes:
+      - ./extras/konga_data:/usr/local/kong
 
-  # kong-migration-up:
-  #   image: claudioed/kong-fc
-  #   # networks:
-  #   #   - mule-rede
-  #   deploy:
-  #     restart_policy:
-  #       condition: on-failure
-  #   depends_on:
-  #     - kong-database
-  #   environment:
-  #     - KONG_DATABASE=postgres
-  #     - KONG_PG_HOST=kong-database
-  #     - KONG_PG_USER=kong
-  #     - KONG_PG_PASSWORD=kong
-  #   command: kong migrations up
+  konga:
+    image: pantsel/konga:latest
+    depends_on:
+      - kong
+    environment:
+      NODE_ENV: production
+    ports:
+      - "1337:1337"
+    volumes:
+      - ./extras/konga_data:/app/kongadata
 
-  # kong:
-  #   container_name: kong
-  #   image: claudioed/kong-fc
-  #   volumes:
-  #   - kong_data:/usr/local/kong
-  #   # networks:
-  #   #   - mule-rede
-  #   deploy:
-  #     restart_policy:
-  #       condition: any
-  #   depends_on:
-  #     - kong-database
-  #   environment:
-  #     - KONG_DATABASE=postgres
-  #     - KONG_PG_HOST=kong-database
-  #     - KONG_PG_DATABASE=kong
-  #     - KONG_PG_PASSWORD=kong
-  #     - KONG_PROXY_ACCESS_LOG=/dev/stdout
-  #     - KONG_ADMIN_ACCESS_LOG=/dev/stdout
-  #     - KONG_PROXY_ERROR_LOG=/dev/stderr
-  #     - KONG_ADMIN_ERROR_LOG=/dev/stderr
-  #     - KONG_ADMIN_LISTEN=0.0.0.0:8001, 0.0.0.0:8444 ssl
-  #     - KONG_PROXY_LISTEN=0.0.0.0:8000, 0.0.0.0:8443 ssl http2
-  #     - KONG_ADMIN_LISTEN=0.0.0.0:8001
-  #     - KONG_REAL_IP_RECURSIVE=on
-  #     - KONG_NGINX_HTTP_RESOLVER=8.8.8.8
-  #     - KONG_PLUGINS=bundled
-  #   ports:
-  #     - "80:8000"
-  #     - "443:8443"
-  #     - "8001:8001"
-  #   healthcheck:
-  #     test: ["CMD", "wget", "-O-", "http://kong:8001/status"]
-  #     interval: 5s
-  #     retries: 10
-  #   restart: on-failure
-   
-  # postgres:
-  #   image: postgres
-  #   volumes:
-  #     - postgres_data:/var/lib/postgresql/data
-  #   environment:
-  #     POSTGRES_DB: keycloak
-  #     POSTGRES_USER: keycloak
-  #     POSTGRES_PASSWORD: password
+  db_keycloak:
+      image: postgres
+      volumes:
+        - ./extras/db_keycloak:/var/lib/postgresql/data
+      environment:
+        POSTGRES_DB: keycloak
+        POSTGRES_USER: keycloak
+        POSTGRES_PASSWORD: password
+      ports:
+        - 5435:5432
 
-  # ###
-  # ### Konga
-  # ### Administracao via interface grafica do Kong API Gateway
-  # ###
-  # konga:
-  #   image: pantsel/konga
-  #   volumes:
-  #   - konga_data:/app/kongadata
-  #   # networks:
-  #   #   - mule-rede
-  #   deploy:
-  #     restart_policy:
-  #       condition: on-failure
-  #   depends_on:
-  #     - kong-database
-  #   environment:
-  #     NODE_ENV: development
-  #   ports:
-  #     - "1337:1337"
+  keycloak:
+      image: quay.io/keycloak/keycloak:legacy
+      environment:
+        DB_VENDOR: POSTGRES
+        DB_ADDR: postgres
+        DB_DATABASE: keycloak
+        DB_USER: keycloak
+        DB_SCHEMA: public
+        DB_PASSWORD: password
+        KEYCLOAK_USER: admin
+        KEYCLOAK_PASSWORD: Pa55w0rd
+        # Uncomment the line below if you want to specify JDBC parameters. The parameter below is just an example, and it shouldn't be used in production without knowledge. It is highly recommended that you read the PostgreSQL JDBC driver documentation in order to use it.
+        #JDBC_PARAMS: "ssl=true"
+      ports:
+        - 8080:8080
+      depends_on:
+        - db_keycloak
