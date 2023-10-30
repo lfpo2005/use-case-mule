@@ -1,0 +1,394 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:kafka="http://www.mulesoft.org/schema/mule/kafka"
+	xmlns:vm="http://www.mulesoft.org/schema/mule/vm"
+	xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
+	xmlns:file="http://www.mulesoft.org/schema/mule/file"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd 
+http://www.mulesoft.org/schema/mule/file http://www.mulesoft.org/schema/mule/file/current/mule-file.xsd 
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
+http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd
+http://www.mulesoft.org/schema/mule/kafka http://www.mulesoft.org/schema/mule/kafka/current/mule-kafka.xsd">
+	<db:config name="Database_Config" doc:name="Database Config"
+		doc:id="e6bcf801-8fc0-47f0-89c9-922d35330eb5">
+		<db:generic-connection
+			url="jdbc:postgresql://localhost:${db.port}/${db.database}"
+			driverClassName="org.postgresql.Driver" user="${db.user}"
+			password="${db.password}" />
+	</db:config>
+	<file:config name="File_Config" doc:name="File Config"
+		doc:id="402adca0-c15f-4229-afbe-bf55903edc13">
+		<file:connection workingDir="${file.accountsDir}" />
+	</file:config>
+	<apikit:config name="bank-lfpo-config"
+		api="resource::80b483b6-f441-466c-a738-91e7f79a52a8:bank-lfpo:1.0.2:raml:zip:bank-lfpo.raml"
+		outboundHeadersMapName="outboundHeaders"
+		httpStatusVarName="httpStatus" />
+
+	<configuration-properties
+		doc:name="Configuration properties"
+		doc:id="86903b81-8aff-4b68-9213-456c21a26d5d" file="config.yaml" />
+	<http:listener-config name="httpListenerConfig"
+		doc:name="HTTP Listener config"
+		doc:id="e3ee3e0e-d687-4306-8083-c309b7ab8602">
+		<http:listener-connection host="0.0.0.0"
+			port="${http.port}" />
+	</http:listener-config>
+	<kafka:consumer-config
+		name="Apache_Kafka_Consumer_config"
+		doc:name="Apache Kafka Consumer configuration"
+		doc:id="318cb803-6006-41b6-ac71-7fc917452ac3">
+		<kafka:consumer-plaintext-connection
+			groupId="group-bank">
+			<kafka:bootstrap-servers>
+				<kafka:bootstrap-server
+					value="localhost:9092" />
+			</kafka:bootstrap-servers>
+			<kafka:topic-patterns>
+				<kafka:topic-pattern value="new_user" />
+			</kafka:topic-patterns>
+		</kafka:consumer-plaintext-connection>
+	</kafka:consumer-config>
+
+	<vm:config name="VM_Config" doc:name="VM Config" doc:id="8a531d33-5312-4416-9159-e0fe87cf5248">
+		<vm:queues >
+			<vm:queue queueName="stg/*" queueType="PERSISTENT" />
+		</vm:queues>
+	</vm:config>
+	<flow name="batchJobFlow-Publish">
+		<scheduler doc:name="Scheduler">
+			<scheduling-strategy>
+				<fixed-frequency frequency="1" timeUnit="DAYS" />
+			</scheduling-strategy>
+		</scheduler>
+		<set-variable
+			value='#[(now() - |P1D|) as String {format: "yyyy-MM-dd"}]'
+			doc:name="date" doc:id="92b531ab-cd5e-489e-82e1-45ace9ccf4e7"
+			variableName="date" />
+		<db:select config-ref="Database_Config"
+			doc:name="Select from mule_transactions">
+			<db:sql><![CDATA[SELECT 
+    t.*,
+    a.account_number
+ FROM mule_transactions t 
+    JOIN mule_accounts a
+    ON t.account_id = a.account_id
+    WHERE DATE(date_transaction) = :yesterday]]></db:sql>
+			<db:input-parameters><![CDATA[#[{
+   'yesterday' : vars.date
+}]]]></db:input-parameters>
+
+		</db:select>
+		<set-payload value="#[payload as Array]"
+			doc:name="Transform to Array" />
+		<ee:transform doc:name="Transform Message"
+			doc:id="87d26463-51d7-4f7c-bc00-78986bcec009">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload map (transaction) -> {
+    transaction_id: transaction.transaction_id,
+    account_id: transaction.account_id,
+    account_number: transaction.account_number,
+    types: transaction.types,
+    amount: transaction.amount,   
+    date: transaction.date_transaction as String {format: "dd-MM-yyyy"},
+	hour: transaction.date_transaction as String {format: "HH:mm:ss"}   
+
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<vm:publish doc:name="Publish stg-report" doc:id="e187a186-67fb-4b28-85e2-199cc917caae" config-ref="VM_Config" queueName="stg-report"/>
+		<flow-ref doc:name="batchJobFlow-Cosumer"
+			doc:id="0d351db9-4b39-4f26-96e6-a0925e3b91ec"
+			name="batchJobFlow-Cosumer" />
+		<error-handler>
+			<on-error-continue type="ANY"
+				enableNotifications="true" logException="true">
+				<logger level="INFO" doc:name="Error" message='#[error]' />
+			</on-error-continue>
+		</error-handler>
+	</flow>
+	<flow name="batchJobFlow-Cosumer"
+		doc:id="bb3efb55-45de-4ab1-ab9c-8db4fce199d8">
+		<set-payload value="#[null]" doc:name="null"
+			doc:id="d9ccb50e-2436-46ba-84af-a5501219d1f4" />
+		<logger level="INFO" doc:name="Payload"
+			doc:id="3dbdc7b7-52ac-4281-a385-8bc32f9a8bca" message="#[payload]" />
+		<vm:consume queueName="stg-report" doc:name="Consume stg-report" doc:id="faa7aeb8-7c3f-4339-8a9e-74fc653c5879" config-ref="VM_Config"/>
+		<choice doc:name="Choice"
+			doc:id="e4d64c46-c561-4f2c-9d14-5d373a74d8a8">
+			<when expression="sizeOf(payload) &gt; 0">
+				<ee:transform doc:name="Transform to CSV"
+					doc:id="927abd0f-4b14-427b-a5d1-cba3057d0b19">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/csv
+
+---
+payload map (transaction) -> {
+	"ID da transação": transaction.transaction_id,
+    "ID da Conta": transaction.account_id,
+    "Numero da conta" : transaction.account_number,
+    "Tipo de transação": transaction.types,
+    "Valor": ("R\$ " as String) ++ (transaction.amount as String),   
+    "Data": transaction.date,
+	"Horas": transaction.hour    
+}
+]]>
+						</ee:set-payload>
+					</ee:message>
+				</ee:transform>
+				<file:write doc:name="Write"
+					doc:id="14466038-5dcc-4122-8c44-8ba9b94b0d34"
+					config-ref="File_Config"
+					path='#["${file.accountsDir}/transaction_" ++ ((now() - |P1D|) as String {format: "dd-MM-yyyy"}) ++ ".csv"]' />
+				<logger level="INFO"
+					doc:name="Custom:Relatorio criado sucesso"
+					message='#["\nRelatório " ++ "transaction_" ++ ((now() - |P1D|) as String {format: "dd-MM-yyyy"}) ++ ".csv" ++ ", criado com sucesso!"]' />
+			</when>
+			<otherwise>
+				<logger level="INFO"
+					doc:name="Não houve transação no dia anterior!"
+					doc:id="2c108f1b-33f4-4c0f-9bdd-00597f25b01e"
+					message='#["\nNão houve transação no dia " ++ ((now() - |P1D|) as String {format: "dd-MM-yyyy"})]' />
+			</otherwise>
+		</choice>
+		<error-handler>
+			<on-error-continue enableNotifications="true"
+				logException="true" doc:name="On Error Continue"
+				doc:id="67c68676-5740-4996-995f-68666d4160a2" type="ANY">
+				<logger level="INFO" doc:name="Error"
+					doc:id="f0188a83-3fd9-42b5-ad57-e23257d429fc" message="#[error]" />
+			</on-error-continue>
+		</error-handler>
+	</flow>
+	<flow name="globalFlow"
+		doc:id="ec5909ef-cd44-4351-9c26-666829fd183a">
+		<scheduler doc:name="Scheduler"
+			doc:id="1d663aa7-3d44-429a-bb50-5bb6eec31379">
+			<scheduling-strategy>
+				<cron expression="0 * * ? * *" />
+			</scheduling-strategy>
+		</scheduler>
+		<flow-ref doc:name="implementation-health-check-main"
+			doc:id="8ae29d25-1da9-43d8-af41-d50debd0ac85"
+			name="implementation-health-check-main" />
+		<logger level="INFO" doc:name="Health-check"
+			doc:id="f2ea2328-eaa9-4ff2-a5ba-718e63a989e7"
+			message='#["health-check": payload.banco_de_dados.status]' />
+	</flow>
+	<flow name="validate-account-number"
+		doc:id="9ea3fe8e-90f2-44c1-b325-a990020952fc">
+		<logger level="INFO" doc:name="Payload"
+			doc:id="59617190-486e-490a-8c31-5aafdc26b39a" message="#[payload]" />
+		<db:select doc:name="Select account_number"
+			doc:id="4e9de8b0-b8bc-4be8-9bf7-050307ce6bb0"
+			config-ref="Database_Config">
+			<db:sql><![CDATA[  SELECT * FROM mule_accounts
+  WHERE
+  account_number = :account_number
+  AND
+  digit = :digit
+  AND
+  account_type = :account_type]]></db:sql>
+			<db:input-parameters><![CDATA[#[{
+	'account_number': vars.account_number,
+	'digit': vars.digit,
+	'account_type': vars.account_type
+}]]]></db:input-parameters>
+		</db:select>
+		<set-payload value="#[payload as Array]"
+			doc:name="payload as Array"
+			doc:id="32bb200e-9a2f-44b2-8747-a932990aa9c3" />
+		<logger level="INFO" doc:name="Payload"
+			doc:id="d51394ba-f30c-427e-9694-7ed241a742f6" message="#[payload]" />
+		<choice doc:name="Choice"
+			doc:id="3423f598-446b-4b00-bfc0-2843b14ce4af">
+			<when expression="#[sizeOf(payload) &gt; 0]">
+				<db:select doc:name="Select Account Number"
+					doc:id="d5475785-ab77-4fb8-9db0-d9ea02ee36b8"
+					config-ref="Database_Config">
+					<db:sql><![CDATA[SELECT * FROM mule_accounts where account_number = :account_number]]></db:sql>
+					<db:input-parameters><![CDATA[#[{
+	account_number: vars.account_number
+}]]]></db:input-parameters>
+				</db:select>
+				<!-- [STUDIO:"getBalance"] <set-variable value="#[payload&#93;" doc:name="getBalance" 
+					doc:id="f9601806-bb23-40af-9a19-52cf6afbde2b" variableName="getBalance" /> 
+					[STUDIO] -->
+				<!-- [STUDIO:"Transform Message"] <ee:transform doc:name="Transform Message" 
+					doc:id="b12cabe8-f55b-4722-86a5-b84e50e2aa20"> <ee:message> <ee:set-payload><![CDATA[%dw 
+					2.0 output application/json &#45;&#45;- payload map (item) -> { "Data": now() 
+					as String {format: "dd-MM-yyyy"}, "Horas": now() as String {format: "HH:mm:ss"}, 
+					"Numero da conta": item.account_number, "Nome": item.name, "Saldo": item.balance 
+					} &#93;&#93;></ee:set-payload> </ee:message> </ee:transform> [STUDIO] -->
+				<logger level="INFO" doc:name="Logger"
+					doc:id="726fa9f8-0733-4646-902b-76387829991e"
+					message='#["\nNumber is valid"]' />
+			</when>
+			<otherwise>
+				<raise-error doc:name="CUSTOM:INVALID_ACCOUNT"
+					doc:id="8cacde78-fcad-4ba9-9137-bb975542cc8a"
+					type="CUSTOM:INVALID_ACCOUNT"
+					description="Dados da conta invalidos!" />
+			</otherwise>
+		</choice>
+		<error-handler>
+			<on-error-propagate enableNotifications="true"
+				logException="true" doc:name="On Error Propagate"
+				doc:id="2bac6290-5832-42d9-9de1-70486413321f"
+				type="CUSTOM:INVALID_ACCOUNT">
+				<logger level="ERROR" doc:name="Error"
+					doc:id="7dfda9b9-4302-4e7e-be41-52c280d3249e" message="#[error]" />
+				<set-variable value="404" doc:name="httpStatus"
+					variableName="httpStatus" />
+				<ee:transform doc:name="Transform Message"
+					doc:id="80338d2d-0014-485a-affd-d1626ae0088a">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+    'Mensagem': 'Verifique o numero da conta.'
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</on-error-propagate>
+		</error-handler>
+	</flow>
+	<flow name="validate-amount"
+		doc:id="1951b627-d277-4db3-a3b3-d9e6d6ba8d51">
+		<logger level="INFO" doc:name="Logger"
+			doc:id="941dffba-13a8-46c5-b633-50edcf42e68e" message="#[payload]" />
+		<choice doc:name="Validate Amount">
+			<when
+				expression="#[vars.amount is Number and vars.amount &gt; 0]">
+				<logger level="INFO" doc:name="Amount is valid"
+					message="Amount is valid: #[vars.amount]" />
+			</when>
+			<otherwise>
+				<raise-error doc:name="CUSTOM:INVALID_AMOUNT"
+					doc:id="48ad49f3-32a7-42f3-946d-345e6595bbd9"
+					type="CUSTOM:INVALID_AMOUNT"
+					description="Valor inválido, deve ser um número maior que 0." />
+			</otherwise>
+		</choice>
+		<error-handler>
+			<on-error-propagate enableNotifications="true"
+				logException="true" doc:name="On Error Propagate"
+				doc:id="1b795c54-129b-423b-a576-cad6d5776891"
+				type="CUSTOM:INVALID_AMOUNT">
+				<logger level="ERROR" doc:name="Error"
+					doc:id="6273b499-cb4a-4bfb-b14e-e7d0b5b50b7b" message="#[error]" />
+				<set-variable value="404" doc:name="httpStatus"
+					variableName="httpStatus" />
+				<ee:transform doc:name="Transform Message"
+					doc:id="3746b5b9-0512-4a6f-a0a8-067bed65994d">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+    'Mensagem': 'Valor inválido, deve ser um número maior que 0.'
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</on-error-propagate>
+		</error-handler>
+	</flow>
+	<flow name="bath-insert-new-user-kafka"
+		doc:id="846c8495-37d1-42ab-b658-9cc6077a3cc5">
+		<kafka:message-listener
+			doc:name="Message listener"
+			doc:id="871b589d-6345-4c9a-8d0b-a9e34a7a1f91"
+			config-ref="Apache_Kafka_Consumer_config"
+			parallelConsumersAmount="10" />
+		<ee:transform doc:name="Transform Message"
+			doc:id="6279ef7b-c465-422a-b91d-eacfc1c11dcc">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+read(payload, "application/json")]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger"
+			doc:id="e19b5244-34f5-44a0-bdb6-293de9c9673f" />
+		<ee:transform doc:name="Clean-cpf"
+			doc:id="5bee471e-bd4a-44a3-aed2-70a9f624ab7d">
+			<ee:message>
+				<ee:set-payload><![CDATA[output application/json
+import * from dw::core::Strings
+fun removePunctuation(text) =
+  text replace /[-.]/ with ""
+---
+{
+	userId: payload.userId,
+	userType: payload.userType,
+	fullName: payload.fullName,
+    cpf: removePunctuation(payload.cpf)
+}
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<db:insert doc:name="Insert"
+			doc:id="cf54955f-9078-4d24-bb5d-2e50dbb4d877"
+			config-ref="Database_Config">
+			<db:sql><![CDATA[insert into 
+  users (user_id, name, cpf, user_type)
+values
+  (:user_id, :name, :cpf, :user_type);]]></db:sql>
+			<db:input-parameters><![CDATA[#[{
+    user_id: payload.userId,
+    name: payload.fullName,
+    cpf: payload.cpf,
+    user_type: payload.userType
+}]]]></db:input-parameters>
+		</db:insert>
+		<logger level="INFO" doc:name="CUSTOM:Message"
+			doc:id="f047fb4e-8a66-4f13-993d-84805909d9af"
+			message='#["\nNewUser adicionado com sucesso! \n Insert-new-user-kafka"]' />
+		<error-handler>
+			<on-error-continue enableNotifications="true"
+				logException="true" doc:name="On Error Continue"
+				doc:id="62eef944-5ba9-4f9f-a7c0-0742c0d5e130" type="ANY">
+				<logger level="INFO" doc:name="Logger"
+					doc:id="535a0589-6fbc-4161-82a5-31b5ca6c158f"
+					message='#["\nErro ao inserir usuario"]' />
+			</on-error-continue>
+		</error-handler>
+	</flow>
+	<flow name="clean-cpf"
+		doc:id="8869590f-0019-4a74-910e-eae818e5156c">
+		<ee:transform doc:name="Transform Message"
+			doc:id="9d8b49b6-7587-4c94-8a3d-7f494ce3f2bb">
+			<ee:message>
+				<ee:set-payload><![CDATA[output application/json
+import * from dw::core::Strings
+fun removePunctuation(text) =
+  text replace /[-.]/ with ""
+---
+{
+	account_type: payload.account_type,
+	account_name: payload.account_name,
+    cpf: removePunctuation(payload.cpf)
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger"
+			doc:id="7fcff659-869e-41e2-aa19-f295a841ca51" />
+	</flow>
+</mule>

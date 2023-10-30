@@ -1,9 +1,0 @@
-%dw 2.0
-
-type auto_7346e751_e709_4f70_82f6_685ae3208833_Input_Payload = {|
-  Mensagem?: String, 
-  account_id?: Number, 
-  amount?: Null, 
-  account_type?: Null
-|}
-

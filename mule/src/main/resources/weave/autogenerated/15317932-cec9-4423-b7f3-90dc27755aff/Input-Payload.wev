@@ -1,4 +1,0 @@
-%dw 2.0
-
-type auto_15317932_cec9_4423_b7f3_90dc27755aff_Input_Payload = Array<{|  Data: String {"format": "dd-MM-yyyy"},   Horas: String {"format": "HH:mm:ss"},   "Numero da conta": Number,   Nome: String,   Saldo: Number | Null|}>
-

@@ -1,0 +1,17 @@
+http:
+  port: "8081"
+  host: "localhost"
+  
+db:
+  host: "jdbc:postgresql://localhost:5432/banco_mule"
+  user: "postgres"
+  password: "197197"  
+  port: "5432"
+  database: "db_mule"
+    
+  
+file:
+  accountsDir: "D:/WORKSPACE/MULE/use_case_mule/data-csv"
+
+
+

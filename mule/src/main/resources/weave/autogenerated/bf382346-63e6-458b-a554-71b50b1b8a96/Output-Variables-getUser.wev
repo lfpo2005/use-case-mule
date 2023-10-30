@@ -1,4 +1,0 @@
-%dw 2.0
-
-type auto_bf382346_63e6_458b_a554_71b50b1b8a96_Output_Variables_getUser = Array<String>
-

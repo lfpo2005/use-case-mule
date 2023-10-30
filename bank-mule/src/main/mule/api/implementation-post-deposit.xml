@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:vm="http://www.mulesoft.org/schema/mule/vm"
+	xmlns:jms="http://www.mulesoft.org/schema/mule/jms"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd
+http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd">
+	<flow name="implementation-post-deposit-main"
+		doc:id="70fabb0f-46a9-4d0e-8ece-6179981935c8">
+		<flow-ref doc:name="implementation-post-deposit-publish"
+			doc:id="22fc23bc-b3bb-49f2-8f1f-b59b958645bf"
+			name="implementation-post-deposit-publish" />
+		<flow-ref doc:name="implementation-post-deposit-consumer"
+			doc:id="77fb2841-dd5d-41ff-af64-d8f6249eabef"
+			name="implementation-post-deposit-consumer" />
+		<error-handler>
+			<on-error-propagate type="ANY">
+				<set-variable variableName="customErrorMessage"
+					value="#[error.description]" doc:name="customErrorMessage"/>
+				<logger level="ERROR"
+					message="#['Erro encontrado: ' ++ vars.customErrorMessage]" doc:name="CustomErrorMessage"/>
+				<ee:transform>
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+    'Mensagem': vars.customErrorMessage default 'Erro desconhecido'
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</on-error-propagate>
+		</error-handler>
+	</flow>
+	<flow name="implementation-post-deposit-publish"
+		doc:id="f501f5bc-8144-40a2-80ee-12812df292f5">
+		<logger level="INFO" doc:name="init deposit" doc:id="b9c4327c-4195-4f65-81da-e50c44b3d35d" message="init deposit" />
+		<flow-ref doc:name="Validate Account Number" doc:id="e29a84ac-9334-4bee-9cf1-fa54cadffcd4" name="validate-account-number"/>
+		<flow-ref doc:name="Validate Amount" doc:id="e302d096-3251-4f0f-8ef2-83e7e02c1444" name="validate-amount"/>
+		<logger level="INFO" doc:name="payload" doc:id="50d53bbd-29cc-4780-85fa-d226a59e2dc4" message="#[payload]"/>
+		<db:select doc:name="Select account_number" config-ref="Database_Config">
+			<db:sql><![CDATA[SELECT account_id FROM mule_accounts WHERE account_number = :account_number]]></db:sql>
+			<db:input-parameters><![CDATA[#[{'account_number': vars.account_number}]]]></db:input-parameters>
+		</db:select>
+		<set-variable variableName="accountId"
+			value="#[payload[0].account_id]" doc:name="account_id" />
+		<logger level="INFO" doc:name="Payload"
+			message="#[payload]" />
+		<ee:transform doc:name="Transform Message" doc:id="59d2e1f3-c0c8-41cb-bcca-5f6062037498" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	'account_id': vars.accountId,
+	'types': 'DEPOSIT',
+	'amount': vars.amount,
+	'account_number': vars.account_number,
+	'digit': vars.digit,
+	'account_type': vars.account_type
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Payload" doc:id="5e2a2f4f-2947-4851-b3fb-18da25a4b5c0" message="payload"/>
+		<vm:publish doc:name="Publish stg-deposit" doc:id="8fc8fd15-68c8-4ac5-805f-839c2f001ef7" queueName="stg-deposit" config-ref="VM_Config"/>
+	
+</flow>
+	<flow name="implementation-post-deposit-consumer" doc:id="e321df5a-3ca4-44a4-b611-b3ded2b2cf37" >
+		<set-payload value="#[null]" doc:name="null" doc:id="a5bb7f8c-9da7-44bf-b0de-f45116760c96" />
+		<vm:consume queueName="stg-deposit" doc:name="Consume stg-deposit" doc:id="4cf7b4d2-c77c-415f-b999-df176189a12b" config-ref="VM_Config"/>
+		<set-variable value="#[payload]" doc:name="deposit" doc:id="a05a0af6-2e4d-4ad0-a2f1-15e07fdaf8a5" variableName="deposit"/>
+		<logger level="INFO" doc:name="Logger" doc:id="4e37442b-06b9-41dd-94e2-30de0cf9ff9b" message="#[payload]"/>
+		<db:insert doc:name="Insert transactions" config-ref="Database_Config">
+			<db:sql><![CDATA[INSERT INTO mule_transactions
+(account_id, types, amount, date_transaction)
+VALUES 
+(:account_id, :types, :amount, NOW())]]></db:sql>
+			<db:input-parameters><![CDATA[#[{
+	'account_id': vars.deposit.account_id,
+	'types': vars.deposit.types,
+	'amount': vars.deposit.amount
+}]]]></db:input-parameters>
+		</db:insert>
+		<db:update doc:name="Update balance" config-ref="Database_Config">
+			<db:sql><![CDATA[UPDATE mule_accounts
+SET 
+    balance = balance + :amount
+WHERE 
+    account_number = :account_number;
+]]></db:sql>
+			<db:input-parameters><![CDATA[#[{
+    'amount': vars.deposit.amount,
+    'account_number': vars.deposit.account_number,
+    
+}]]]></db:input-parameters>
+		</db:update>
+		<set-variable variableName="transactionSuccess" value="#[true]" doc:name="Set transactionSuccess" />
+		<logger level="DEBUG" message="#[payload]" doc:name="After Insertion" />
+		<choice doc:name="Choice" doc:id="0e9b2d4e-e0cf-4aa4-b7e5-563f317dd391">
+			<when expression="#[vars.transactionSuccess == true]">
+				<ee:transform doc:name="Transform Message" doc:id="747ca809-a0e2-4f04-88af-ba2be4cfd1f9">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+    "Status": "success",
+    "Mensagem": "Depósito realizado com sucesso"
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+				<logger level="INFO" doc:name="Payload" doc:id="85275d0a-d45c-421a-a1ee-646539dc380d" message="#[payload]" />
+			
+</when>
+			<otherwise>
+				<ee:transform doc:name="Transform Message" doc:id="a743a75b-c5ee-41ab-94ef-a646c42856ca">
+					<ee:message>
+						<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+    "Status": "erro",
+    "Mensagem": "O depósito não pôde ser concluído"
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+				<logger level="INFO" doc:name="Payload" doc:id="62a92d16-2e25-4993-9c31-874aa59d40ad" message="#[payload]" />
+			
+</otherwise>
+		</choice>
+		<error-handler >
+			<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="238f8a4a-0592-4ea7-8c9d-5eb504b238eb" type="ANY" >
+				<logger level="INFO" doc:name="Error" doc:id="083c0b35-2dd0-4111-90ea-c9d1b657e73f" message="#[error]" />
+			</on-error-continue>
+		</error-handler>
+	</flow>
+</mule>

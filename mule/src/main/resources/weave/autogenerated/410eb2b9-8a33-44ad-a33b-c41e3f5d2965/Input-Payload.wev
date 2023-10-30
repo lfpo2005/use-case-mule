@@ -1,4 +1,0 @@
-%dw 2.0
-
-type auto_410eb2b9_8a33_44ad_a33b_c41e3f5d2965_Input_Payload = {| Message: String |}
-

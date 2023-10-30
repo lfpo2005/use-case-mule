@@ -5,9 +5,9 @@ server:
 
 spring:
   datasource:
-    url:  jdbc:postgresql://localhost:5433/db_ms_user
+    url:  jdbc:postgresql://localhost:5432/db_ms_user
     username: postgres
-    password: postgres
+    password: 197197
   jpa:
     hibernate:
       ddl-auto: update
@@ -33,12 +33,12 @@ kafka:
   topic:
     name: new_user
 
-keycloak:
-  auth-server-url: http://localhost:8080/auth
-  realm: role_admin
-  resource: 197197197
-  public-client: true
-  principal-attribute: preferred_username
+#keycloak:
+#  auth-server-url: http://localhost:8080/auth
+#  realm: role_admin
+#  resource: 197197197
+#  public-client: true
+#  principal-attribute: preferred_username
 
 logging:
   level:

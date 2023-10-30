@@ -1,4 +1,0 @@
-%dw 2.0
-
-type auto_7346e751_e709_4f70_82f6_685ae3208833_Input_Variables_getBalance = Array<{|  account_id: Number,   user_id: Number,   account_type: String,   account_number: Number,   digit: Number,   balance?: Number|}>
-
